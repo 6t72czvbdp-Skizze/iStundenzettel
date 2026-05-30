@@ -293,11 +293,11 @@
 
         // Marc Hoß's Arbeitszeiten pro Wochentag
         const arbeitszeiten = {
-            0: '7:30-15:00',    // Montag (Frühbetreuung)
-            1: '10:00-14:20',   // Dienstag
-            2: '8:00-13:30',    // Mittwoch
-            3: '8:00-16:00',    // Donnerstag Dienst (Team 16:15-17:15 extra)
-            4: '10:00-15:00',   // Freitag
+            0: '7:30-15:00',    // Montag (Frühbetreuung) = 7h
+            1: '10:00-14:20',   // Dienstag = 4:20h
+            2: '8:00-13:30',    // Mittwoch = 5:30h
+            3: '8:00-16:00',    // Donnerstag = 8:30h (ohne Team), +1h Team = 9:30h
+            4: '10:00-15:00',   // Freitag = 5h
             5: 'Frei',          // Samstag
             6: 'Frei'           // Sonntag
         };
@@ -331,6 +331,23 @@
                 const stunden = Math.floor(newMinutes / 60);
                 const minuten = newMinutes % 60;
                 teamSpan.textContent = `${stunden}:${minuten.toString().padStart(2, '0')}`;
+                
+                calculateAll();
+            }
+        }
+
+        // Funktion zum Anpassen der Vorbereitungszeit (±15 Minuten)
+        function adjustVorbereitung(minutesChange) {
+            const vorbSpan = document.getElementById('vorbereitung');
+            if (vorbSpan) {
+                let currentMinutes = parseInt(vorbSpan.dataset.minutes || 60);
+                let newMinutes = currentMinutes + minutesChange;
+                newMinutes = Math.max(0, newMinutes);
+                vorbSpan.dataset.minutes = newMinutes;
+                
+                const stunden = Math.floor(newMinutes / 60);
+                const minuten = newMinutes % 60;
+                vorbSpan.textContent = `${stunden}:${minuten.toString().padStart(2, '0')}`;
                 
                 calculateAll();
             }
@@ -469,6 +486,16 @@
                     </tbody>
                 </table>
 
+                <div style="margin: 30px 0; padding: 15px; background-color: #fff3cd; border-radius: 5px; border-left: 4px solid #ffc107;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">📚 Bastel- & Vorbereitungszeit (zu Hause):</p>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button style="width: 32px; height: 32px; padding: 0; font-size: 16px; background-color: #ff6b6b; border: none; border-radius: 4px; color: white; cursor: pointer;" onclick="adjustVorbereitung(-15)">−</button>
+                        <span id="vorbereitung" data-minutes="60" style="min-width: 60px; text-align: center; font-size: 16px; font-weight: bold;">1:00</span>
+                        <button style="width: 32px; height: 32px; padding: 0; font-size: 16px; background-color: #51cf66; border: none; border-radius: 4px; color: white; cursor: pointer;" onclick="adjustVorbereitung(15)">+</button>
+                        <span style="margin-left: 10px; color: #666; font-size: 13px;">Stunde(n) pro Woche - wird automatisch mitgezählt</span>
+                    </div>
+                </div>
+
                 <div style="margin: 30px 0; font-weight: bold; font-size: 14px;">
                     <p>Gesamt Monat +/-Stunden: <span id="monatDiff" class="summary-value">0.00</span></p>
                     <p>Mehr-/Minderarbeitsstunden neu: _________</p>
@@ -563,12 +590,12 @@
                             ist = ((endMin - startMin) - pause) / 60;
                             ist = Math.max(0, ist);
                             
-                            // Donnerstag: Team-Zeit dazurechnen
+                            // Donnerstag: Pause 0:30 wird DAZUGERECHNET (8:00-16:00 = 8h -> 8:30h)
+                            // plus Team-Zeit
                             if (dayOfWeekDE === 3) {
                                 const teamInput = document.getElementById(`team-${day}`);
                                 const teamStunden = teamInput ? (parseFloat(teamInput.dataset.minutes || 60) / 60) : 1.0;
-                                // Pause 0:30 dazurechnen + Team
-                                ist = ist + 0.5 + teamStunden;
+                                ist = ist + 0.5 + teamStunden; // 8h + 0.5h Pause + 1h Team = 9.5h
                             }
                             
                             if (istInput) istInput.value = ist.toFixed(2);
@@ -614,6 +641,23 @@
 
                 currentDate.setDate(currentDate.getDate() + 1);
             }
+
+            // Vorbereitungszeit pro Woche dazurechnen
+            const vorbSpan = document.getElementById('vorbereitung');
+            const vorbMinuten = vorbSpan ? parseInt(vorbSpan.dataset.minutes || 60) : 60;
+            const vorbStundenProWoche = vorbMinuten / 60;
+            
+            // Anzahl Wochen im Monat zählen (vereinfacht: Anzahl Montage)
+            let wochenAnzahl = 0;
+            let checkDate = new Date(firstDay);
+            while (checkDate.getMonth() === month) {
+                if (checkDate.getDay() === 1) wochenAnzahl++; // Montag
+                checkDate.setDate(checkDate.getDate() + 1);
+            }
+            if (wochenAnzahl === 0) wochenAnzahl = 1;
+            
+            const vorbereitungGesamt = vorbStundenProWoche * wochenAnzahl;
+            totalIst += vorbereitungGesamt;
 
             // Monatssumme aktualisieren
             const monatDiff = totalIst - totalSoll;
