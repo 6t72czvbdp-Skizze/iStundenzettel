@@ -273,8 +273,8 @@
         const sollStunden = {
             0: 7.0,      // Montag
             1: 4 + 20/60, // Dienstag: 4:20
-            2: 5 + 10/60, // Mittwoch: 5:10
-            3: 9.5,      // Donnerstag: 9:30h
+            2: 5 + 30/60, // Mittwoch: 5:30
+            3: 9.5,      // Donnerstag: 8:30 + 1:00 Team = 9:30
             4: 5.0,      // Freitag
             5: 0,        // Samstag
             6: 0         // Sonntag
@@ -284,8 +284,8 @@
         const pausenMinuten = {
             0: 30,  // Montag
             1: 0,   // Dienstag
-            2: 30,  // Mittwoch
-            3: -30,  // Donnerstag: negative pause = wird addiert statt subtrahiert! 8:00-16:00 (8h) + 0:30 = 8:30h
+            2: 0,   // Mittwoch: keine pause
+            3: 0,   // Donnerstag: 8:00-16:00 = 8h, Sollarbeit 8:30 + Team 1h = 9:30
             4: 0,   // Freitag
             5: 0,   // Samstag
             6: 0    // Sonntag
@@ -293,10 +293,10 @@
 
         // Marc Hoß's Arbeitszeiten pro Wochentag
         const arbeitszeiten = {
-            0: '7:30-15:00',    // Montag
+            0: '7:30-15:00',    // Montag (Frühbetreuung)
             1: '10:00-14:20',   // Dienstag
-            2: '10:50-16:00',   // Mittwoch
-            3: '8:00-16:00',    // Donnerstag Kernarbeit (dann Team 16:15-17:30)
+            2: '8:00-13:30',    // Mittwoch
+            3: '8:00-16:00',    // Donnerstag (Sollarbeit 8:30 + 1h Team = 9:30)
             4: '10:00-15:00',   // Freitag
             5: 'Frei',          // Samstag
             6: 'Frei'           // Sonntag
