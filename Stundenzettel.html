@@ -269,13 +269,13 @@
     </div>
 
     <script>
-        // Sollarbeitszeiten pro Wochentag (in Stunden)
+        // Sollarbeitszeiten pro Wochentag (in Stunden) - aus Dienstplan
         const sollStunden = {
-            0: 7.0,      // Montag
-            1: 4 + 20/60, // Dienstag: 4:20
-            2: 5 + 30/60, // Mittwoch: 5:30
-            3: 9.5,      // Donnerstag: 8:30 + 1:00 Team = 9:30
-            4: 5.0,      // Freitag
+            0: 7.0,      // Montag: (7)
+            1: 4 + 20/60, // Dienstag: (4:20)
+            2: 5 + 30/60, // Mittwoch: (5:30)
+            3: 9.5,      // Donnerstag: 8:30 Dienst + 1:00 Team = 9:30
+            4: 5.0,      // Freitag: (5)
             5: 0,        // Samstag
             6: 0         // Sonntag
         };
@@ -285,7 +285,7 @@
             0: 30,  // Montag
             1: 0,   // Dienstag
             2: 0,   // Mittwoch: keine pause
-            3: 0,   // Donnerstag: 8:00-16:00 = 8h, Sollarbeit 8:30 + Team 1h = 9:30
+            3: 0,   // Donnerstag: bonus +1.5h wird in berechnung dazugerechnet
             4: 0,   // Freitag
             5: 0,   // Samstag
             6: 0    // Sonntag
@@ -296,7 +296,7 @@
             0: '7:30-15:00',    // Montag (Frühbetreuung)
             1: '10:00-14:20',   // Dienstag
             2: '8:00-13:30',    // Mittwoch
-            3: '8:00-16:00',    // Donnerstag (Sollarbeit 8:30 + 1h Team = 9:30)
+            3: '8:00-16:00',    // Donnerstag Dienst (Team 16:15-17:15 extra)
             4: '10:00-15:00',   // Freitag
             5: 'Frei',          // Samstag
             6: 'Frei'           // Sonntag
@@ -314,6 +314,24 @@
                 let newValue = currentValue + amount;
                 newValue = Math.max(0, newValue); // Nicht negativ
                 input.value = newValue.toFixed(2);
+                calculateAll();
+            }
+        }
+
+        // Funktion zum Anpassen der Team-Zeit am Donnerstag (±15 Minuten)
+        function adjustTeam(day, minutesChange) {
+            const teamSpan = document.getElementById(`team-${day}`);
+            if (teamSpan) {
+                let currentMinutes = parseInt(teamSpan.dataset.minutes || 60);
+                let newMinutes = currentMinutes + minutesChange;
+                newMinutes = Math.max(0, newMinutes); // Nicht negativ
+                teamSpan.dataset.minutes = newMinutes;
+                
+                // Anzeige aktualisieren (z.B. 1:15)
+                const stunden = Math.floor(newMinutes / 60);
+                const minuten = newMinutes % 60;
+                teamSpan.textContent = `${stunden}:${minuten.toString().padStart(2, '0')}`;
+                
                 calculateAll();
             }
         }
@@ -356,6 +374,7 @@
                             <th>Arbeitszeit</th>
                             <th>Pause</th>
                             <th>Stunden</th>
+                            <th>Team</th>
                             <th>+/-</th>
                             <th>Frei</th>
                             <th>Begründung</th>
@@ -393,6 +412,21 @@
 
                 const isWeekend = dayOfWeekDE >= 5;
                 const rowClass = isWeekend ? 'free-day' : '';
+                const isDonnerstag = dayOfWeekDE === 3;
+
+                // Team-Spalte nur für Donnerstag
+                let teamCell = '';
+                if (isDonnerstag) {
+                    teamCell = `
+                        <div style="display: flex; gap: 2px; justify-content: center; align-items: center; padding: 4px;">
+                            <button style="width: 26px; height: 26px; padding: 0; font-size: 14px; background-color: #ff6b6b; border: none; border-radius: 3px; color: white; cursor: pointer;" onclick="adjustTeam(${day}, -15)">−</button>
+                            <span id="team-${day}" data-minutes="60" style="min-width: 45px; text-align: center; font-size: 12px; font-weight: bold;">1:00</span>
+                            <button style="width: 26px; height: 26px; padding: 0; font-size: 14px; background-color: #51cf66; border: none; border-radius: 3px; color: white; cursor: pointer;" onclick="adjustTeam(${day}, 15)">+</button>
+                        </div>
+                    `;
+                } else {
+                    teamCell = '<span style="color: #ccc;">—</span>';
+                }
 
                 html += `
                     <tr class="${rowClass}">
@@ -406,6 +440,7 @@
                                 <button style="width: 30px; height: 30px; padding: 0; font-size: 16px; background-color: #51cf66; border: none; border-radius: 3px; color: white; cursor: pointer;" onclick="adjustHours(${day}, 0.25)" ${isWeekend ? 'disabled' : ''}>+</button>
                             </div>
                         </td>
+                        <td>${teamCell}</td>
                         <td style="color: #2196F3; font-weight: bold;"><span id="diff-${day}">0.00</span>h</td>
                         <td style="text-align: center;"><input type="checkbox" id="free-${day}" ${isWeekend ? 'checked disabled' : ''}></td>
                         <td><input type="text" placeholder="z.B. kein Team"></td>
@@ -418,7 +453,7 @@
                     const weekId = `week-${weekNum}`;
                     html += `
                         <tr class="week-summary">
-                            <td colspan="7">
+                            <td colspan="8">
                                 <span class="summary-value">Woche ${weekNum}: SOLL ${weekSollStunden.toFixed(2)}h | IST <span id="ist-${weekId}">0.00</span>h | +/- <span id="diff-week-${weekId}">0.00</span>h</span>
                             </td>
                         </tr>
@@ -527,6 +562,15 @@
                             const endMin = endH * 60 + endM;
                             ist = ((endMin - startMin) - pause) / 60;
                             ist = Math.max(0, ist);
+                            
+                            // Donnerstag: Team-Zeit dazurechnen
+                            if (dayOfWeekDE === 3) {
+                                const teamInput = document.getElementById(`team-${day}`);
+                                const teamStunden = teamInput ? (parseFloat(teamInput.dataset.minutes || 60) / 60) : 1.0;
+                                // Pause 0:30 dazurechnen + Team
+                                ist = ist + 0.5 + teamStunden;
+                            }
+                            
                             if (istInput) istInput.value = ist.toFixed(2);
                         }
                     }
