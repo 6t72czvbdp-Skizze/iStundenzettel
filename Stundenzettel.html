@@ -302,6 +302,12 @@ function generateTimesheet() {
         const isWeekend = dow >= 5;
         const isDo = dow === 3;
 
+        // Wochenenden überspringen
+        if (isWeekend) {
+            currentDate.setDate(currentDate.getDate()+1);
+            continue;
+        }
+
         if (isDo) {
             teamZeiten[day] = 60;
         }
@@ -437,6 +443,12 @@ function calcAll() {
         const dow = (currentDate.getDay()+6)%7;
         const isDo = dow === 3;
         const isWeekend = dow >= 5;
+
+        // Wochenenden überspringen
+        if (isWeekend) {
+            currentDate.setDate(currentDate.getDate()+1);
+            continue;
+        }
 
         const azInput   = document.getElementById(`az-${day}`);
         const istInput  = document.getElementById(`ist-${day}`);
