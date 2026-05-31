@@ -184,7 +184,7 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 .save-status { font-size:12px; color:#2e7d32; text-align:center; margin:-4px 0 12px; min-height:18px; }
 
 
-/* ===== STAMMDATEN / EINSTELLUNGEN ===== */
+/* ===== MEIN ARBEITSPLAN ===== */
 .settings-card{
   background:white; border-radius:12px; padding:14px; margin-bottom:12px;
   box-shadow:0 2px 8px rgba(0,0,0,0.08);
@@ -206,6 +206,30 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 .settings-hint{font-size:11px;color:#666;margin-top:8px;line-height:1.35;}
 @media(max-width:430px){.settings-grid{grid-template-columns:1fr;}}
 @media print{.settings-card{display:none!important;}}
+
+
+/* ===== SCHLIESSTAGE ===== */
+.closure-card{
+  background:white; border-radius:12px; padding:14px; margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+.closure-title{font-size:15px;font-weight:bold;margin-bottom:8px;color:var(--dark);}
+.closure-row{display:grid;grid-template-columns:1fr 1.2fr auto;gap:7px;margin-bottom:7px;align-items:center;}
+.closure-row input{
+  width:100%;border:1px solid #ddd;border-radius:7px;padding:8px;font-size:13px;
+}
+.closure-row button{
+  border:none;border-radius:7px;padding:8px 9px;background:#ffebee;color:#c62828;font-weight:bold;
+}
+.closure-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.closure-actions button{
+  border:none;border-radius:9px;padding:9px 10px;font-size:13px;font-weight:bold;cursor:pointer;
+}
+.btn-closure{background:#fff3e0;color:#e65100;}
+.btn-save-closure{background:#FF9800;color:white;}
+.closure-hint{font-size:11px;color:#666;margin-top:8px;line-height:1.35;}
+@media(max-width:430px){.closure-row{grid-template-columns:1fr;}}
+@media print{.closure-card{display:none!important;}}
 
 /* ===== PRINT STYLES ===== */
 @media print {
@@ -309,7 +333,7 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 
   <div class="settings-card">
     <div class="settings-actions" style="margin-top:0">
-      <button class="btn-settings" onclick="toggleSettings()">⚙️ Stammdaten / Einstellungen</button>
+      <button class="btn-settings" onclick="toggleSettings()">⚙️ Mein Arbeitsplan</button>
     </div>
     <div id="settingsPanel" style="display:none;margin-top:12px;">
       <div class="settings-title">Einmal eintragen – auf diesem Gerät gespeichert</div>
@@ -358,11 +382,29 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
         </label>
       </div>
       <div class="settings-actions">
-        <button class="btn-save-settings" onclick="saveSettings()">💾 Stammdaten speichern</button>
+        <button class="btn-save-settings" onclick="saveSettings()">💾 Arbeitsplan speichern</button>
         <button class="btn-close-settings" onclick="toggleSettings()">Schließen</button>
       </div>
       <div class="settings-hint">
         Die Daten werden nur auf diesem Gerät in diesem Browser gespeichert. Keine Anmeldung, keine Datenbank, keine Daten von Kolleginnen und Kollegen online.
+      </div>
+    </div>
+  </div>
+
+
+  <div class="closure-card">
+    <div class="closure-actions" style="margin-top:0">
+      <button class="btn-closure" onclick="toggleClosures()">🗓️ Schließtage / Brückentage</button>
+    </div>
+    <div id="closurePanel" style="display:none;margin-top:12px;">
+      <div class="closure-title">Tage eintragen, die als Minusstunden zählen</div>
+      <div id="closureList"></div>
+      <div class="closure-actions">
+        <button class="btn-closure" onclick="addClosureRow()">+ Tag hinzufügen</button>
+        <button class="btn-save-closure" onclick="saveClosures()">💾 Schließtage speichern</button>
+      </div>
+      <div class="closure-hint">
+        Beispiel: 15.05.2026 – Brückentag. Der Tag wird beim Generieren automatisch als „Frei / Schule zu“ gerechnet und erscheint als Minusstunden.
       </div>
     </div>
   </div>
@@ -423,12 +465,15 @@ var vMin     = 60;
 var generated = false;
 
 
-// ===== STAMMDATEN / EINSTELLUNGEN =====
+// ===== MEIN ARBEITSPLAN =====
 var SETTINGS_KEY = 'sz_settings_v1';
+
+var FIRST_START_KEY = 'sz_first_start_done_v1';
+
 var USER = {
-  name: (USER.name||''),
-  sub: 'RGT · AWO',
-  weekHours: '31',
+  name: '',
+  sub: '',
+  weekHours: '',
   transfer: '0',
   az: {0:'7:30-15:00', 1:'10:00-14:20', 2:'8:00-13:30', 3:'8:00-16:00', 4:'10:00-15:00'},
   pauseTxt: {0:'0:30', 1:'-', 2:'-', 3:'0:15', 4:'-'}
@@ -459,6 +504,10 @@ function loadSettings(){
     }catch(e){}
   }
   applySettings();
+  if(!raw){
+    var p=document.getElementById('settingsPanel');
+    if(p) p.style.display='block';
+  }
 }
 function applySettings(){
   AZ = USER.az;
@@ -469,7 +518,7 @@ function applySettings(){
     SOLL[i]=parseZ(AZ[i], PAUZ[i]);
   }
   var sub=document.getElementById('appSub');
-  if(sub) sub.textContent=(USER.name||'')+' · '+(USER.sub||'');
+  if(sub) sub.textContent=(USER.name||'Bitte Stammdaten eintragen')+(USER.sub?' · '+USER.sub:'');
 }
 function fillSettingsForm(){
   var el;
@@ -486,7 +535,7 @@ function toggleSettings(){
   var p=document.getElementById('settingsPanel');
   if(!p) return;
   fillSettingsForm();
-  p.style.display = p.style.display==='none' ? 'block' : 'none';
+  p.style.display = (p.style.display==='none' || p.style.display==='') ? 'block' : 'none';
 }
 function saveSettings(){
   USER.name=(document.getElementById('setName').value||'').trim() || 'Name';
@@ -502,8 +551,65 @@ function saveSettings(){
   localStorage.setItem('sz_ueb_'+curYear+'_'+curMonth, String(hmToDec(USER.transfer)));
   applySettings();
   var st=document.getElementById('saveStatus');
-  if(st) st.textContent='✅ Stammdaten gespeichert. Sie bleiben auf diesem Gerät erhalten.';
+  if(st) st.textContent='✅ Arbeitsplan gespeichert. Sie bleiben auf diesem Gerät erhalten.';
   if(generated) gen();
+}
+
+
+// ===== SCHLIESSTAGE / BRÜCKENTAGE =====
+var CLOSURE_KEY = 'sz_closure_days_v1';
+var closures = [];
+
+function dateKey(year, month, day){
+  return year+'-'+String(month+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+}
+function loadClosures(){
+  var raw=localStorage.getItem(CLOSURE_KEY);
+  if(raw){ try{ closures=JSON.parse(raw)||[]; }catch(e){ closures=[]; } }
+}
+function saveClosures(){
+  var rows=document.querySelectorAll('.closure-row');
+  var arr=[];
+  rows.forEach(function(r){
+    var d=r.querySelector('.closure-date').value;
+    var g=r.querySelector('.closure-reason').value.trim();
+    if(d){ arr.push({date:d, reason:g||'Brückentag / Schule zu'}); }
+  });
+  closures=arr;
+  localStorage.setItem(CLOSURE_KEY, JSON.stringify(closures));
+  var st=document.getElementById('saveStatus');
+  if(st) st.textContent='✅ Schließtage gespeichert.';
+  if(generated) gen();
+}
+function getClosure(dateStr){
+  for(var i=0;i<closures.length;i++){
+    if(closures[i].date===dateStr) return closures[i];
+  }
+  return null;
+}
+function toggleClosures(){
+  var p=document.getElementById('closurePanel');
+  if(!p) return;
+  renderClosures();
+  p.style.display=(p.style.display==='none'||p.style.display==='')?'block':'none';
+}
+function addClosureRow(dateVal, reasonVal){
+  var list=document.getElementById('closureList');
+  if(!list) return;
+  var row=document.createElement('div');
+  row.className='closure-row';
+  row.innerHTML='<input class="closure-date" type="date" value="'+(dateVal||'')+'">'+
+                '<input class="closure-reason" type="text" placeholder="z.B. Brückentag" value="'+(reasonVal||'')+'">'+
+                '<button type="button" onclick="this.parentNode.remove()">✕</button>';
+  list.appendChild(row);
+}
+function renderClosures(){
+  loadClosures();
+  var list=document.getElementById('closureList');
+  if(!list) return;
+  list.innerHTML='';
+  if(!closures.length){ addClosureRow('', ''); return; }
+  closures.forEach(function(c){ addClosureRow(c.date, c.reason); });
 }
 
 // ===== HILFSFUNKTIONEN =====
@@ -602,13 +708,18 @@ function changeMonth(dir) {
   curMonth += dir;
   if (curMonth > 11) { curMonth=0; curYear++; }
   if (curMonth < 0)  { curMonth=11; curYear--; }
-  loadSettings();
-updateMonthLabel();
+  updateMonthLabel();
   if (generated) gen();
 }
 
 // ===== GENERIEREN =====
 function gen() {
+  if(!(USER.name||'').trim() || !(USER.weekHours||'').trim()){
+    toggleSettings();
+    var st=document.getElementById('saveStatus');
+    if(st) st.textContent='Bitte erst Name und Wochenstunden unter „Mein Arbeitsplan“ eintragen.';
+    return;
+  }
   generated = true;
   tmMin = {};
   var saved = loadData();
@@ -638,6 +749,11 @@ function gen() {
       var isDo=(dow===3);
       var ds=String(day).padStart(2,'0')+'.'+String(curMonth+1).padStart(2,'0')+'.';
       var savedRow = (saved&&saved.rows&&saved.rows[day]) ? saved.rows[day] : null;
+      var cDay = getClosure(dateKey(curYear, curMonth, day));
+      if(cDay && (!savedRow || !savedRow.status || savedRow.status==='normal')){
+        savedRow = Object.assign({az:AZ[dow], ist:'0,00', gr:cDay.reason||'Brückentag / Schule zu', status:'frei', fr:true}, savedRow||{});
+        savedRow.status='frei'; savedRow.fr=true; savedRow.ist='0,00'; savedRow.gr=cDay.reason||'Brückentag / Schule zu';
+      }
       var azVal    = savedRow ? savedRow.az  : AZ[dow];
       var istVal   = savedRow ? savedRow.ist : '';
       if (dow===1 && (azVal==='7:30-15:00' || istVal==='7,30' || istVal==='7,00')) { azVal=AZ[1]; istVal=''; }
@@ -997,6 +1113,17 @@ window.addEventListener('load', function() {
     gen();
   }
 });
+
+// ===== START =====
+document.addEventListener('DOMContentLoaded', function(){
+  loadSettings();
+  loadClosures();
+  updateMonthLabel();
+  fillSettingsForm();
+});
+
+if(document.readyState!=='loading'){ loadSettings(); loadClosures(); updateMonthLabel(); fillSettingsForm(); }
+
 </script>
 </body>
 </html>
