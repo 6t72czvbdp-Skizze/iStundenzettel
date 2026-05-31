@@ -289,8 +289,8 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
   @page{size:A4 portrait;margin:0!important;}
   html,body{width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;overflow:hidden!important;background:white!important;}
   #app-area{display:none!important;}
-  #print-area{display:block!important;width:175mm!important;height:248mm!important;margin:0 auto!important;padding:0!important;overflow:hidden!important;page-break-after:avoid!important;break-after:avoid!important;}
-  .scan-page{width:175mm!important;height:248mm!important;margin:0 auto!important;overflow:hidden!important;page-break-inside:avoid!important;break-inside:avoid!important;}
+  #print-area{display:block!important;width:190mm!important;height:270mm!important;margin:0 auto!important;padding:0!important;overflow:hidden!important;page-break-after:avoid!important;break-after:avoid!important;}
+  .scan-page{width:190mm!important;height:270mm!important;margin:0 auto!important;overflow:hidden!important;page-break-inside:avoid!important;break-inside:avoid!important;}
   .scan-bg{width:100%!important;height:100%!important;object-fit:fill!important;}
 }
 
@@ -325,7 +325,7 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 
 <div class="content">
   <div class="info-box" id="infoBox">
-    Monat wählen und auf <strong>Generieren</strong> tippen. Danach kannst du alles ändern und mit <strong>Speichern</strong> sichern.
+    Monat wählen und auf <strong>Generieren</strong> tippen. Danach kannst du alles ändern und mit <strong>Speichern</strong> sichern. Der Übertrag wird automatisch in den nächsten Monat übernommen.
     <br><br>
     <button class="btn-gen2" onclick="gen()">▶ Stundenzettel generieren</button>
   </div>
@@ -425,8 +425,8 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
     <div class="monat-row"><span>Gesamt SOLL:</span><span id="mSoll">—</span></div>
     <div class="monat-row"><span>Gesamt IST:</span><span id="mIst">—</span></div>
     <div class="monat-row"><span>Vorbereitungszeit:</span><span id="mVorb">—</span></div>
-    <div class="monat-row"><span>Übertrag:</span><span id="mUeb">—</span></div>
-    <div class="monat-row" style="color:var(--blue)"><span>Gesamt +/-:</span><span id="mDiff">—</span></div>
+    <div class="monat-row"><span>Übertrag aus Vormonat:</span><span id="mUeb">—</span></div>
+    <div class="monat-row" style="color:var(--blue)"><span>Neuer Stand +/-:</span><span id="mDiff">—</span></div>
   </div>
 
   <div class="save-card" onclick="manualSave()" id="saveBtn" style="display:none">
@@ -608,6 +608,40 @@ function renderClosures(){
   list.innerHTML='';
   if(!closures.length){ addClosureRow('', ''); return; }
   closures.forEach(function(c){ addClosureRow(c.date, c.reason); });
+}
+
+
+// ===== AUTOMATISCHER ÜBERTRAG =====
+function transferKey(year, month){ return 'sz_ueb_'+year+'_'+month; }
+function saldoKey(year, month){ return 'sz_saldo_'+year+'_'+month; }
+function prevMonth(year, month){
+  month--;
+  if(month < 0){ month = 11; year--; }
+  return {year:year, month:month};
+}
+function nextMonth(year, month){
+  month++;
+  if(month > 11){ month = 0; year++; }
+  return {year:year, month:month};
+}
+function getTransferForMonth(year, month){
+  var own = localStorage.getItem(transferKey(year, month));
+  if(own !== null && own !== '') return parseFloat(own)||0;
+
+  var p = prevMonth(year, month);
+  var prevSaldo = localStorage.getItem(saldoKey(p.year, p.month));
+  if(prevSaldo !== null && prevSaldo !== '') {
+    var v = parseFloat(prevSaldo)||0;
+    localStorage.setItem(transferKey(year, month), String(v));
+    return v;
+  }
+
+  return hmToDec(USER.transfer||'0');
+}
+function saveSaldoAndNextTransfer(year, month, saldo){
+  localStorage.setItem(saldoKey(year, month), String(saldo));
+  var n = nextMonth(year, month);
+  localStorage.setItem(transferKey(n.year, n.month), String(saldo));
 }
 
 // ===== HILFSFUNKTIONEN =====
@@ -884,8 +918,9 @@ function calc() {
   if(wN===0)wN=1;
   var vGes=(vMin/60)*wN;
 
-  var ueb=parseFloat((localStorage.getItem('sz_ueb_'+curYear+'_'+curMonth)||String(hmToDec(USER.transfer||'0'))||'0'));
+  var ueb=getTransferForMonth(curYear, curMonth);
   var md=totI-totS+ueb;
+  saveSaldoAndNextTransfer(curYear, curMonth, md);
 
   var mI=document.getElementById('mIst');
   var mS=document.getElementById('mSoll');
@@ -979,7 +1014,7 @@ window.addEventListener('change', function(){ if(generated) saveData(); });
 function doPrint() {
   saveData();
   var weeks=getWeeks(curYear,curMonth);
-  var ueb=parseFloat((localStorage.getItem('sz_ueb_'+curYear+'_'+curMonth)||String(hmToDec(USER.transfer||'0'))||'0'));
+  var ueb=getTransferForMonth(curYear, curMonth);
   var saved=loadData()||{rows:{}};
   if(!saved.rows) saved.rows={};
 
@@ -1068,8 +1103,9 @@ function doPrint() {
   }
 
   var md=totI-totS+ueb;
-  html+=field(910,1535,110,26,(md>=0?'+':'')+decToHM(md),'center sum diff '+(md<0?'neg':''));
-  html+=field(910,1569,110,26,'','center sum');
+  saveSaldoAndNextTransfer(curYear, curMonth, md);
+  html+=field(910,1510,110,26,(md>=0?'+':'')+decToHM(md),'center sum diff '+(md<0?'neg':''));
+  html+=field(910,1544,110,26,'','center sum');
   html+='</div>';
 
   document.getElementById('print-area').innerHTML=html;
