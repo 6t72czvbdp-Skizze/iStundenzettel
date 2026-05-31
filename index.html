@@ -145,6 +145,12 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 .frei-btn.active {
   background:#fff3e0; border-color:#FF9800; color:#e65100; font-weight:bold;
 }
+.status-btn {
+  border:1px solid #ddd; border-radius:6px; padding:5px 9px;
+  font-size:11px; cursor:pointer; background:white; color:#666;
+}
+.status-btn.krank.active { background:#e8f5e9; border-color:#4CAF50; color:#2e7d32; font-weight:bold; }
+.status-btn.frei.active { background:#ffebee; border-color:#f44336; color:#c62828; font-weight:bold; }
 
 /* Begründung */
 .grund-input {
@@ -225,8 +231,8 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 @media print{
   @page{size:A4 portrait;margin:0;}
   html,body{width:210mm;height:297mm;margin:0!important;background:white!important;}
-  #print-area{display:block!important;width:210mm;height:297mm;margin:0!important;padding:0!important;}
-  .scan-page{width:210mm!important;height:297mm!important;margin:0!important;}
+  #print-area{display:block!important;width:190mm;height:270mm;margin:0 auto!important;padding:0!important;overflow:hidden!important;}
+  .scan-page{width:190mm!important;height:270mm!important;margin:0 auto!important;overflow:hidden!important;}
 }
 
 </style>
@@ -382,12 +388,15 @@ function saveData() {
       var isE=document.getElementById('ist-'+day);
       var grE=document.getElementById('gr-'+day);
       var frE=document.getElementById('fr-'+day);
-      if (azE||isE) {
+      var statusE=document.getElementById('status-'+day);
+      if (azE||isE||statusE) {
+        var statusVal=statusE ? statusE.value : (frE&&(frE.value==='1'||frE.checked) ? 'frei' : 'normal');
         data.rows[day]={
           az:azE?azE.value:'',
           ist:isE?isE.value:'',
           gr:grE?grE.value:'',
-          fr:frE?(frE.value==='1'||frE.checked):false
+          status:statusVal,
+          fr:(statusVal==='frei')
         };
       }
     }
@@ -447,18 +456,23 @@ function gen() {
       var savedRow = (saved&&saved.rows&&saved.rows[day]) ? saved.rows[day] : null;
       var azVal    = savedRow ? savedRow.az  : AZ[dow];
       var istVal   = savedRow ? savedRow.ist : '';
+      if (dow===1 && (azVal==='7:30-15:00' || istVal==='7,30' || istVal==='7,00')) { azVal=AZ[1]; istVal=''; }
       var grVal    = savedRow ? savedRow.gr  : '';
-      var frVal    = savedRow ? savedRow.fr  : false;
+      var statusVal = savedRow ? (savedRow.status || (savedRow.fr ? 'frei' : 'normal')) : 'normal';
+      var frVal    = statusVal === 'frei';
+      var krankVal = statusVal === 'krank';
       var tmVal    = tmMin[day] ? hm(tmMin[day]) : '1:00';
 
-      html += '<div class="day-row'+(frVal?' is-free':'')+'" id="dr-'+day+'">';
+      html += '<div class="day-row'+(frVal||krankVal?' is-free':'')+'" id="dr-'+day+'">';
 
       // Zeile 1: Tag + Datum + Arbeitszeit
       html += '<div class="day-top">';
       html += '<span class="day-name">'+WT[dow]+'</span>';
       html += '<span class="day-date">'+ds+'</span>';
       if (frVal) {
-        html += '<span style="flex:1;text-align:center;color:#aaa;font-size:13px;">— Frei / Krank —</span>';
+        html += '<span style="flex:1;text-align:center;color:#c62828;font-size:13px;">— Frei / Schule zu —</span>';
+      } else if (krankVal) {
+        html += '<span style="flex:1;text-align:center;color:#2e7d32;font-size:13px;">— Krank —</span>';
       } else {
         html += '<input class="az-input" type="text" id="az-'+day+'" value="'+azVal+'" placeholder="z.B. 7:30-15:00" onchange="onAZ('+day+')">';
       }
@@ -474,7 +488,8 @@ function gen() {
         html += '<button class="spin-btn spin-plus" onclick="adjH('+day+',0.25)">+</button>';
         html += '</div>';
         html += '<span id="df-'+day+'" class="diff-badge diff-neu">—</span>';
-        html += '<button class="frei-btn" onclick="toggleFrei('+day+')">Frei/Krank</button>';
+        html += '<button class="status-btn krank" onclick="setStatus('+day+',\'krank\')">Krank</button>';
+        html += '<button class="status-btn frei" onclick="setStatus('+day+',\'frei\')">Frei/Schule zu</button>';
         html += '</div>';
 
         // Zeile 3: Team (nur Donnerstag)
@@ -490,15 +505,19 @@ function gen() {
         // Zeile 4: Begründung
         html += '<input class="grund-input" type="text" id="gr-'+day+'" value="'+grVal+'" placeholder="Begründung (z.B. kein Team, Vertretung...)" onchange="saveData()">';
       } else {
-        // Frei-Zeile
+        // Status-Zeile: Krank zählt wie Soll, Frei/Schule zu zählt als 0 Stunden.
         html += '<div class="day-bottom">';
-        html += '<span class="pause-tag">—</span>';
-        html += '<input type="hidden" id="ist-'+day+'" value="0">';
+        html += '<span class="pause-tag">'+(krankVal?'zählt voll':'Minus')+'</span>';
+        var statusIst = krankVal ? decToHM(isDo ? SOLL[3]+1 : SOLL[dow]) : '0,00';
+        html += '<input type="hidden" id="ist-'+day+'" value="'+statusIst+'">';
         html += '<input type="hidden" id="gr-'+day+'" value="'+grVal+'">';
-        html += '<button class="frei-btn active" onclick="toggleFrei('+day+')">✓ Frei/Krank</button>';
+        html += '<button class="status-btn krank '+(krankVal?'active':'')+'" onclick="setStatus('+day+',\'krank\')">✓ Krank</button>';
+        html += '<button class="status-btn frei '+(frVal?'active':'')+'" onclick="setStatus('+day+',\'frei\')">✓ Frei/Schule zu</button>';
+        html += '<button class="status-btn" onclick="setStatus('+day+',\'normal\')">Normal</button>';
         html += '</div>';
       }
       html += '<input type="hidden" id="fr-'+day+'" value="'+(frVal?'1':'0')+'">';
+      html += '<input type="hidden" id="status-'+day+'" value="'+statusVal+'">';
       html += '</div>'; // day-row
     }
     html += '</div>'; // week-card
@@ -526,13 +545,19 @@ function calc() {
       var isDo=(dow===3);
       var tS=isDo?SOLL[3]+1:SOLL[dow];
       var frEl=document.getElementById('fr-'+day);
-      var isFree=(frEl&&(frEl.value==='1'||frEl.checked));
+      var statusEl=document.getElementById('status-'+day);
+      var statusVal=statusEl ? statusEl.value : (frEl&&(frEl.value==='1'||frEl.checked) ? 'frei' : 'normal');
+      var isFree=(statusVal==='frei');
+      var isKrank=(statusVal==='krank');
       var isE=document.getElementById('ist-'+day);
       var azE=document.getElementById('az-'+day);
       var dfE=document.getElementById('df-'+day);
       var base=0;
 
-      if (!isFree) {
+      if (isKrank) {
+        base = tS;
+        if (isE) isE.value = decToHM(tS);
+      } else if (!isFree) {
         if (isE&&!isE.value&&azE&&azE.value) {
           base=parseZ(azE.value,PAUZ[dow]);
           if (isDo) base+=0.5;
@@ -542,10 +567,10 @@ function calc() {
         }
       }
 
-      var ist=base+(isDo&&!isFree?(tmMin[day]||60)/60:0);
+      var ist=isKrank ? tS : (base+(isDo&&!isFree?(tmMin[day]||60)/60:0));
       var df=ist-tS;
 
-      if (dfE&&!isFree) {
+      if (dfE&&!isFree&&!isKrank) {
         dfE.textContent=(df>=0?'+':'')+decToHM(df)+'h';
         dfE.className='diff-badge '+(df<-0.001?'diff-neg':df>0.001?'diff-pos':'diff-neu');
       }
@@ -605,19 +630,38 @@ function adjV(mc) {
   document.getElementById('vorbVal').textContent=hm(vMin);
   saveData(); calc();
 }
-function toggleFrei(day) {
-  var frEl=document.getElementById('fr-'+day);
-  var isFree=frEl&&(frEl.value==='1'||frEl.checked);
-  // Neu generieren mit geändertem Status
+function setStatus(day, status) {
   var weeks=getWeeks(curYear,curMonth);
   var saved=loadData()||{rows:{}};
   if(!saved.rows) saved.rows={};
-  if(!saved.rows[day]) saved.rows[day]={az:AZ[0],ist:'',gr:'',fr:false};
-  saved.rows[day].fr=!isFree;
+  var dow=0;
+  outer: for(var wi=0;wi<weeks.length;wi++){
+    for(var di=0;di<weeks[wi].length;di++){
+      if(weeks[wi][di].day===day){dow=weeks[wi][di].dow;break outer;}
+    }
+  }
+  if(!saved.rows[day]) saved.rows[day]={az:AZ[dow],ist:'',gr:'',status:'normal',fr:false};
+  saved.rows[day].status=status;
+  saved.rows[day].fr=(status==='frei');
+  if(status==='normal'){
+    saved.rows[day].az=saved.rows[day].az||AZ[dow];
+    saved.rows[day].ist='';
+  }
+  if(status==='krank'){
+    saved.rows[day].ist=decToHM(dow===3 ? SOLL[3]+1 : SOLL[dow]);
+    saved.rows[day].gr=saved.rows[day].gr || 'krank';
+  }
+  if(status==='frei'){
+    saved.rows[day].ist='0,00';
+    saved.rows[day].gr=saved.rows[day].gr || 'frei / Schule zu';
+  }
   saved.tmMin=tmMin; saved.vMin=vMin;
   localStorage.setItem(saveKey(),JSON.stringify(saved));
   gen();
 }
+
+// Alte Funktion bleibt als Sicherheit erhalten
+function toggleFrei(day) { setStatus(day,'frei'); }
 
 function manualSave() {
   saveData();
@@ -669,7 +713,10 @@ function doPrint() {
       var istEl=document.getElementById('ist-'+day);
       var grEl=document.getElementById('gr-'+day);
       var frEl=document.getElementById('fr-'+day);
-      var isFree=(sr.fr===true)||(frEl&&(frEl.value==='1'||frEl.checked));
+      var statusEl=document.getElementById('status-'+day);
+      var statusVal=statusEl ? statusEl.value : (sr.status || (sr.fr ? 'frei' : 'normal'));
+      var isFree=(statusVal==='frei');
+      var isKrank=(statusVal==='krank');
       var azV=azEl?azEl.value:(sr.az||AZ[dow]);
       var istV=istEl?istEl.value:(sr.ist||'');
       var grV=grEl?grEl.value:(sr.gr||'');
@@ -682,23 +729,31 @@ function doPrint() {
 
       var soll=isDo?SOLL[3]+1:SOLL[dow];
       var base=0, ist=0, dispH='';
-      if(!isFree){
+      if(isKrank){
+        ist=soll;
+        dispH=decToHM(soll);
+        if(!grV) grV='krank';
+      } else if(isFree){
+        ist=0;
+        dispH='0,00';
+        if(!grV) grV='frei / Schule zu';
+      } else {
         if(istV){ base=hmToDec(istV); }
         else { base=parseZ(azV,PAUZ[dow]); if(isDo) base+=0.5; }
         ist=base+(isDo?(tmMin[day]||60)/60:0);
         dispH=decToHM(ist);
       }
       wS+=soll; totS+=soll; wI+=ist; totI+=ist;
-      weekRows.push({day:day,dow:dow,az:azV,ist:dispH,gr:grV,free:isFree});
+      weekRows.push({day:day,dow:dow,az:azV,ist:dispH,gr:grV,free:isFree,krank:isKrank});
     }
 
     for(var di=0;di<weekRows.length;di++){
       var r=weekRows[di], y=rowPos[rowIndex++];
       var ds=String(r.day).padStart(2,'0')+'.'+String(curMonth+1).padStart(2,'0')+'.';
       html+=field(40,y,120,24,WT[r.dow]+' '+ds,'center');
-      html+=field(185,y,145,24,r.free?'Frei/Krank':r.az,'center');
-      html+=field(337,y,70,24,r.free?'-':PTXT_SHORT[r.dow],'center');
-      html+=field(425,y,95,24,r.free?'-':r.ist,'center');
+      html+=field(185,y,145,24,r.free?'Frei':(r.krank?'Krank':r.az),'center');
+      html+=field(337,y,70,24,(r.free||r.krank)?'-':PTXT_SHORT[r.dow],'center');
+      html+=field(425,y,95,24,r.ist,'center');
       html+=field(545,y,220,24,r.gr||'-','left');
     }
 
