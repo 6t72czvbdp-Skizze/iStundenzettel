@@ -336,7 +336,7 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
       <button class="btn-settings" onclick="toggleSettings()">⚙️ Mein Arbeitsplan</button>
     </div>
     <div id="settingsPanel" style="display:none;margin-top:12px;">
-      <div class="settings-title">Einmal eintragen – auf diesem Gerät gespeichert</div>
+      <div class="settings-title">Dein Arbeitsplan – hier kannst du deine Daten jederzeit ändern</div>
       <div class="settings-grid">
         <label>Name
           <input id="setName" type="text" placeholder="z.B. Marc Hoß">
@@ -471,9 +471,9 @@ var SETTINGS_KEY = 'sz_settings_v1';
 var FIRST_START_KEY = 'sz_first_start_done_v1';
 
 var USER = {
-  name: '',
-  sub: '',
-  weekHours: '',
+  name: 'Marc Hoß',
+  sub: 'RGT · AWO',
+  weekHours: '31',
   transfer: '0',
   az: {0:'7:30-15:00', 1:'10:00-14:20', 2:'8:00-13:30', 3:'8:00-16:00', 4:'10:00-15:00'},
   pauseTxt: {0:'0:30', 1:'-', 2:'-', 3:'0:15', 4:'-'}
@@ -504,10 +504,8 @@ function loadSettings(){
     }catch(e){}
   }
   applySettings();
-  if(!raw){
-    var p=document.getElementById('settingsPanel');
-    if(p) p.style.display='block';
-  }
+  // Persönliche Version: Arbeitsplan ist bereits vorbelegt.
+  // Einstellungen können bei Bedarf über „Mein Arbeitsplan“ geöffnet werden.
 }
 function applySettings(){
   AZ = USER.az;
@@ -714,12 +712,6 @@ function changeMonth(dir) {
 
 // ===== GENERIEREN =====
 function gen() {
-  if(!(USER.name||'').trim() || !(USER.weekHours||'').trim()){
-    toggleSettings();
-    var st=document.getElementById('saveStatus');
-    if(st) st.textContent='Bitte erst Name und Wochenstunden unter „Mein Arbeitsplan“ eintragen.';
-    return;
-  }
   generated = true;
   tmMin = {};
   var saved = loadData();
