@@ -216,6 +216,19 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 .pfoot { font-size:11px; margin-top:6px; }
 .pfoot p { margin-bottom:3px; }
 .pul2 { border-bottom:1px solid #333; min-width:90px; display:inline-block; }
+
+/* ===== ORIGINALSCAN-DRUCK ===== */
+.scan-page{position:relative;width:min(100%,210mm);height:auto;aspect-ratio:1091/1700;margin:0 auto;background:white;overflow:hidden;}
+.scan-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:0;print-color-adjust:exact;-webkit-print-color-adjust:exact;}
+.pf{position:absolute;z-index:1;box-sizing:border-box;border:0;background:transparent;color:#062d76;font-family:Arial,Helvetica,sans-serif;font-size:3.75mm;line-height:1.05;padding:0 0.6mm;white-space:nowrap;overflow:hidden;}
+.pf.center{text-align:center}.pf.left{text-align:left}.pf.right{text-align:right}.pf.sum{font-size:3.55mm}.pf.diff.neg{color:#c40000}.pf.black{color:#111}
+@media print{
+  @page{size:A4 portrait;margin:0;}
+  html,body{width:210mm;height:297mm;margin:0!important;background:white!important;}
+  #print-area{display:block!important;width:210mm;height:297mm;margin:0!important;padding:0!important;}
+  .scan-page{width:210mm!important;height:297mm!important;margin:0!important;}
+}
+
 </style>
 </head>
 <body>
@@ -618,108 +631,92 @@ window.addEventListener('change', function(){ if(generated) saveData(); });
 
 // ===== DRUCKEN =====
 function doPrint() {
+  saveData();
   var weeks=getWeeks(curYear,curMonth);
   var ueb=parseFloat((localStorage.getItem('sz_ueb_'+curYear+'_'+curMonth)||'0'));
   var saved=loadData()||{rows:{}};
-  var totI=0,totS=0;
+  if(!saved.rows) saved.rows={};
 
-  var wN=0,cd=new Date(curYear,curMonth,1);
-  while(cd.getMonth()===curMonth){if(cd.getDay()===1)wN++;cd.setDate(cd.getDate()+1);}
-  if(wN===0)wN=1;
-  var vGes=(vMin/60)*wN;
+  var PW=1091, PH=1700;
+  function pctX(x){return (x/PW*100).toFixed(4)+'%';}
+  function pctY(y){return (y/PH*100).toFixed(4)+'%';}
+  function esc(v){return String(v==null?'':v).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+  function field(x,y,w,h,text,cls){
+    return '<div class="pf '+(cls||'center')+'" style="left:'+pctX(x)+';top:'+pctY(y)+';width:'+pctX(w)+';height:'+pctY(h)+'">'+esc(text)+'</div>';
+  }
 
-  var html='';
-  // Header
-  html+='<div class="phdr-top"><div class="prgt">RGT</div><div class="pawo">AWO</div></div>';
-  html+='<div class="phdr-row">Name:&nbsp;<span class="pul">Marc Hoß</span>&nbsp;&nbsp;';
-  html+='Monat:&nbsp;<span class="pul">'+MN[curMonth]+' '+curYear+'</span>&nbsp;&nbsp;';
-  html+='Wochenstunden:&nbsp;<span class="pul">31</span></div>';
-  html+='<div class="puerow">Übertrag Mehr-/Minderarbeitsstunden:&nbsp;<span class="pul">'+(ueb!==0?(ueb>0?'+':'')+ueb.toFixed(2):'&nbsp;&nbsp;&nbsp;&nbsp;')+'</span></div>';
+  var rowPos=[473,534,572,611,650,712,774,814,854,894,953,1014,1054,1094,1134,1194,1256,1296,1336,1376,1438];
+  var sumPos=[448,687,928,1169,1413];
+  var rows=[];
+  for(var wi=0;wi<weeks.length;wi++){
+    for(var di=0;di<weeks[wi].length;di++) rows.push(weeks[wi][di]);
+  }
 
-  html+='<table class="ptable"><colgroup><col style="width:14%"><col style="width:18%"><col style="width:9%"><col style="width:12%"><col style="width:32%"><col style="width:15%"></colgroup><thead><tr>';
-  html+='<th style="width:12%">Datum</th>';
-  html+='<th style="width:18%">Arbeitszeit</th>';
-  html+='<th style="width:9%">Pause</th>';
-  html+='<th style="width:12%">Stunden</th>';
-  html+='<th>Begründung<br>Mehr-/Minderarbeit</th>';
-  html+='<th style="width:15%;border:2px solid #333"></th>';
-  html+='</tr></thead><tbody>';
+  var html='<div class="scan-page"><img class="scan-bg" src="scan-bg.JPG" onerror="this.onerror=null;this.src=\'scan-bg.jpg\'">';
+  html+=field(100,140,210,28,'Marc Hoß','left');
+  html+=field(515,140,180,28,MN[curMonth]+' '+curYear,'center');
+  html+=field(960,140,70,28,'31','center');
+  html+=field(500,196,130,28,ueb!==0?((ueb>0?'+':'')+decToHM(ueb)):'','center');
 
-  for (var wi=0;wi<weeks.length;wi++) {
-    var wk=weeks[wi],wn=wi+1,rs=wk.length;
-    var wI=0,wS=0;
+  var totI=0, totS=0, rowIndex=0;
+  for(var wi=0;wi<weeks.length;wi++){
+    var wk=weeks[wi], wI=0, wS=0;
+    var weekRows=[];
+    for(var di=0;di<wk.length;di++){
+      var day=wk[di].day, dow=wk[di].dow, isDo=(dow===3);
+      var sr=saved.rows[day]||{};
+      var azEl=document.getElementById('az-'+day);
+      var istEl=document.getElementById('ist-'+day);
+      var grEl=document.getElementById('gr-'+day);
+      var frEl=document.getElementById('fr-'+day);
+      var isFree=(sr.fr===true)||(frEl&&(frEl.value==='1'||frEl.checked));
+      var azV=azEl?azEl.value:(sr.az||AZ[dow]);
+      var istV=istEl?istEl.value:(sr.ist||'');
+      var grV=grEl?grEl.value:(sr.gr||'');
 
-    // Vorab Wochensumme berechnen
-    for(var di2=0;di2<wk.length;di2++){
-      var d2=wk[di2].day,dw2=wk[di2].dow,isDo2=(dw2===3);
-      var sr2=saved.rows&&saved.rows[d2]?saved.rows[d2]:null;
-      var ts2=isDo2?SOLL[3]+1:SOLL[dw2];
-      wS+=ts2; totS+=ts2;
-      var base2=0;
-      if(!sr2||!sr2.fr){
-        base2=sr2&&sr2.ist?hmToDec(sr2.ist):0;
-        if(!base2&&sr2&&sr2.az){base2=parseZ(sr2.az,PAUZ[dw2]);if(isDo2)base2+=0.5;}
-        var ist2=base2+(isDo2?(tmMin[d2]||60)/60:0);
-        wI+=ist2; totI+=ist2;
+      // Korrektur: Dienstage sind standardmäßig immer 10:00-14:20 und 4,20 Stunden.
+      // Falls alte gespeicherte Werte fälschlich Montag übernommen haben, werden sie hier korrigiert.
+      if(dow===1 && (azV==='7:30-15:00' || istV==='7,30' || istV==='7,00')){
+        azV=AZ[1]; istV='';
       }
+
+      var soll=isDo?SOLL[3]+1:SOLL[dow];
+      var base=0, ist=0, dispH='';
+      if(!isFree){
+        if(istV){ base=hmToDec(istV); }
+        else { base=parseZ(azV,PAUZ[dow]); if(isDo) base+=0.5; }
+        ist=base+(isDo?(tmMin[day]||60)/60:0);
+        dispH=decToHM(ist);
+      }
+      wS+=soll; totS+=soll; wI+=ist; totI+=ist;
+      weekRows.push({day:day,dow:dow,az:azV,ist:dispH,gr:grV,free:isFree});
     }
 
-    for (var di=0;di<wk.length;di++) {
-      var day=wk[di].day, dow=wk[di].dow;
-      var isDo=(dow===3);
-      var isFirst=(di===0);
-      var ds=String(day).padStart(2,'0')+'.'+String(curMonth+1).padStart(2,'0')+'.';
-      var sr=saved.rows&&saved.rows[day]?saved.rows[day]:null;
-      var azV=sr?sr.az:AZ[dow];
-      var istEl=document.getElementById('ist-'+day);
-      var istV=istEl?istEl.value:(sr?sr.ist:'');
-      var isDo=(dow===3);
-      var grV=sr?sr.gr:'';
-      var isFree=sr&&sr.fr;
+    for(var di=0;di<weekRows.length;di++){
+      var r=weekRows[di], y=rowPos[rowIndex++];
+      var ds=String(r.day).padStart(2,'0')+'.'+String(curMonth+1).padStart(2,'0')+'.';
+      html+=field(40,y,120,24,WT[r.dow]+' '+ds,'center');
+      html+=field(185,y,145,24,r.free?'Frei/Krank':r.az,'center');
+      html+=field(337,y,70,24,r.free?'-':PTXT_SHORT[r.dow],'center');
+      html+=field(425,y,95,24,r.free?'-':r.ist,'center');
+      html+=field(545,y,220,24,r.gr||'-','left');
+    }
 
-      // Für Druck: Stunden anzeigen
-      var dispH='';
-      if(!isFree){
-        if(istV) { dispH=istV; }
-        else {
-          var b=parseZ(azV,PAUZ[dow]);
-          if(isDo)b+=0.5;
-          var t=b+(isDo?(tmMin[day]||60)/60:0);
-          dispH=decToHM(t);
-        }
-      }
-
-      html+='<tr>';
-      html+='<td style="text-align:center"><strong>'+WT[dow]+'&nbsp;'+ds+'</strong></td>';
-      html+='<td style="text-align:center">'+(isFree?'Frei/Krank':azV)+'</td>';
-      html+='<td style="text-align:center">'+(isFree?'—':PTXT_SHORT[dow])+'</td>';
-      html+='<td style="text-align:center">'+(isFree?'—':dispH)+'</td>';
-      html+='<td>'+(grV||'')+'</td>';
-      if(isFirst){
-        var wd=wI-wS;
-        html+='<td class="pwbox" rowspan="'+rs+'">'
-             +'Gesamt SOLL Woche: <strong>'+decToHM(wS)+'</strong><br>'
-             +'Gesamt IST Woche: <strong>'+decToHM(wI)+'</strong><br>'
-             +'+/-Stunden: <strong>'+(wd>=0?'+':'')+decToHM(wd)+'</strong>'
-             +'</td>';
-      }
-      html+='</tr>';
+    if(wi<sumPos.length){
+      var sy=sumPos[wi], wd=wI-wS;
+      html+=field(970,sy,80,22,decToHM(wS),'right sum black');
+      html+=field(970,sy+26,80,22,decToHM(wI),'right sum black');
+      html+=field(970,sy+52,80,22,(wd>=0?'+':'')+decToHM(wd),'right sum diff '+(wd<0?'neg':''));
     }
   }
-  html+='</tbody></table>';
 
-  var md=totI+vGes-totS+ueb;
-  html+='<div class="pfoot">';
-  html+='<p>Gesamt Monat +/-Stunden:&nbsp;<span class="pul2">'+(md>=0?'+':'')+decToHM(md)+'h</span></p>';
-  html+='<p>Mehr-/Minderarbeitsstunden neu:&nbsp;<span class="pul2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>';
-  html+='</div>';
-  html+='<div class="psigs">';
-  html+='<div class="psig">Datum, Unterschrift Mitarbeiter*in</div>';
-  html+='<div class="psig">Datum, Unterschrift Koordinator*in</div>';
+  var md=totI-totS+ueb;
+  html+=field(910,1535,110,26,(md>=0?'+':'')+decToHM(md),'center sum diff '+(md<0?'neg':''));
+  html+=field(910,1569,110,26,'','center sum');
   html+='</div>';
 
   document.getElementById('print-area').innerHTML=html;
-  window.print();
+  setTimeout(function(){window.print();},250);
 }
 
 // ===== PWA INSTALL =====
