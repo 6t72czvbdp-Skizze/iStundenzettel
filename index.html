@@ -318,6 +318,46 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 .settings-card > .settings-actions:first-child,
 .closure-card > .closure-actions:first-child{display:none;}
 
+
+/* ===== UNTERE AKTIONEN ===== */
+.bottom-action-row{
+  display:grid;
+  grid-template-columns:3fr 1fr;
+  gap:10px;
+  margin:12px 0 20px;
+}
+.bottom-save-btn,
+.bottom-reset-btn{
+  border-radius:14px;
+  padding:15px 12px;
+  min-height:54px;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,0.10);
+}
+.bottom-save-btn{
+  background:#43A047;
+  color:white;
+  border:2px solid #43A047;
+}
+.bottom-reset-btn{
+  background:white;
+  color:#c62828;
+  border:2px solid #c62828;
+}
+@media(max-width:430px){
+  .bottom-action-row{grid-template-columns:3fr 1.1fr;gap:8px;}
+  .bottom-save-btn,.bottom-reset-btn{font-size:13px;padding:13px 8px;}
+}
+@media print{
+  .bottom-action-row{display:none!important;}
+}
+
+
+/* alte einzelne Speichern-/Zurücksetzen-Karten ausblenden */
+#saveBtn,#resetBtn{display:none!important;}
+
 /* ===== PRINT STYLES ===== */
 @media print {
   @page { size:A4 portrait; margin:7mm 7mm; }
@@ -533,13 +573,18 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
     <div class="monat-row" style="color:var(--blue)"><span>Neuer Stand +/-:</span><span id="mDiff">—</span></div>
   </div>
 
+
+  <div class="bottom-action-row" id="bottomActionRow" style="display:none">
+    <button class="bottom-save-btn" onclick="manualSave()">Speichern</button>
+    <button class="bottom-reset-btn" onclick="resetMonthData()">Zurücksetzen</button>
+  </div>
   <div class="save-card" onclick="manualSave()" id="saveBtn" style="display:none">
     💾 Speichern
   </div>
   <div class="save-status" id="saveStatus"></div>
 
   <div class="save-card" onclick="resetMonthData()" id="resetBtn" style="display:none;border-color:#f44336;color:#c62828;">
-    🧹 Gespeicherte Daten löschen
+    Zurücksetzen
   </div>
   <div class="print-card" onclick="doPrint()" id="printBtn" style="display:none">
     🖨️ Ausdrucken / Als PDF speichern
@@ -974,6 +1019,7 @@ function gen() {
   document.getElementById('printBtn').style.display='block';
   var rb=document.getElementById('resetBtn'); if(rb) rb.style.display='block';
   document.getElementById('saveBtn').style.display='block';
+  var bar=document.getElementById('bottomActionRow'); if(bar) bar.style.display='grid';
   document.getElementById('infoBox').style.display='none';
 
   setTimeout(calc, 80);
@@ -1116,7 +1162,7 @@ function resetMonthData() {
   tmMin = {};
   vMin = 60;
   var st=document.getElementById('saveStatus');
-  if(st){st.textContent='🧹 Gespeicherte Daten für diesen Monat gelöscht.';}
+  if(st){st.textContent='Daten für diesen Monat wurden zurückgesetzt.';}
   gen();
 }
 
