@@ -6,118 +6,127 @@
 <title>Stundenzettel Marc Hoß</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: Arial, sans-serif; background:#f0f0f0; padding:10px; }
+body { font-family:Arial,sans-serif; background:#eee; padding:10px; }
 
-.controls {
-  background:white; padding:12px; border-radius:8px;
-  margin-bottom:12px; display:flex; gap:10px; flex-wrap:wrap;
-  align-items:flex-end; box-shadow:0 2px 6px rgba(0,0,0,0.15);
-}
+/* Steuerleiste */
+.ctrl { background:white; padding:12px; border-radius:8px; margin-bottom:12px;
+  display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15); }
 .cg { display:flex; flex-direction:column; gap:4px; }
 .cg label { font-weight:bold; font-size:12px; }
-.cg select, .cg input { padding:7px; border:1px solid #ccc; border-radius:4px; font-size:13px; }
-.btn-gen  { padding:8px 16px; background:#4CAF50; color:white; border:none; border-radius:4px; font-size:13px; cursor:pointer; }
-.btn-print{ padding:8px 16px; background:#2196F3; color:white; border:none; border-radius:4px; font-size:13px; cursor:pointer; }
+.cg select, .cg input[type=number] { padding:7px; border:1px solid #ccc; border-radius:4px; font-size:13px; }
+.btn-g { padding:8px 16px; background:#4CAF50; color:white; border:none; border-radius:4px; font-size:13px; cursor:pointer; }
+.btn-p { padding:8px 16px; background:#2196F3; color:white; border:none; border-radius:4px; font-size:13px; cursor:pointer; }
 
-.sheet {
-  background:white; width:100%; max-width:800px; margin:0 auto;
-  padding:15px; box-shadow:0 3px 15px rgba(0,0,0,0.2); border-radius:4px;
-}
+/* A4-Blatt */
+.sheet { background:white; max-width:210mm; margin:0 auto; padding:14px;
+  box-shadow:0 3px 15px rgba(0,0,0,0.2); }
 
-/* HEADER */
-.hdr-top { display:flex; justify-content:space-between; margin-bottom:6px; }
-.rgt { border:1px solid #333; padding:3px 10px; font-weight:bold; font-size:12px; }
-.awo { font-size:16px; font-weight:bold; border:2px solid #333; border-radius:40%; padding:3px 8px; }
-.hdr-row { font-size:12px; margin-bottom:4px; display:flex; gap:20px; flex-wrap:wrap; }
-.ul { border-bottom:1px solid #333; min-width:100px; display:inline-block; }
-.uebertrag-row { font-size:12px; margin-bottom:8px; }
+/* Header */
+.hdr-top  { display:flex; justify-content:space-between; margin-bottom:5px; }
+.rgt      { border:1px solid #333; padding:3px 10px; font-weight:bold; font-size:12px; }
+.awo      { font-size:15px; font-weight:bold; border:2px solid #333; border-radius:40%; padding:3px 8px; }
+.hdr-row  { font-size:12px; margin-bottom:3px; }
+.ul       { border-bottom:1px solid #333; min-width:90px; display:inline-block; padding:0 4px; }
+.ul-lg    { border-bottom:1px solid #333; min-width:130px; display:inline-block; padding:0 4px; }
+.uerow    { font-size:12px; margin-bottom:7px; }
 
-/* TABELLE */
-table { width:100%; border-collapse:collapse; font-size:12px; }
-th { background:#ddd; border:1px solid #555; padding:6px 4px; text-align:center; font-size:11px; }
-td { border:1px solid #999; padding:3px; height:26px; }
-.tc { text-align:center; }
+/* Tabelle */
+table { width:100%; border-collapse:collapse; font-size:11px; }
+th    { background:#e0e0e0; border:1px solid #555; padding:5px 3px; text-align:center; font-size:10px; }
+td    { border:1px solid #999; padding:2px 3px; height:24px; vertical-align:middle; }
+
+/* Nur-Bildschirm-Spalten */
+.sc { background:#f8f8f8; }
+
+/* Wochenbox rechts */
+.wbox { border:2px solid #333 !important; vertical-align:top !important;
+  font-size:9px; line-height:1.9; padding:4px !important;
+  background:white !important; min-width:105px; }
 
 /* Eingaben */
-input.az { width:100%; border:none; background:transparent; font-size:11px; text-align:center; padding:2px; }
-input.az:focus { outline:1px solid #2196F3; background:#f0f8ff; }
-input.hh { width:48px; border:1px solid #ccc; border-radius:3px; font-size:11px; text-align:center; padding:2px; }
-input.gr { width:100%; border:none; background:transparent; font-size:10px; padding:2px; }
+input.az { width:100%; border:none; background:transparent; font-size:11px; text-align:center; padding:1px; }
+input.az:focus { outline:1px solid #2196F3; background:#f0f8ff; border-radius:2px; }
+input.hh { width:44px; border:1px solid #ccc; border-radius:2px; font-size:11px; text-align:center; padding:1px; }
+input.gr { width:100%; border:none; background:transparent; font-size:10px; padding:1px; }
 input.gr:focus { outline:1px solid #2196F3; }
 
 /* Buttons */
-.bwrap { display:flex; gap:2px; align-items:center; justify-content:center; }
-.bm { width:26px; height:26px; background:#ff6b6b; color:white; border:none; border-radius:3px; font-size:15px; cursor:pointer; }
-.bp { width:26px; height:26px; background:#51cf66; color:white; border:none; border-radius:3px; font-size:15px; cursor:pointer; }
-.tm { display:flex; gap:2px; align-items:center; justify-content:center; }
-.tdsp { font-size:11px; font-weight:bold; min-width:36px; text-align:center; }
+.bwr { display:flex; gap:2px; align-items:center; justify-content:center; }
+.bm  { width:24px; height:24px; background:#ff6b6b; color:white; border:none; border-radius:3px; font-size:14px; cursor:pointer; }
+.bp  { width:24px; height:24px; background:#51cf66; color:white; border:none; border-radius:3px; font-size:14px; cursor:pointer; }
+.twr { display:flex; gap:2px; align-items:center; justify-content:center; }
+.tsp { font-size:11px; font-weight:bold; min-width:32px; text-align:center; }
 
-/* +/- Anzeige */
-.neg { color:#d32f2f; font-weight:bold; font-size:11px; }
-.pos { color:#2e7d32; font-weight:bold; font-size:11px; }
-.neu { color:#666; font-size:11px; }
-
-/* Wochensummen */
-.wrow td { background:#fffde7; }
-.wcell { border:2px solid #333 !important; vertical-align:top; font-size:9px; line-height:1.8; padding:3px !important; }
+/* Farbige Abweichung */
+.neg { color:#c62828; font-weight:bold; font-size:10px; }
+.pos { color:#2e7d32; font-weight:bold; font-size:10px; }
+.neu { color:#777; font-size:10px; }
 
 /* Vorbereitungsbox */
-.vbox {
-  background:#fff9c4; border:1px solid #f0c040; border-radius:5px;
-  padding:10px; margin:12px 0; display:flex; gap:8px; align-items:center;
-  font-size:12px; flex-wrap:wrap;
-}
-.vdsp { font-size:15px; font-weight:bold; min-width:44px; text-align:center; }
+.vbox { background:#fff9c4; border:1px solid #f0c040; border-radius:5px;
+  padding:9px 12px; margin:10px 0; display:flex; gap:8px;
+  align-items:center; font-size:12px; flex-wrap:wrap; }
+.vsp  { font-size:14px; font-weight:bold; min-width:38px; text-align:center; }
 
-/* Summen */
-.sbox { margin:12px 0; padding:10px; background:#e8f5e9; border-radius:5px; font-size:13px; }
-.sbox p { margin-bottom:4px; }
-.sbox .ul2 { border-bottom:1px solid #333; min-width:80px; display:inline-block; font-weight:bold; }
+/* Bildschirm-Summen */
+.sbox { margin:10px 0; padding:10px; background:#e8f5e9; border-radius:5px; font-size:13px; }
+.sbox p { margin-bottom:3px; }
 
-/* Unterschriften */
-.sigs { display:flex; justify-content:space-between; margin-top:30px; }
-.sig { border-top:1px solid #333; min-width:180px; text-align:center; padding-top:5px; font-size:11px; }
+/* Footer */
+.ftxt  { font-size:12px; margin-top:8px; }
+.ftxt p { margin-bottom:4px; }
+.ul2   { border-bottom:1px solid #333; min-width:90px; display:inline-block; }
+.sigs  { display:flex; justify-content:space-between; margin-top:28px; }
+.sig   { border-top:1px solid #333; min-width:180px; text-align:center; padding-top:4px; font-size:11px; }
 
-/* PRINT */
+/* ====== DRUCK ====== */
 @media print {
-  body { background:white; padding:0; }
-  .controls { display:none !important; }
-  .sheet { box-shadow:none; padding:10mm; }
-  .bm, .bp, .vbox, .sbox { display:none !important; }
-  .bwrap { display:block; }
-  .tm { display:block; }
-  input.az { border:none; }
-  input.hh { border:none; }
-  .neg, .pos, .neu { display:none; }
+  @page { size:A4 portrait; margin:10mm 12mm; }
+  body  { background:white; padding:0; }
+  .ctrl { display:none !important; }
+  .sheet { box-shadow:none; padding:0; max-width:100%; }
+
+  /* Nur-Bildschirm-Elemente ausblenden */
+  .sc   { display:none !important; }
+  .bm   { display:none !important; }
+  .bp   { display:none !important; }
+  .vbox { display:none !important; }
+  .sbox { display:none !important; }
+
+  /* Eingaben ohne Rahmen */
+  input.az { font-size:10px; }
+  input.hh { border:none; background:transparent; }
+  input.gr { font-size:9px; }
+  .bwr { justify-content:center; }
+
   table { font-size:10px; }
-  td { height:20px; }
-  th { font-size:10px; }
+  td    { height:19px; }
+  th    { font-size:9px; padding:3px 2px; }
+  .wbox { font-size:8.5px; line-height:1.8; padding:3px !important; }
+
+  .ftxt { margin-top:6px; }
 }
 </style>
 </head>
 <body>
 
-<div class="controls">
+<!-- STEUERLEISTE -->
+<div class="ctrl">
   <div class="cg">
     <label>Monat:</label>
-    <select id="sel-month">
-      <option value="0">Januar</option>
-      <option value="1">Februar</option>
-      <option value="2">März</option>
-      <option value="3">April</option>
-      <option value="4">Mai</option>
-      <option value="5">Juni</option>
-      <option value="6">Juli</option>
-      <option value="7">August</option>
-      <option value="8">September</option>
-      <option value="9">Oktober</option>
-      <option value="10">November</option>
-      <option value="11">Dezember</option>
+    <select id="sel-m">
+      <option value="0">Januar</option><option value="1">Februar</option>
+      <option value="2">März</option><option value="3">April</option>
+      <option value="4">Mai</option><option value="5">Juni</option>
+      <option value="6">Juli</option><option value="7">August</option>
+      <option value="8">September</option><option value="9">Oktober</option>
+      <option value="10">November</option><option value="11">Dezember</option>
     </select>
   </div>
   <div class="cg">
     <label>Jahr:</label>
-    <select id="sel-year">
+    <select id="sel-y">
       <option value="2024">2024</option>
       <option value="2025">2025</option>
       <option value="2026" selected>2026</option>
@@ -126,325 +135,281 @@ input.gr:focus { outline:1px solid #2196F3; }
     </select>
   </div>
   <div class="cg">
-    <label>Übertrag (Stunden):</label>
-    <input type="number" id="uebertrag" value="0" step="0.25" style="width:80px;">
+    <label>Übertrag (h):</label>
+    <input type="number" id="ueb" value="0" step="0.25" style="width:70px;">
   </div>
-  <button class="btn-gen" onclick="generate()">▶ Generieren</button>
-  <button class="btn-print" onclick="window.print()">🖨️ Drucken</button>
+  <button class="btn-g" onclick="gen()">▶ Generieren</button>
+  <button class="btn-p" onclick="window.print()">🖨️ Drucken / PDF</button>
 </div>
 
+<!-- A4-BLATT -->
 <div class="sheet" id="sheet">
-  <p style="color:#999;padding:20px;">Monat und Jahr wählen, dann auf Generieren klicken.</p>
+  <p style="color:#aaa;padding:25px;text-align:center;">Monat und Jahr wählen → Generieren klicken</p>
 </div>
 
 <script>
-var AZ = {
-  0:'7:30-15:00', 1:'10:00-14:15', 2:'8:00-13:30',
-  3:'8:00-16:00', 4:'10:00-15:00'
-};
-var SOLL = {
-  0:7.0, 1:4+15/60, 2:5.5, 3:8.5, 4:5.0
-};
-var PAUSE_MIN = { 0:30, 1:0, 2:0, 3:0, 4:0 };
-var PAUSE_TXT = { 0:'0:30', 1:'-', 2:'-', 3:'0:15', 4:'-' };
-var WT = ['Mo','Di','Mi','Do','Fr','Sa','So'];
-var MN = ['Januar','Februar','März','April','Mai','Juni',
-          'Juli','August','September','Oktober','November','Dezember'];
+var AZ   = {0:'7:30-15:00', 1:'10:00-14:20', 2:'8:00-13:30', 3:'8:00-16:00', 4:'10:00-15:00'};
+var SOLL = {0:7.0, 1:4+20/60, 2:5.5, 3:8.5, 4:5.0};
+var PAUZ = {0:30, 1:0, 2:0, 3:0, 4:0};
+var PTXT = {0:'0:30', 1:'-', 2:'-', 3:'0:15', 4:'-'};
+var WT   = ['Mo','Di','Mi','Do','Fr'];
+var MN   = ['Januar','Februar','März','April','Mai','Juni',
+            'Juli','August','September','Oktober','November','Dezember'];
 
-var teamMin = {};
-var vorbMin = 60;
+var tmMin = {}; // team-minuten pro donnerstag
+var vMin  = 60; // vorbereitungszeit in minuten
 
-function toHHMM(min) {
-  var sign = min < 0 ? '-' : '';
-  var a = Math.abs(min);
-  return sign + Math.floor(a/60) + ':' + String(a%60).padStart(2,'0');
+function hm(min) {
+  var s = min < 0 ? '-' : '';
+  var a = Math.abs(Math.round(min));
+  return s + Math.floor(a/60) + ':' + String(a%60).padStart(2,'0');
 }
 
-function parseAZ(s, pauseMin) {
-  if (!s || s === 'Frei' || s.indexOf('-') < 0) return 0;
+function parseZ(s, p) {
+  if (!s || s.indexOf('-') < 0) return 0;
   var parts = s.split('-');
-  var p1 = parts[0].trim().split(':').map(Number);
-  var p2 = parts[1].trim().split(':').map(Number);
-  var diff = (p2[0]*60+p2[1]) - (p1[0]*60+p1[1]) - pauseMin;
-  return Math.max(0, diff/60);
+  var a = parts[0].trim().split(':').map(Number);
+  var b = parts[1].trim().split(':').map(Number);
+  return Math.max(0, ((b[0]*60+(b[1]||0)) - (a[0]*60+(a[1]||0)) - p) / 60);
 }
 
-function generate() {
-  var month = parseInt(document.getElementById('sel-month').value);
-  var year  = parseInt(document.getElementById('sel-year').value);
-  var ueb   = parseFloat(document.getElementById('uebertrag').value) || 0;
-
-  teamMin = {};
-  vorbMin = 60;
-
+function getWeeks(year, month) {
   var first = new Date(year, month, 1);
   var last  = new Date(year, month+1, 0);
+  var weeks = [], cur = [], d = new Date(first);
+  while (d.getMonth() === month) {
+    var dw = (d.getDay()+6)%7;
+    if (dw < 5) {
+      cur.push({day:d.getDate(), dow:dw});
+      if (dw === 4 || d.toDateString() === last.toDateString()) {
+        weeks.push(cur.slice()); cur = [];
+      }
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return weeks;
+}
 
+function gen() {
+  var month = parseInt(document.getElementById('sel-m').value);
+  var year  = parseInt(document.getElementById('sel-y').value);
+  var ueb   = parseFloat(document.getElementById('ueb').value) || 0;
+
+  tmMin = {}; vMin = 60;
+  var weeks = getWeeks(year, month);
   var html = '';
 
   // HEADER
-  html += '<div class="hdr-top">';
-  html += '<div class="rgt">RGT</div>';
-  html += '<div class="awo">AWO</div>';
-  html += '</div>';
-  html += '<div class="hdr-row">';
-  html += 'Name: <span class="ul">Marc Hoß</span>';
-  html += '&nbsp;&nbsp;Monat: <span class="ul">' + MN[month] + ' ' + year + '</span>';
-  html += '&nbsp;&nbsp;Wochenstunden: <span class="ul">31</span>';
-  html += '</div>';
-  html += '<div class="uebertrag-row">Übertrag Mehr-/Minderarbeitsstunden: <span class="ul">' + (ueb !== 0 ? ueb.toFixed(2) : '______') + '</span></div>';
+  html += '<div class="hdr-top">'
+        + '<div class="rgt">RGT</div>'
+        + '<div class="awo">AWO</div>'
+        + '</div>';
+  html += '<div class="hdr-row">'
+        + 'Name:&nbsp;<span class="ul-lg">Marc Hoß</span>&nbsp;&nbsp;'
+        + 'Monat:&nbsp;<span class="ul-lg">'+MN[month]+' '+year+'</span>&nbsp;&nbsp;'
+        + 'Wochenstunden:&nbsp;<span class="ul">31</span>'
+        + '</div>';
+  html += '<div class="uerow">Übertrag Mehr-/Minderarbeitsstunden:&nbsp;'
+        + '<span class="ul">'+(ueb!==0?(ueb>0?'+':'')+ueb.toFixed(2):'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')+'</span>'
+        + '</div>';
 
   // TABELLE
-  html += '<table>';
-  html += '<thead><tr>';
-  html += '<th style="width:13%">Datum</th>';
-  html += '<th style="width:19%">Arbeitszeit</th>';
-  html += '<th style="width:9%">Pause</th>';
-  html += '<th style="width:15%">Stunden</th>';
-  html += '<th style="width:11%">Team (Do)</th>';
-  html += '<th style="width:8%">+/-</th>';
-  html += '<th style="width:5%">Frei</th>';
-  html += '<th>Begründung Mehr-/Minderarbeit</th>';
-  html += '<th style="width:14%;border:2px solid #333;"></th>';
-  html += '</tr></thead><tbody>';
+  html += '<table><thead><tr>'
+        + '<th style="width:11%">Datum</th>'
+        + '<th style="width:17%">Arbeitszeit</th>'
+        + '<th style="width:9%">Pause</th>'
+        + '<th style="width:13%">Stunden</th>'
+        + '<th class="sc" style="width:10%">Team&nbsp;(Do)</th>'
+        + '<th class="sc" style="width:7%">+/-</th>'
+        + '<th class="sc" style="width:5%">Frei</th>'
+        + '<th>Begründung<br>Mehr-/Minderarbeit</th>'
+        + '<th style="width:14%;border:2px solid #333;font-size:9px;">Woche</th>'
+        + '</tr></thead><tbody>';
 
-  var d = new Date(first);
-  var weekNum = 0;
+  for (var wi = 0; wi < weeks.length; wi++) {
+    var wk = weeks[wi];
+    var wn = wi+1;
+    var rs = wk.length; // rowspan für wochenbox
 
-  while (d.getMonth() === month) {
-    var day = d.getDate();
-    var dow = (d.getDay()+6) % 7; // 0=Mo
+    for (var di = 0; di < wk.length; di++) {
+      var day = wk[di].day;
+      var dow = wk[di].dow;
+      var isDo = (dow === 3);
+      var isFirst = (di === 0);
+      var ds = String(day).padStart(2,'0')+'.'+String(month+1).padStart(2,'0')+'.';
 
-    // Nur Wochentage (Mo-Fr)
-    if (dow >= 5) {
-      d.setDate(d.getDate()+1);
-      continue;
+      if (isDo) tmMin[day] = 60;
+
+      // Team-Zelle (nur Donnerstag)
+      var tcell = '<td class="sc" style="text-align:center"><span style="color:#bbb">—</span></td>';
+      if (isDo) {
+        tcell = '<td class="sc" style="padding:2px">'
+              + '<div class="twr">'
+              + '<button class="bm" onclick="adjT('+day+',-15)">−</button>'
+              + '<span class="tsp" id="tm-'+day+'">1:00</span>'
+              + '<button class="bp" onclick="adjT('+day+',15)">+</button>'
+              + '</div></td>';
+      }
+
+      html += '<tr>';
+      html += '<td style="text-align:center"><strong>'+WT[dow]+'&nbsp;'+ds+'</strong></td>';
+      html += '<td style="text-align:center">'
+            + '<input class="az" type="text" id="az-'+day+'" value="'+AZ[dow]+'" onchange="calc()">'
+            + '</td>';
+      html += '<td style="text-align:center">'+PTXT[dow]+'</td>';
+      html += '<td style="padding:2px">'
+            + '<div class="bwr">'
+            + '<button class="bm" onclick="adjH('+day+',-0.25)">−</button>'
+            + '<input class="hh" type="number" id="ist-'+day+'" step="0.25" onchange="calc()">'
+            + '<button class="bp" onclick="adjH('+day+',0.25)">+</button>'
+            + '</div></td>';
+      html += tcell;
+      html += '<td class="sc" style="text-align:center">'
+            + '<span id="df-'+day+'" class="neu">—</span>'
+            + '</td>';
+      html += '<td class="sc" style="text-align:center">'
+            + '<input type="checkbox" id="fr-'+day+'" onchange="calc()">'
+            + '</td>';
+      html += '<td><input class="gr" type="text" id="gr-'+day+'" placeholder=""></td>';
+
+      // Wochenbox: nur beim ersten Tag der Woche, mit rowspan
+      if (isFirst) {
+        html += '<td class="wbox" id="wb-'+wn+'" rowspan="'+rs+'">'
+              + 'Gesamt SOLL Woche:<br>'
+              + 'Gesamt IST Woche:<br>'
+              + '+/-Stunden:'
+              + '</td>';
+      }
+      html += '</tr>';
     }
-
-    var isDo = (dow === 3);
-    var isLast = (d.toDateString() === last.toDateString());
-
-    var dateStr = String(day).padStart(2,'0') + '.' + String(month+1).padStart(2,'0') + '.';
-
-    if (isDo) teamMin[day] = 60;
-
-    // Team-Zelle
-    var teamTD = '<td class="tc"><span style="color:#ccc;">—</span></td>';
-    if (isDo) {
-      teamTD = '<td class="tc">'
-        + '<div class="tm">'
-        + '<button class="bm" onclick="adjTeam('+day+',-15)">−</button>'
-        + '<span class="tdsp" id="team-'+day+'">1:00</span>'
-        + '<button class="bp" onclick="adjTeam('+day+',15)">+</button>'
-        + '</div></td>';
-    }
-
-    html += '<tr id="tr-'+day+'">';
-    html += '<td class="tc"><strong>'+WT[dow]+' '+dateStr+'</strong></td>';
-    html += '<td class="tc"><input class="az" type="text" id="az-'+day+'" value="'+AZ[dow]+'" onchange="calc()"></td>';
-    html += '<td class="tc">'+PAUSE_TXT[dow]+'</td>';
-    html += '<td><div class="bwrap">'
-          + '<button class="bm" onclick="adjH('+day+',-0.25)">−</button>'
-          + '<input class="hh" type="number" id="ist-'+day+'" step="0.25" onchange="calc()">'
-          + '<button class="bp" onclick="adjH('+day+',0.25)">+</button>'
-          + '</div></td>';
-    html += teamTD;
-    html += '<td class="tc"><span id="diff-'+day+'" class="neu">—</span></td>';
-    html += '<td class="tc"><input type="checkbox" id="free-'+day+'" onchange="calc()"></td>';
-    html += '<td><input class="gr" type="text" id="gr-'+day+'" placeholder="z.B. kein Team"></td>';
-    html += '<td class="wcell" id="wc-cell-'+day+'"></td>';
-    html += '</tr>';
-
-    // Wochensumme nach Freitag oder letztem Tag
-    if (dow === 4 || isLast) {
-      weekNum++;
-      html += '<tr class="wrow" id="wrow-'+weekNum+'">'
-            + '<td colspan="8" style="border:none;background:#fffde7;padding:5px;font-size:11px;">'
-            + '<strong>Woche '+weekNum+':</strong> '
-            + 'SOLL <span id="wsoll-'+weekNum+'">—</span>h | '
-            + 'IST <span id="wist-'+weekNum+'">—</span>h | '
-            + '<span id="wdiff-'+weekNum+'" class="neu">—</span>'
-            + '</td>'
-            + '<td class="wcell" id="ws-'+weekNum+'">'
-            + 'Gesamt SOLL Woche:<br>Gesamt IST Woche:<br>+/-Stunden:'
-            + '</td>'
-            + '</tr>';
-    }
-
-    d.setDate(d.getDate()+1);
   }
-
   html += '</tbody></table>';
 
-  // Vorbereitungsbox
+  // VORBEREITUNGSBOX (nur Bildschirm)
   html += '<div class="vbox">'
-        + '<strong>📚 Vorbereitungszeit (zu Hause) pro Woche:</strong>'
-        + '<button class="bm" onclick="adjVorb(-15)">−</button>'
-        + '<span class="vdsp" id="vorb">1:00</span>'
-        + '<button class="bp" onclick="adjVorb(15)">+</button>'
-        + '<span style="color:#888;">wird automatisch mitgezählt</span>'
+        + '<strong>📚 Vorbereitungszeit&nbsp;(zu Hause)&nbsp;pro&nbsp;Woche:</strong>'
+        + '<button class="bm" onclick="adjV(-15)">−</button>'
+        + '<span class="vsp" id="vsp">1:00</span>'
+        + '<button class="bp" onclick="adjV(15)">+</button>'
+        + '<span style="color:#888;font-size:11px;">wird automatisch mitgezählt</span>'
         + '</div>';
 
-  // Monats-Summen
+  // BILDSCHIRM-SUMMEN
   html += '<div class="sbox">'
-        + '<p>Gesamt Monat IST: <span id="m-ist">—</span></p>'
-        + '<p>Gesamt Monat SOLL: <span id="m-soll">—</span></p>'
-        + '<p>Gesamt Monat +/-: <span id="m-diff" class="ul2">—</span></p>'
+        + '<p>Gesamt IST: <strong id="m-ist">—</strong></p>'
+        + '<p>Gesamt SOLL: <strong id="m-sol">—</strong></p>'
+        + '<p>Gesamt +/-: <strong id="m-dif" class="neu">—</strong></p>'
         + '</div>';
 
-  // Unterschriften
+  // DRUCK-FOOTER
+  html += '<div class="ftxt">'
+        + '<p>Gesamt Monat +/-Stunden:&nbsp;&nbsp;<span class="ul2" id="p-dif">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>'
+        + '<p>Mehr-/Minderarbeitsstunden neu:&nbsp;<span class="ul2" id="p-neu">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>'
+        + '</div>';
   html += '<div class="sigs">'
         + '<div class="sig">Datum, Unterschrift Mitarbeiter*in</div>'
         + '<div class="sig">Datum, Unterschrift Koordinator*in</div>'
         + '</div>';
 
   document.getElementById('sheet').innerHTML = html;
-
-  setTimeout(calc, 100);
+  setTimeout(calc, 80);
 }
 
 function calc() {
-  var month = parseInt(document.getElementById('sel-month').value);
-  var year  = parseInt(document.getElementById('sel-year').value);
-  var ueb   = parseFloat(document.getElementById('uebertrag').value) || 0;
-  var first = new Date(year, month, 1);
-  var last  = new Date(year, month+1, 0);
+  var month = parseInt(document.getElementById('sel-m').value);
+  var year  = parseInt(document.getElementById('sel-y').value);
+  var ueb   = parseFloat(document.getElementById('ueb').value) || 0;
+  var weeks = getWeeks(year, month);
+  var totI=0, totS=0;
 
-  var totIst = 0, totSoll = 0;
-  var wIst = 0, wSoll = 0;
-  var weekNum = 0;
-  var d = new Date(first);
+  for (var wi=0; wi<weeks.length; wi++) {
+    var wk=weeks[wi], wn=wi+1, wI=0, wS=0;
 
-  while (d.getMonth() === month) {
-    var day = d.getDate();
-    var dow = (d.getDay()+6) % 7;
+    for (var di=0; di<wk.length; di++) {
+      var day=wk[di].day, dow=wk[di].dow;
+      var isDo=(dow===3);
+      var tS = isDo ? SOLL[3]+1 : SOLL[dow];
 
-    if (dow >= 5) {
-      d.setDate(d.getDate()+1);
-      continue;
-    }
+      var azE = document.getElementById('az-'+day);
+      var isE = document.getElementById('ist-'+day);
+      var frE = document.getElementById('fr-'+day);
+      var dfE = document.getElementById('df-'+day);
 
-    var isDo = (dow === 3);
-    var isLast = (d.toDateString() === last.toDateString());
-    var tagSoll = isDo ? SOLL[3]+1 : SOLL[dow];
+      var base=0, isFree = frE && frE.checked;
 
-    var azEl   = document.getElementById('az-'+day);
-    var istEl  = document.getElementById('ist-'+day);
-    var freeEl = document.getElementById('free-'+day);
-    var diffEl = document.getElementById('diff-'+day);
-
-    var ist = 0;
-    var isFree = freeEl && freeEl.checked;
-
-    if (!isFree) {
-      if (istEl && !istEl.value && azEl && azEl.value) {
-        // Automatisch berechnen
-        if (isDo) {
-          var basis = parseAZ(azEl.value, 0);
-          ist = basis + 0.5 + (teamMin[day]||60)/60;
-        } else {
-          ist = parseAZ(azEl.value, PAUSE_MIN[dow]);
+      if (!isFree) {
+        if (isE && !isE.value && azE && azE.value) {
+          // Automatisch berechnen
+          base = parseZ(azE.value, PAUZ[dow]);
+          if (isDo) base += 0.5; // +0:30 Pausenanrechnung
+          if (isE) isE.value = base.toFixed(2);
+        } else if (isE && isE.value) {
+          base = parseFloat(isE.value) || 0;
         }
-        if (istEl) istEl.value = ist.toFixed(2);
-      } else if (istEl && istEl.value) {
-        ist = parseFloat(istEl.value) || 0;
-        // Donnerstag: Team dazurechnen wenn IST manuell
-        if (isDo) ist += (teamMin[day]||60)/60;
       }
+
+      var ist = base + (isDo && !isFree ? (tmMin[day]||60)/60 : 0);
+      var df  = ist - tS;
+
+      if (dfE) {
+        dfE.textContent = (df>=0?'+':'')+df.toFixed(2)+'h';
+        dfE.className = df<-0.001?'neg':df>0.001?'pos':'neu';
+      }
+      wI+=ist; wS+=tS; totI+=ist; totS+=tS;
     }
 
-    // +/- pro Tag
-    if (diffEl && !isFree) {
-      var df = ist - tagSoll;
-      diffEl.textContent = (df>=0?'+':'') + df.toFixed(2) + 'h';
-      diffEl.className = df < -0.001 ? 'neg' : df > 0.001 ? 'pos' : 'neu';
+    var wb = document.getElementById('wb-'+wn);
+    if (wb) {
+      var wd=wI-wS;
+      wb.innerHTML = 'Gesamt SOLL Woche:&nbsp;<strong>'+wS.toFixed(2)+'</strong><br>'
+                   + 'Gesamt IST Woche:&nbsp;<strong>'+wI.toFixed(2)+'</strong><br>'
+                   + '+/-Stunden:&nbsp;<strong class="'+(wd<-0.001?'neg':wd>0.001?'pos':'')+'">'
+                   + (wd>=0?'+':'')+wd.toFixed(2)+'</strong>';
     }
-
-    totIst  += ist;
-    totSoll += tagSoll;
-    wIst    += ist;
-    wSoll   += tagSoll;
-
-    if (dow === 4 || isLast) {
-      weekNum++;
-      var wd = wIst - wSoll;
-      var wsEl = document.getElementById('ws-'+weekNum);
-      if (wsEl) {
-        wsEl.innerHTML = 'Gesamt SOLL Woche: <strong>'+wSoll.toFixed(2)+'</strong><br>'
-          + 'Gesamt IST Woche: <strong>'+wIst.toFixed(2)+'</strong><br>'
-          + '+/-Stunden: <strong class="'+(wd<-0.001?'neg':wd>0.001?'pos':'')+'">'
-          + (wd>=0?'+':'')+wd.toFixed(2)+'</strong>';
-      }
-      var wsollEl = document.getElementById('wsoll-'+weekNum);
-      var wistEl  = document.getElementById('wist-'+weekNum);
-      var wdiffEl = document.getElementById('wdiff-'+weekNum);
-      if (wsollEl) wsollEl.textContent = wSoll.toFixed(2);
-      if (wistEl)  wistEl.textContent  = wIst.toFixed(2);
-      if (wdiffEl) {
-        wdiffEl.textContent = (wd>=0?'+':'')+wd.toFixed(2)+'h';
-        wdiffEl.className = wd<-0.001?'neg':wd>0.001?'pos':'neu';
-      }
-      wIst = 0; wSoll = 0;
-    }
-
-    d.setDate(d.getDate()+1);
   }
 
   // Vorbereitungszeit
-  var vorbEl = document.getElementById('vorb');
-  var vm = vorbEl ? (parseInt(vorbEl.getAttribute('data-min')) || 60) : 60;
-  // Anzahl Arbeitswochen
-  var wAnz = 0;
-  var cd = new Date(year, month, 1);
-  while (cd.getMonth() === month) {
-    if (cd.getDay() === 1) wAnz++;
-    cd.setDate(cd.getDate()+1);
-  }
-  if (wAnz === 0) wAnz = 1;
-  totIst += (vm/60)*wAnz;
+  var vE = document.getElementById('vsp');
+  var vm = vE ? parseInt(vE.getAttribute('data-min')||'60') : 60;
+  var wN=0, d=new Date(year,month,1);
+  while(d.getMonth()===month){if(d.getDay()===1)wN++;d.setDate(d.getDate()+1);}
+  if(wN===0)wN=1;
+  totI += (vm/60)*wN;
 
-  // Monatssummen
-  var mIstEl  = document.getElementById('m-ist');
-  var mSollEl = document.getElementById('m-soll');
-  var mDiffEl = document.getElementById('m-diff');
-  if (mIstEl)  mIstEl.textContent  = totIst.toFixed(2)+'h';
-  if (mSollEl) mSollEl.textContent = totSoll.toFixed(2)+'h';
-  if (mDiffEl) {
-    var md = totIst - totSoll + ueb;
-    mDiffEl.textContent = (md>=0?'+':'')+md.toFixed(2)+'h';
-    mDiffEl.className = 'ul2 ' + (md<-0.001?'neg':md>0.001?'pos':'');
-  }
+  var md=totI-totS+ueb;
+  var mI=document.getElementById('m-ist');
+  var mS=document.getElementById('m-sol');
+  var mD=document.getElementById('m-dif');
+  var pD=document.getElementById('p-dif');
+  var pN=document.getElementById('p-neu');
+
+  if(mI) mI.textContent=totI.toFixed(2)+'h';
+  if(mS) mS.textContent=totS.toFixed(2)+'h';
+  if(mD){mD.textContent=(md>=0?'+':'')+md.toFixed(2)+'h';mD.className=md<-0.001?'neg':md>0.001?'pos':'neu';}
+  if(pD) pD.textContent=(md>=0?'+':'')+md.toFixed(2)+'h';
+  if(pN) pN.textContent=(md>=0?'+':'')+md.toFixed(2)+'h';
 }
 
-function adjH(day, amount) {
-  var el = document.getElementById('ist-'+day);
-  if (!el) return;
-  var dow = (new Date(parseInt(document.getElementById('sel-year').value),
-                      parseInt(document.getElementById('sel-month').value), day).getDay()+6)%7;
-  var v = parseFloat(el.value) || 0;
-  if (dow === 3) {
-    var th = (teamMin[day]||60)/60;
-    var basis = Math.max(0, v - th + amount);
-    el.value = (basis + th).toFixed(2);
-  } else {
-    el.value = Math.max(0, v+amount).toFixed(2);
-  }
+function adjH(day, amt) {
+  var el=document.getElementById('ist-'+day);
+  if(!el) return;
+  el.value=Math.max(0,(parseFloat(el.value)||0)+amt).toFixed(2);
   calc();
 }
 
-function adjTeam(day, minChange) {
-  teamMin[day] = Math.max(0, (teamMin[day]||60) + minChange);
-  var sp = document.getElementById('team-'+day);
-  if (sp) sp.textContent = toHHMM(teamMin[day]);
+function adjT(day, mc) {
+  tmMin[day]=Math.max(0,(tmMin[day]||60)+mc);
+  var sp=document.getElementById('tm-'+day);
+  if(sp) sp.textContent=hm(tmMin[day]);
   calc();
 }
 
-function adjVorb(minChange) {
-  var el = document.getElementById('vorb');
-  if (!el) return;
-  vorbMin = Math.max(0, vorbMin + minChange);
-  el.setAttribute('data-min', vorbMin);
-  el.textContent = toHHMM(vorbMin);
+function adjV(mc) {
+  var el=document.getElementById('vsp');
+  if(!el) return;
+  vMin=Math.max(0,vMin+mc);
+  el.setAttribute('data-min',vMin);
+  el.textContent=hm(vMin);
   calc();
 }
 </script>
