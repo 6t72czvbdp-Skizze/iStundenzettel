@@ -172,7 +172,7 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 
 /* ===== PRINT STYLES ===== */
 @media print {
-  @page { size:A4 portrait; margin:10mm 12mm; }
+  @page { size:A4 portrait; margin:7mm 7mm; }
   body { background:white; }
   .app-header, .month-nav, .content > .info-box,
   .vorb-card, .print-card, .install-banner,
@@ -192,17 +192,18 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 #app-area   { display:block; }
 
 /* DRUCK-TABELLE */
-.ptable { width:100%; border-collapse:collapse; font-size:10px; margin-bottom:8px; }
+.ptable { width:100%; border-collapse:collapse; table-layout:fixed; font-size:9.5px; margin-bottom:8px; }
 .ptable th { background:#e0e0e0; border:1px solid #555; padding:4px 3px; text-align:center; font-size:9px; }
-.ptable td { border:1px solid #999; padding:2px 3px; height:19px; vertical-align:middle; }
+.ptable td { border:1px solid #999; padding:2px 3px; height:22px; vertical-align:middle; overflow:hidden; }
 .phdr-top { display:flex; justify-content:space-between; margin-bottom:5px; }
 .prgt { border:1px solid #333; padding:2px 8px; font-weight:bold; font-size:11px; }
 .pawo { font-size:14px; font-weight:bold; border:2px solid #333; border-radius:40%; padding:2px 7px; }
-.phdr-row { font-size:11px; margin-bottom:3px; }
+.phdr-row { font-size:10.5px; margin-bottom:3px; white-space:nowrap; }
 .pul { border-bottom:1px solid #333; min-width:90px; display:inline-block; padding:0 3px; }
 .puerow { font-size:11px; margin-bottom:6px; }
-.pwbox { border:2px solid #333 !important; vertical-align:top !important;
-  font-size:8.5px; line-height:1.8; padding:3px !important; min-width:100px; }
+.pwbox { border:2px solid #333 !important; vertical-align:middle !important;
+  font-size:7.8px; line-height:1.55; padding:5px 4px !important;
+  min-width:0; white-space:normal; word-break:normal; overflow:hidden; }
 .psigs { display:flex; justify-content:space-between; margin-top:25px; }
 .psig { border-top:1px solid #333; min-width:170px; text-align:center; padding-top:4px; font-size:10px; }
 .pfoot { font-size:11px; margin-top:6px; }
@@ -610,7 +611,7 @@ function doPrint() {
   html+='Wochenstunden:&nbsp;<span class="pul">31</span></div>';
   html+='<div class="puerow">Übertrag Mehr-/Minderarbeitsstunden:&nbsp;<span class="pul">'+(ueb!==0?(ueb>0?'+':'')+ueb.toFixed(2):'&nbsp;&nbsp;&nbsp;&nbsp;')+'</span></div>';
 
-  html+='<table class="ptable"><thead><tr>';
+  html+='<table class="ptable"><colgroup><col style="width:14%"><col style="width:18%"><col style="width:9%"><col style="width:12%"><col style="width:32%"><col style="width:15%"></colgroup><thead><tr>';
   html+='<th style="width:12%">Datum</th>';
   html+='<th style="width:18%">Arbeitszeit</th>';
   html+='<th style="width:9%">Pause</th>';
