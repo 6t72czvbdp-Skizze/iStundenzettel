@@ -358,32 +358,6 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 /* alte einzelne Speichern-/Zurücksetzen-Karten ausblenden */
 #saveBtn,#resetBtn{display:none!important;}
 
-
-/* ===== STARTSEITE: VORBEREITUNGSZEIT VERSTECKEN ===== */
-#vorbCard{
-  display:none !important;
-}
-body.generated #vorbCard{
-  display:none !important;
-}
-
-
-/* ===== AUFGERÄUMTE MONATSÜBERSICHT ===== */
-.monat-card{
-  border-left:6px solid #1565C0;
-}
-.monat-title{
-  font-size:18px !important;
-  margin-bottom:12px !important;
-}
-.monat-row:last-child{
-  background:#eef7ff;
-  border-radius:10px;
-  padding:10px 12px;
-  margin-top:8px;
-  border-bottom:none !important;
-}
-
 /* ===== PRINT STYLES ===== */
 @media print {
   @page { size:A4 portrait; margin:7mm 7mm; }
@@ -478,7 +452,7 @@ body.generated #vorbCard{
 
 <div class="content">
   <div class="info-box" id="infoBox">
-    Monat wählen und auf <strong>Generieren</strong> tippen. Der Übertrag wird automatisch übernommen.
+    Monat wählen und auf <strong>Generieren</strong> tippen. Danach kannst du alles ändern und mit <strong>Speichern</strong> sichern. Der Übertrag wird automatisch in den nächsten Monat übernommen.
     <br><br>
     <button class="btn-gen2" onclick="gen()">▶ Stundenzettel generieren</button>
   </div>
@@ -592,10 +566,12 @@ body.generated #vorbCard{
   <!-- Monatssumme -->
   <div class="monat-card" id="monatCard" style="display:none">
     <div class="monat-title">📊 Monatsübersicht</div>
+    <div style="font-size:12px;color:#607d8b;margin-bottom:10px;">Vorbereitungszeit wird angezeigt, aber nicht in +/- eingerechnet.</div>
     <div class="monat-row"><span>Gesamt SOLL:</span><span id="mSoll">—</span></div>
     <div class="monat-row"><span>Gesamt IST:</span><span id="mIst">—</span></div>
     <div class="monat-row"><span>Vorbereitungszeit:</span><span id="mVorb">—</span></div>
     <div class="monat-row"><span>Übertrag aus Vormonat:</span><span id="mUeb">—</span></div>
+    <div class="monat-row"><span>Monat +/-:</span><span id="mMonthDiff">—</span></div>
     <div class="monat-row" style="color:var(--blue)"><span>Neuer Stand +/-:</span><span id="mDiff">—</span></div>
   </div>
 
@@ -940,7 +916,7 @@ function gen() {
   tmMin = {};
   var saved = loadData();
   if (saved && saved.tmMin) tmMin = saved.tmMin;
-  vMin = 60;
+  if (saved && saved.vMin)  { vMin = saved.vMin; document.getElementById('vorbVal').textContent=hm(vMin); }
 
   var weeks = getWeeks(curYear, curMonth);
   var html = '';
@@ -1011,7 +987,7 @@ function gen() {
         // Zeile 3: Team (nur Donnerstag)
         if (isDo) {
           html += '<div class="team-row">';
-          html += '<span class="team-label">🤝 Team-Besprechung (16:15 Uhr)</span>';
+          html += '<span class="team-label">🤝 Team-Besprechung 16:15–17:15</span>';
           html += '<button class="spin-btn spin-minus" onclick="adjT('+day+',-15)" style="background:#c8e6c9">−</button>';
           html += '<span id="tm-'+day+'" style="min-width:38px;text-align:center;font-size:13px;font-weight:bold;">'+tmVal+'</span>';
           html += '<button class="spin-btn spin-plus" onclick="adjT('+day+',15)" style="background:#c8e6c9">+</button>';
@@ -1040,7 +1016,7 @@ function gen() {
   }
 
   document.getElementById('appContent').innerHTML = html;
-  
+  document.getElementById('vorbCard').style.display='flex';
   document.getElementById('monatCard').style.display='block';
   document.getElementById('printBtn').style.display='block';
   var rb=document.getElementById('resetBtn'); if(rb) rb.style.display='block';
@@ -1078,7 +1054,7 @@ function calc() {
       } else if (!isFree) {
         if (isE&&!isE.value&&azE&&azE.value) {
           base=parseZ(azE.value,PAUZ[dow]);
-          if (isDo) base+=0.5;
+          /* Teamzeit wird separat addiert */
           isE.value=decToHM(base);
         } else if (isE&&isE.value) {
           base=hmToDec(isE.value);
@@ -1110,7 +1086,8 @@ function calc() {
   var vGes=(vMin/60)*wN;
 
   var ueb=getTransferForMonth(curYear, curMonth);
-  var md=totI-totS+ueb;
+  var monthDiff=totI-totS;
+  var md=monthDiff+ueb;
   saveSaldoAndNextTransfer(curYear, curMonth, md);
   updateTopBalance();
 
@@ -1118,12 +1095,14 @@ function calc() {
   var mS=document.getElementById('mSoll');
   var mV=document.getElementById('mVorb');
   var mU=document.getElementById('mUeb');
+  var mMD=document.getElementById('mMonthDiff');
   var mD=document.getElementById('mDiff');
 
   if(mI) mI.textContent=decToHM(totI)+'h';
   if(mS) mS.textContent=decToHM(totS)+'h';
-  if(mV) mV.textContent='+'+decToHM(vGes)+'h ('+wN+' Wochen)';
+  if(mV) mV.textContent='+'+decToHM(vGes)+'h ('+wN+' Wochen, nur Info)';
   if(mU) mU.textContent=(ueb>=0?'+':'')+decToHM(ueb)+'h';
+  if(mMD) mMD.textContent=(monthDiff>=0?'+':'')+decToHM(monthDiff)+'h';
   if(mD){mD.textContent=(md>=0?'+':'')+decToHM(md)+'h';
          mD.style.color=md<-0.001?'#c62828':md>0.001?'#2e7d32':'inherit';}
 }
@@ -1268,7 +1247,7 @@ function doPrint() {
         if(!grV) grV='frei / Schule zu';
       } else {
         if(istV){ base=hmToDec(istV); }
-        else { base=parseZ(azV,PAUZ[dow]); if(isDo) base+=0.5; }
+        else { base=parseZ(azV,PAUZ[dow]); /* Teamzeit wird separat addiert */ }
         ist=base+(isDo?(tmMin[day]||60)/60:0);
         dispH=decToHM(ist);
       }
