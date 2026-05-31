@@ -2,416 +2,729 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Stundenzettel">
+<meta name="theme-color" content="#2196F3">
 <title>Stundenzettel Marc Hoß</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232196F3'/><text y='68' x='50' text-anchor='middle' font-size='55' font-family='Arial'>🕐</text></svg>">
+
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:Arial,sans-serif; background:#eee; padding:10px; }
+:root {
+  --blue: #2196F3; --green: #4CAF50; --red: #f44336;
+  --orange: #FF9800; --gray: #f5f5f5; --dark: #333;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; }
+body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 
-/* Steuerleiste */
-.ctrl { background:white; padding:12px; border-radius:8px; margin-bottom:12px;
-  display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;
-  box-shadow:0 2px 6px rgba(0,0,0,0.15); }
-.cg { display:flex; flex-direction:column; gap:4px; }
-.cg label { font-weight:bold; font-size:12px; }
-.cg select, .cg input[type=number] { padding:7px; border:1px solid #ccc; border-radius:4px; font-size:13px; }
-.btn-g { padding:8px 16px; background:#4CAF50; color:white; border:none; border-radius:4px; font-size:13px; cursor:pointer; }
-.btn-p { padding:8px 16px; background:#2196F3; color:white; border:none; border-radius:4px; font-size:13px; cursor:pointer; }
+/* ===== HEADER ===== */
+.app-header {
+  background:var(--blue); color:white; padding:12px 15px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.2);
+}
+.app-title { font-size:17px; font-weight:bold; }
+.app-sub   { font-size:11px; opacity:0.85; }
+.btn-install { background:white; color:var(--blue); border:none; border-radius:20px;
+  padding:6px 12px; font-size:12px; font-weight:bold; cursor:pointer; display:none; }
 
-/* A4-Blatt */
-.sheet { background:white; max-width:210mm; margin:0 auto; padding:14px;
-  box-shadow:0 3px 15px rgba(0,0,0,0.2); }
+/* ===== MONATSNAVIGATION ===== */
+.month-nav {
+  background:white; padding:12px 15px; display:flex; align-items:center;
+  justify-content:space-between; border-bottom:1px solid #e0e0e0;
+  position:sticky; top:53px; z-index:99; box-shadow:0 1px 4px rgba(0,0,0,0.08);
+}
+.month-nav button { background:var(--blue); color:white; border:none;
+  border-radius:8px; width:38px; height:38px; font-size:20px; cursor:pointer; }
+.month-label { font-size:17px; font-weight:bold; color:var(--dark); }
+.btn-gen2 { background:var(--green); color:white; border:none; border-radius:8px;
+  padding:8px 14px; font-size:13px; font-weight:bold; cursor:pointer; }
 
-/* Header */
-.hdr-top  { display:flex; justify-content:space-between; margin-bottom:5px; }
-.rgt      { border:1px solid #333; padding:3px 10px; font-weight:bold; font-size:12px; }
-.awo      { font-size:15px; font-weight:bold; border:2px solid #333; border-radius:40%; padding:3px 8px; }
-.hdr-row  { font-size:12px; margin-bottom:3px; }
-.ul       { border-bottom:1px solid #333; min-width:90px; display:inline-block; padding:0 4px; }
-.ul-lg    { border-bottom:1px solid #333; min-width:130px; display:inline-block; padding:0 4px; }
-.uerow    { font-size:12px; margin-bottom:7px; }
+/* ===== INSTALL-BANNER ===== */
+.install-banner {
+  background:#e3f2fd; padding:12px 15px; font-size:12px;
+  border-bottom:1px solid #bbdefb; display:none;
+}
+.install-banner strong { color:var(--blue); }
 
-/* Tabelle */
-table { width:100%; border-collapse:collapse; font-size:11px; }
-th    { background:#e0e0e0; border:1px solid #555; padding:5px 3px; text-align:center; font-size:10px; }
-td    { border:1px solid #999; padding:2px 3px; height:24px; vertical-align:middle; }
+/* ===== CONTENT ===== */
+.content { padding:10px; max-width:600px; margin:0 auto; }
 
-/* Nur-Bildschirm-Spalten */
-.sc { background:#f8f8f8; }
+/* ===== INFO-BOX ===== */
+.info-box {
+  background:#e3f2fd; border-left:4px solid var(--blue);
+  border-radius:4px; padding:10px 12px; margin-bottom:10px; font-size:12px;
+}
 
-/* Wochenbox rechts */
-.wbox { border:2px solid #333 !important; vertical-align:top !important;
-  font-size:9px; line-height:1.9; padding:4px !important;
-  background:white !important; min-width:105px; }
+/* ===== VORBEREITUNG ===== */
+.vorb-card {
+  background:#fff9c4; border:1px solid #f0c040; border-radius:10px;
+  padding:12px; margin-bottom:10px; display:flex; align-items:center; gap:10px;
+}
+.vorb-label { font-size:12px; font-weight:bold; flex:1; }
+.vorb-val   { font-size:16px; font-weight:bold; min-width:42px; text-align:center; }
 
-/* Eingaben */
-input.az { width:100%; border:none; background:transparent; font-size:11px; text-align:center; padding:1px; }
-input.az:focus { outline:1px solid #2196F3; background:#f0f8ff; border-radius:2px; }
-input.hh { width:44px; border:1px solid #ccc; border-radius:2px; font-size:11px; text-align:center; padding:1px; }
-input.gr { width:100%; border:none; background:transparent; font-size:10px; padding:1px; }
-input.gr:focus { outline:1px solid #2196F3; }
+/* ===== WOCHEN-KARTE ===== */
+.week-card {
+  background:white; border-radius:12px; margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08); overflow:hidden;
+}
+.week-header {
+  background:#37474f; color:white; padding:8px 14px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.week-title { font-size:13px; font-weight:bold; }
+.week-summary { font-size:11px; opacity:0.9; }
+.week-soll { opacity:0.7; font-size:10px; }
 
-/* Buttons */
-.bwr { display:flex; gap:2px; align-items:center; justify-content:center; }
-.bm  { width:24px; height:24px; background:#ff6b6b; color:white; border:none; border-radius:3px; font-size:14px; cursor:pointer; }
-.bp  { width:24px; height:24px; background:#51cf66; color:white; border:none; border-radius:3px; font-size:14px; cursor:pointer; }
-.twr { display:flex; gap:2px; align-items:center; justify-content:center; }
-.tsp { font-size:11px; font-weight:bold; min-width:32px; text-align:center; }
+/* ===== TAG-ZEILE ===== */
+.day-row {
+  padding:10px 14px; border-bottom:1px solid #f0f0f0;
+  display:flex; flex-direction:column; gap:6px;
+}
+.day-row:last-child { border-bottom:none; }
+.day-row.is-free    { background:#f9f9f9; }
 
-/* Farbige Abweichung */
-.neg { color:#c62828; font-weight:bold; font-size:10px; }
-.pos { color:#2e7d32; font-weight:bold; font-size:10px; }
-.neu { color:#777; font-size:10px; }
+.day-top {
+  display:flex; align-items:center; gap:8px;
+}
+.day-name { font-size:14px; font-weight:bold; min-width:32px; color:var(--dark); }
+.day-date { font-size:12px; color:#888; min-width:50px; }
+.az-input {
+  flex:1; border:1px solid #ddd; border-radius:6px;
+  padding:7px 8px; font-size:13px; text-align:center; background:white;
+}
+.az-input:focus { outline:none; border-color:var(--blue); }
 
-/* Vorbereitungsbox */
-.vbox { background:#fff9c4; border:1px solid #f0c040; border-radius:5px;
-  padding:9px 12px; margin:10px 0; display:flex; gap:8px;
-  align-items:center; font-size:12px; flex-wrap:wrap; }
-.vsp  { font-size:14px; font-weight:bold; min-width:38px; text-align:center; }
+.day-bottom {
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+}
+.pause-tag {
+  background:#f0f0f0; border-radius:5px; padding:4px 8px;
+  font-size:11px; color:#666; white-space:nowrap;
+}
 
-/* Bildschirm-Summen */
-.sbox { margin:10px 0; padding:10px; background:#e8f5e9; border-radius:5px; font-size:13px; }
-.sbox p { margin-bottom:3px; }
+/* Stunden-Spinner */
+.spinner { display:flex; align-items:center; gap:4px; }
+.spin-btn {
+  width:34px; height:34px; border:none; border-radius:8px;
+  font-size:18px; font-weight:bold; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.spin-minus { background:#ffebee; color:var(--red); }
+.spin-plus  { background:#e8f5e9; color:var(--green); }
+.spin-val   {
+  width:54px; text-align:center; border:1px solid #ddd;
+  border-radius:6px; padding:6px 4px; font-size:13px; font-weight:bold;
+}
+.spin-val:focus { outline:none; border-color:var(--blue); }
 
-/* Footer */
-.ftxt  { font-size:12px; margin-top:8px; }
-.ftxt p { margin-bottom:4px; }
-.ul2   { border-bottom:1px solid #333; min-width:90px; display:inline-block; }
-.sigs  { display:flex; justify-content:space-between; margin-top:28px; }
-.sig   { border-top:1px solid #333; min-width:180px; text-align:center; padding-top:4px; font-size:11px; }
+/* Team-Spinner (Donnerstag) */
+.team-row {
+  display:flex; align-items:center; gap:8px;
+  background:#e8f5e9; border-radius:8px; padding:6px 10px;
+}
+.team-label { font-size:11px; color:#2e7d32; font-weight:bold; flex:1; }
 
-/* ====== DRUCK ====== */
+/* Diff-Badge */
+.diff-badge {
+  padding:3px 8px; border-radius:12px; font-size:11px; font-weight:bold;
+  white-space:nowrap; margin-left:auto;
+}
+.diff-pos { background:#e8f5e9; color:#2e7d32; }
+.diff-neg { background:#ffebee; color:#c62828; }
+.diff-neu { background:#f5f5f5; color:#888; }
+
+/* Frei-Toggle */
+.frei-btn {
+  border:1px solid #ddd; border-radius:6px; padding:5px 10px;
+  font-size:11px; cursor:pointer; background:white; color:#888;
+}
+.frei-btn.active {
+  background:#fff3e0; border-color:#FF9800; color:#e65100; font-weight:bold;
+}
+
+/* Begründung */
+.grund-input {
+  width:100%; border:1px solid #eee; border-radius:6px;
+  padding:6px 8px; font-size:12px; color:#555; background:#fafafa;
+}
+.grund-input:focus { outline:none; border-color:var(--blue); background:white; }
+
+/* ===== MONATS-ZUSAMMENFASSUNG ===== */
+.monat-card {
+  background:white; border-radius:12px; padding:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08); margin-bottom:15px;
+}
+.monat-title { font-size:15px; font-weight:bold; margin-bottom:10px; color:var(--dark); }
+.monat-row { display:flex; justify-content:space-between; padding:5px 0;
+  border-bottom:1px solid #f0f0f0; font-size:13px; }
+.monat-row:last-child { border-bottom:none; font-weight:bold; font-size:14px; }
+
+/* ===== DRUCK-BUTTON ===== */
+.print-card {
+  background:var(--blue); border-radius:12px; padding:14px;
+  text-align:center; margin-bottom:20px; cursor:pointer;
+  color:white; font-size:15px; font-weight:bold; box-shadow:0 3px 10px rgba(33,150,243,0.4);
+}
+
+/* ===== PRINT STYLES ===== */
 @media print {
   @page { size:A4 portrait; margin:10mm 12mm; }
-  body  { background:white; padding:0; }
-  .ctrl { display:none !important; }
-  .sheet { box-shadow:none; padding:0; max-width:100%; }
+  body { background:white; }
+  .app-header, .month-nav, .content > .info-box,
+  .vorb-card, .print-card, .install-banner,
+  .spin-btn, .frei-btn, .team-row, .diff-badge,
+  .week-header .week-summary,
+  .monat-card { display:none !important; }
 
-  /* Nur-Bildschirm-Elemente ausblenden */
-  .sc   { display:none !important; }
-  .bm   { display:none !important; }
-  .bp   { display:none !important; }
-  .vbox { display:none !important; }
-  .sbox { display:none !important; }
+  .content { padding:0; max-width:100%; }
+  .week-card { box-shadow:none; border-radius:0; border:none; margin-bottom:0; }
 
-  /* Eingaben ohne Rahmen */
-  input.az { font-size:10px; }
-  input.hh { border:none; background:transparent; }
-  input.gr { font-size:9px; }
-  .bwr { justify-content:center; }
-
-  table { font-size:10px; }
-  td    { height:19px; }
-  th    { font-size:9px; padding:3px 2px; }
-  .wbox { font-size:8.5px; line-height:1.8; padding:3px !important; }
-
-  .ftxt { margin-top:6px; }
+  /* Druck-Tabelle statt App-Layout */
+  #print-area { display:block !important; }
+  #app-area   { display:none !important; }
 }
+
+#print-area { display:none; }
+#app-area   { display:block; }
+
+/* DRUCK-TABELLE */
+.ptable { width:100%; border-collapse:collapse; font-size:10px; margin-bottom:8px; }
+.ptable th { background:#e0e0e0; border:1px solid #555; padding:4px 3px; text-align:center; font-size:9px; }
+.ptable td { border:1px solid #999; padding:2px 3px; height:19px; vertical-align:middle; }
+.phdr-top { display:flex; justify-content:space-between; margin-bottom:5px; }
+.prgt { border:1px solid #333; padding:2px 8px; font-weight:bold; font-size:11px; }
+.pawo { font-size:14px; font-weight:bold; border:2px solid #333; border-radius:40%; padding:2px 7px; }
+.phdr-row { font-size:11px; margin-bottom:3px; }
+.pul { border-bottom:1px solid #333; min-width:90px; display:inline-block; padding:0 3px; }
+.puerow { font-size:11px; margin-bottom:6px; }
+.pwbox { border:2px solid #333 !important; vertical-align:top !important;
+  font-size:8.5px; line-height:1.8; padding:3px !important; min-width:100px; }
+.psigs { display:flex; justify-content:space-between; margin-top:25px; }
+.psig { border-top:1px solid #333; min-width:170px; text-align:center; padding-top:4px; font-size:10px; }
+.pfoot { font-size:11px; margin-top:6px; }
+.pfoot p { margin-bottom:3px; }
+.pul2 { border-bottom:1px solid #333; min-width:90px; display:inline-block; }
 </style>
 </head>
 <body>
 
-<!-- STEUERLEISTE -->
-<div class="ctrl">
-  <div class="cg">
-    <label>Monat:</label>
-    <select id="sel-m">
-      <option value="0">Januar</option><option value="1">Februar</option>
-      <option value="2">März</option><option value="3">April</option>
-      <option value="4">Mai</option><option value="5">Juni</option>
-      <option value="6">Juli</option><option value="7">August</option>
-      <option value="8">September</option><option value="9">Oktober</option>
-      <option value="10">November</option><option value="11">Dezember</option>
-    </select>
+<!-- APP ANSICHT -->
+<div id="app-area">
+
+<div class="app-header">
+  <div>
+    <div class="app-title">📋 Stundenzettel</div>
+    <div class="app-sub">Marc Hoß · RGT · AWO</div>
   </div>
-  <div class="cg">
-    <label>Jahr:</label>
-    <select id="sel-y">
-      <option value="2024">2024</option>
-      <option value="2025">2025</option>
-      <option value="2026" selected>2026</option>
-      <option value="2027">2027</option>
-      <option value="2028">2028</option>
-    </select>
-  </div>
-  <div class="cg">
-    <label>Übertrag (h):</label>
-    <input type="number" id="ueb" value="0" step="0.25" style="width:70px;">
-  </div>
-  <button class="btn-g" onclick="gen()">▶ Generieren</button>
-  <button class="btn-p" onclick="window.print()">🖨️ Drucken / PDF</button>
+  <button class="btn-install" id="installBtn" onclick="installApp()">
+    📲 Installieren
+  </button>
 </div>
 
-<!-- A4-BLATT -->
-<div class="sheet" id="sheet">
-  <p style="color:#aaa;padding:25px;text-align:center;">Monat und Jahr wählen → Generieren klicken</p>
+<div class="install-banner" id="installBanner">
+  <strong>📲 Als App installieren:</strong> Tippe auf „Teilen" → „Zum Home-Bildschirm" (iPhone) oder auf die drei Punkte → „Zum Startbildschirm" (Android)
 </div>
+
+<div class="month-nav">
+  <button onclick="changeMonth(-1)">‹</button>
+  <div>
+    <div class="month-label" id="monthLabel">–</div>
+  </div>
+  <button onclick="changeMonth(1)">›</button>
+</div>
+
+<div class="content">
+  <div class="info-box" id="infoBox">
+    Monat wählen und auf <strong>Generieren</strong> tippen.
+    <br><br>
+    <button class="btn-gen2" onclick="gen()">▶ Stundenzettel generieren</button>
+  </div>
+
+  <!-- Vorbereitungszeit -->
+  <div class="vorb-card" id="vorbCard" style="display:none">
+    <div class="vorb-label">📚 Vorbereitungszeit<br><span style="font-weight:normal;font-size:11px;">zu Hause, pro Woche</span></div>
+    <button class="spin-btn spin-minus" onclick="adjV(-15)">−</button>
+    <div class="vorb-val" id="vorbVal">1:00</div>
+    <button class="spin-btn spin-plus" onclick="adjV(15)">+</button>
+  </div>
+
+  <div id="appContent"></div>
+
+  <!-- Monatssumme -->
+  <div class="monat-card" id="monatCard" style="display:none">
+    <div class="monat-title">📊 Monatsübersicht</div>
+    <div class="monat-row"><span>Gesamt SOLL:</span><span id="mSoll">—</span></div>
+    <div class="monat-row"><span>Gesamt IST:</span><span id="mIst">—</span></div>
+    <div class="monat-row"><span>Vorbereitungszeit:</span><span id="mVorb">—</span></div>
+    <div class="monat-row"><span>Übertrag:</span><span id="mUeb">—</span></div>
+    <div class="monat-row" style="color:var(--blue)"><span>Gesamt +/-:</span><span id="mDiff">—</span></div>
+  </div>
+
+  <div class="print-card" onclick="doPrint()" id="printBtn" style="display:none">
+    🖨️ Ausdrucken / Als PDF speichern
+  </div>
+</div>
+</div>
+
+<!-- DRUCK-ANSICHT -->
+<div id="print-area"></div>
 
 <script>
+// ===== KONFIGURATION =====
 var AZ   = {0:'7:30-15:00', 1:'10:00-14:20', 2:'8:00-13:30', 3:'8:00-16:00', 4:'10:00-15:00'};
 var SOLL = {0:7.0, 1:4+20/60, 2:5.5, 3:8.5, 4:5.0};
 var PAUZ = {0:30, 1:0, 2:0, 3:0, 4:0};
-var PTXT = {0:'0:30', 1:'-', 2:'-', 3:'0:15', 4:'-'};
+var PTXT = {0:'Pause 9:35-10:05 (0:30)', 1:'Keine Pause', 2:'Keine Pause', 3:'Pause 0:15', 4:'Keine Pause'};
+var PTXT_SHORT = {0:'0:30', 1:'-', 2:'-', 3:'0:15', 4:'-'};
 var WT   = ['Mo','Di','Mi','Do','Fr'];
+var WTF  = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag'];
 var MN   = ['Januar','Februar','März','April','Mai','Juni',
             'Juli','August','September','Oktober','November','Dezember'];
 
-var tmMin = {}; // team-minuten pro donnerstag
-var vMin  = 60; // vorbereitungszeit in minuten
+var curMonth = new Date().getMonth();
+var curYear  = new Date().getFullYear();
+var tmMin    = {};
+var vMin     = 60;
+var generated = false;
 
+// ===== HILFSFUNKTIONEN =====
 function hm(min) {
-  var s = min < 0 ? '-' : '';
-  var a = Math.abs(Math.round(min));
-  return s + Math.floor(a/60) + ':' + String(a%60).padStart(2,'0');
+  var s=min<0?'-':''; var a=Math.abs(Math.round(min));
+  return s+Math.floor(a/60)+':'+String(a%60).padStart(2,'0');
 }
-
-function parseZ(s, p) {
-  if (!s || s.indexOf('-') < 0) return 0;
-  var parts = s.split('-');
-  var a = parts[0].trim().split(':').map(Number);
-  var b = parts[1].trim().split(':').map(Number);
-  return Math.max(0, ((b[0]*60+(b[1]||0)) - (a[0]*60+(a[1]||0)) - p) / 60);
+// Dezimalstunden → H,MM (z.B. 4.333 → "4,20")
+function decToHM(dec) {
+  var neg=dec<0; dec=Math.abs(dec);
+  var h=Math.floor(dec);
+  var m=Math.round((dec-h)*60);
+  if(m===60){h++;m=0;}
+  return (neg?'-':'')+h+','+String(m).padStart(2,'0');
 }
-
+// H,MM oder H:MM → Dezimalstunden (z.B. "4,20" → 4.333)
+function hmToDec(s) {
+  if(!s&&s!==0) return 0;
+  s=String(s).replace(',',':');
+  if(s.indexOf(':')>=0){
+    var p=s.split(':');
+    return (parseFloat(p[0])||0) + (parseFloat(p[1])||0)/60;
+  }
+  // Wenn z.B. "4.33" eingegeben: als dezimal behandeln
+  var v=parseFloat(s)||0;
+  // Prüfen ob es HH.MM-Format ist (z.B. 4.20)
+  var str=String(s);
+  if(str.indexOf('.')>=0){
+    var pp=str.split('.');
+    if(pp[1]&&pp[1].length===2&&parseFloat(pp[1])<60){
+      return parseFloat(pp[0])+(parseFloat(pp[1])/60);
+    }
+  }
+  return v;
+}
+function parseZ(s,p) {
+  if (!s||s.indexOf('-')<0) return 0;
+  var pts=s.split('-');
+  var a=pts[0].trim().split(':').map(Number);
+  var b=pts[1].trim().split(':').map(Number);
+  return Math.max(0,((b[0]*60+(b[1]||0))-(a[0]*60+(a[1]||0))-p)/60);
+}
 function getWeeks(year, month) {
-  var first = new Date(year, month, 1);
-  var last  = new Date(year, month+1, 0);
-  var weeks = [], cur = [], d = new Date(first);
-  while (d.getMonth() === month) {
-    var dw = (d.getDay()+6)%7;
-    if (dw < 5) {
-      cur.push({day:d.getDate(), dow:dw});
-      if (dw === 4 || d.toDateString() === last.toDateString()) {
-        weeks.push(cur.slice()); cur = [];
-      }
+  var first=new Date(year,month,1), last=new Date(year,month+1,0);
+  var weeks=[],cur=[],d=new Date(first);
+  while(d.getMonth()===month) {
+    var dw=(d.getDay()+6)%7;
+    if(dw<5) {
+      cur.push({day:d.getDate(),dow:dw});
+      if(dw===4||d.toDateString()===last.toDateString()){weeks.push(cur.slice());cur=[];}
     }
     d.setDate(d.getDate()+1);
   }
   return weeks;
 }
-
-function gen() {
-  var month = parseInt(document.getElementById('sel-m').value);
-  var year  = parseInt(document.getElementById('sel-y').value);
-  var ueb   = parseFloat(document.getElementById('ueb').value) || 0;
-
-  tmMin = {}; vMin = 60;
-  var weeks = getWeeks(year, month);
-  var html = '';
-
-  // HEADER
-  html += '<div class="hdr-top">'
-        + '<div class="rgt">RGT</div>'
-        + '<div class="awo">AWO</div>'
-        + '</div>';
-  html += '<div class="hdr-row">'
-        + 'Name:&nbsp;<span class="ul-lg">Marc Hoß</span>&nbsp;&nbsp;'
-        + 'Monat:&nbsp;<span class="ul-lg">'+MN[month]+' '+year+'</span>&nbsp;&nbsp;'
-        + 'Wochenstunden:&nbsp;<span class="ul">31</span>'
-        + '</div>';
-  html += '<div class="uerow">Übertrag Mehr-/Minderarbeitsstunden:&nbsp;'
-        + '<span class="ul">'+(ueb!==0?(ueb>0?'+':'')+ueb.toFixed(2):'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')+'</span>'
-        + '</div>';
-
-  // TABELLE
-  html += '<table><thead><tr>'
-        + '<th style="width:11%">Datum</th>'
-        + '<th style="width:17%">Arbeitszeit</th>'
-        + '<th style="width:9%">Pause</th>'
-        + '<th style="width:13%">Stunden</th>'
-        + '<th class="sc" style="width:10%">Team&nbsp;(Do)</th>'
-        + '<th class="sc" style="width:7%">+/-</th>'
-        + '<th class="sc" style="width:5%">Frei</th>'
-        + '<th>Begründung<br>Mehr-/Minderarbeit</th>'
-        + '<th style="width:14%;border:2px solid #333;font-size:9px;">Woche</th>'
-        + '</tr></thead><tbody>';
-
-  for (var wi = 0; wi < weeks.length; wi++) {
-    var wk = weeks[wi];
-    var wn = wi+1;
-    var rs = wk.length; // rowspan für wochenbox
-
-    for (var di = 0; di < wk.length; di++) {
-      var day = wk[di].day;
-      var dow = wk[di].dow;
-      var isDo = (dow === 3);
-      var isFirst = (di === 0);
-      var ds = String(day).padStart(2,'0')+'.'+String(month+1).padStart(2,'0')+'.';
-
-      if (isDo) tmMin[day] = 60;
-
-      // Team-Zelle (nur Donnerstag)
-      var tcell = '<td class="sc" style="text-align:center"><span style="color:#bbb">—</span></td>';
-      if (isDo) {
-        tcell = '<td class="sc" style="padding:2px">'
-              + '<div class="twr">'
-              + '<button class="bm" onclick="adjT('+day+',-15)">−</button>'
-              + '<span class="tsp" id="tm-'+day+'">1:00</span>'
-              + '<button class="bp" onclick="adjT('+day+',15)">+</button>'
-              + '</div></td>';
+function saveKey() { return 'sz_'+curYear+'_'+curMonth; }
+function saveData() {
+  if (!generated) return;
+  var data = {vMin:vMin, tmMin:tmMin, rows:{}};
+  var weeks = getWeeks(curYear, curMonth);
+  for (var wi=0;wi<weeks.length;wi++) {
+    for (var di=0;di<weeks[wi].length;di++) {
+      var day=weeks[wi][di].day;
+      var azE=document.getElementById('az-'+day);
+      var isE=document.getElementById('ist-'+day);
+      var grE=document.getElementById('gr-'+day);
+      var frE=document.getElementById('fr-'+day);
+      if (azE||isE) {
+        data.rows[day]={
+          az:azE?azE.value:'',
+          ist:isE?isE.value:'',
+          gr:grE?grE.value:'',
+          fr:frE?frE.checked:false
+        };
       }
-
-      html += '<tr>';
-      html += '<td style="text-align:center"><strong>'+WT[dow]+'&nbsp;'+ds+'</strong></td>';
-      html += '<td style="text-align:center">'
-            + '<input class="az" type="text" id="az-'+day+'" value="'+AZ[dow]+'" onchange="calc()">'
-            + '</td>';
-      html += '<td style="text-align:center">'+PTXT[dow]+'</td>';
-      html += '<td style="padding:2px">'
-            + '<div class="bwr">'
-            + '<button class="bm" onclick="adjH('+day+',-0.25)">−</button>'
-            + '<input class="hh" type="number" id="ist-'+day+'" step="0.25" onchange="calc()">'
-            + '<button class="bp" onclick="adjH('+day+',0.25)">+</button>'
-            + '</div></td>';
-      html += tcell;
-      html += '<td class="sc" style="text-align:center">'
-            + '<span id="df-'+day+'" class="neu">—</span>'
-            + '</td>';
-      html += '<td class="sc" style="text-align:center">'
-            + '<input type="checkbox" id="fr-'+day+'" onchange="calc()">'
-            + '</td>';
-      html += '<td><input class="gr" type="text" id="gr-'+day+'" placeholder=""></td>';
-
-      // Wochenbox: nur beim ersten Tag der Woche, mit rowspan
-      if (isFirst) {
-        html += '<td class="wbox" id="wb-'+wn+'" rowspan="'+rs+'">'
-              + 'Gesamt SOLL Woche:<br>'
-              + 'Gesamt IST Woche:<br>'
-              + '+/-Stunden:'
-              + '</td>';
-      }
-      html += '</tr>';
     }
   }
-  html += '</tbody></table>';
+  localStorage.setItem(saveKey(), JSON.stringify(data));
+}
+function loadData() {
+  var raw=localStorage.getItem(saveKey());
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch(e) { return null; }
+}
 
-  // VORBEREITUNGSBOX (nur Bildschirm)
-  html += '<div class="vbox">'
-        + '<strong>📚 Vorbereitungszeit&nbsp;(zu Hause)&nbsp;pro&nbsp;Woche:</strong>'
-        + '<button class="bm" onclick="adjV(-15)">−</button>'
-        + '<span class="vsp" id="vsp">1:00</span>'
-        + '<button class="bp" onclick="adjV(15)">+</button>'
-        + '<span style="color:#888;font-size:11px;">wird automatisch mitgezählt</span>'
-        + '</div>';
+// ===== MONATSNAVIGATION =====
+function updateMonthLabel() {
+  document.getElementById('monthLabel').textContent = MN[curMonth]+' '+curYear;
+}
+function changeMonth(dir) {
+  curMonth += dir;
+  if (curMonth > 11) { curMonth=0; curYear++; }
+  if (curMonth < 0)  { curMonth=11; curYear--; }
+  updateMonthLabel();
+  if (generated) gen();
+}
 
-  // BILDSCHIRM-SUMMEN
-  html += '<div class="sbox">'
-        + '<p>Gesamt IST: <strong id="m-ist">—</strong></p>'
-        + '<p>Gesamt SOLL: <strong id="m-sol">—</strong></p>'
-        + '<p>Gesamt +/-: <strong id="m-dif" class="neu">—</strong></p>'
-        + '</div>';
+// ===== GENERIEREN =====
+function gen() {
+  generated = true;
+  tmMin = {};
+  var saved = loadData();
+  if (saved && saved.tmMin) tmMin = saved.tmMin;
+  if (saved && saved.vMin)  { vMin = saved.vMin; document.getElementById('vorbVal').textContent=hm(vMin); }
 
-  // DRUCK-FOOTER
-  html += '<div class="ftxt">'
-        + '<p>Gesamt Monat +/-Stunden:&nbsp;&nbsp;<span class="ul2" id="p-dif">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>'
-        + '<p>Mehr-/Minderarbeitsstunden neu:&nbsp;<span class="ul2" id="p-neu">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>'
-        + '</div>';
-  html += '<div class="sigs">'
-        + '<div class="sig">Datum, Unterschrift Mitarbeiter*in</div>'
-        + '<div class="sig">Datum, Unterschrift Koordinator*in</div>'
-        + '</div>';
+  var weeks = getWeeks(curYear, curMonth);
+  var html = '';
 
-  document.getElementById('sheet').innerHTML = html;
+  for (var wi=0;wi<weeks.length;wi++) {
+    var wk=weeks[wi], wn=wi+1;
+    html += '<div class="week-card">';
+    html += '<div class="week-header">';
+    html += '<div class="week-title">Woche '+wn;
+    if(wk.length>0){
+      var f=wk[0],l=wk[wk.length-1];
+      var fd=String(f.day).padStart(2,'0')+'.'+String(curMonth+1).padStart(2,'0');
+      var ld=String(l.day).padStart(2,'0')+'.'+String(curMonth+1).padStart(2,'0');
+      html += ' <span style="font-weight:normal;font-size:11px;opacity:0.8">('+fd+'–'+ld+')</span>';
+    }
+    html += '</div>';
+    html += '<div id="ws-'+wn+'" class="week-summary">SOLL — | IST —</div>';
+    html += '</div>';
+
+    for (var di=0;di<wk.length;di++) {
+      var day=wk[di].day, dow=wk[di].dow;
+      var isDo=(dow===3);
+      var ds=String(day).padStart(2,'0')+'.'+String(curMonth+1).padStart(2,'0')+'.';
+      var savedRow = (saved&&saved.rows&&saved.rows[day]) ? saved.rows[day] : null;
+      var azVal    = savedRow ? savedRow.az  : AZ[dow];
+      var istVal   = savedRow ? savedRow.ist : '';
+      var grVal    = savedRow ? savedRow.gr  : '';
+      var frVal    = savedRow ? savedRow.fr  : false;
+      var tmVal    = tmMin[day] ? hm(tmMin[day]) : '1:00';
+
+      html += '<div class="day-row'+(frVal?' is-free':'')+'" id="dr-'+day+'">';
+
+      // Zeile 1: Tag + Datum + Arbeitszeit
+      html += '<div class="day-top">';
+      html += '<span class="day-name">'+WT[dow]+'</span>';
+      html += '<span class="day-date">'+ds+'</span>';
+      if (frVal) {
+        html += '<span style="flex:1;text-align:center;color:#aaa;font-size:13px;">— Frei / Krank —</span>';
+      } else {
+        html += '<input class="az-input" type="text" id="az-'+day+'" value="'+azVal+'" placeholder="z.B. 7:30-15:00" onchange="onAZ('+day+')">';
+      }
+      html += '</div>';
+
+      if (!frVal) {
+        // Zeile 2: Pause + Stunden + Diff + Frei
+        html += '<div class="day-bottom">';
+        html += '<span class="pause-tag">'+PTXT[dow]+'</span>';
+        html += '<div class="spinner">';
+        html += '<button class="spin-btn spin-minus" onclick="adjH('+day+',-0.25)">−</button>';
+        html += '<input class="spin-val" type="number" id="ist-'+day+'" value="'+istVal+'" step="0.25" onchange="onH('+day+')">';
+        html += '<button class="spin-btn spin-plus" onclick="adjH('+day+',0.25)">+</button>';
+        html += '</div>';
+        html += '<span id="df-'+day+'" class="diff-badge diff-neu">—</span>';
+        html += '<button class="frei-btn" onclick="toggleFrei('+day+')">Frei/Krank</button>';
+        html += '</div>';
+
+        // Zeile 3: Team (nur Donnerstag)
+        if (isDo) {
+          html += '<div class="team-row">';
+          html += '<span class="team-label">🤝 Team-Besprechung (16:15 Uhr)</span>';
+          html += '<button class="spin-btn spin-minus" onclick="adjT('+day+',-15)" style="background:#c8e6c9">−</button>';
+          html += '<span id="tm-'+day+'" style="min-width:38px;text-align:center;font-size:13px;font-weight:bold;">'+tmVal+'</span>';
+          html += '<button class="spin-btn spin-plus" onclick="adjT('+day+',15)" style="background:#c8e6c9">+</button>';
+          html += '</div>';
+        }
+
+        // Zeile 4: Begründung
+        html += '<input class="grund-input" type="text" id="gr-'+day+'" value="'+grVal+'" placeholder="Begründung (z.B. kein Team, Vertretung...)" onchange="saveData()">';
+      } else {
+        // Frei-Zeile
+        html += '<div class="day-bottom">';
+        html += '<span class="pause-tag">—</span>';
+        html += '<input type="hidden" id="ist-'+day+'" value="0">';
+        html += '<input type="hidden" id="gr-'+day+'" value="'+grVal+'">';
+        html += '<button class="frei-btn active" onclick="toggleFrei('+day+')">✓ Frei/Krank</button>';
+        html += '</div>';
+      }
+      html += '<input type="hidden" id="fr-'+day+'" value="'+(frVal?'1':'0')+'">';
+      html += '</div>'; // day-row
+    }
+    html += '</div>'; // week-card
+  }
+
+  document.getElementById('appContent').innerHTML = html;
+  document.getElementById('vorbCard').style.display='flex';
+  document.getElementById('monatCard').style.display='block';
+  document.getElementById('printBtn').style.display='block';
+  document.getElementById('infoBox').style.display='none';
+
   setTimeout(calc, 80);
 }
 
+// ===== BERECHNUNG =====
 function calc() {
-  var month = parseInt(document.getElementById('sel-m').value);
-  var year  = parseInt(document.getElementById('sel-y').value);
-  var ueb   = parseFloat(document.getElementById('ueb').value) || 0;
-  var weeks = getWeeks(year, month);
+  var weeks=getWeeks(curYear,curMonth);
   var totI=0, totS=0;
 
-  for (var wi=0; wi<weeks.length; wi++) {
-    var wk=weeks[wi], wn=wi+1, wI=0, wS=0;
-
-    for (var di=0; di<wk.length; di++) {
+  for (var wi=0;wi<weeks.length;wi++) {
+    var wk=weeks[wi],wn=wi+1,wI=0,wS=0;
+    for (var di=0;di<wk.length;di++) {
       var day=wk[di].day, dow=wk[di].dow;
       var isDo=(dow===3);
-      var tS = isDo ? SOLL[3]+1 : SOLL[dow];
-
-      var azE = document.getElementById('az-'+day);
-      var isE = document.getElementById('ist-'+day);
-      var frE = document.getElementById('fr-'+day);
-      var dfE = document.getElementById('df-'+day);
-
-      var base=0, isFree = frE && frE.checked;
+      var tS=isDo?SOLL[3]+1:SOLL[dow];
+      var frEl=document.getElementById('fr-'+day);
+      var isFree=(frEl&&(frEl.value==='1'||frEl.checked));
+      var isE=document.getElementById('ist-'+day);
+      var azE=document.getElementById('az-'+day);
+      var dfE=document.getElementById('df-'+day);
+      var base=0;
 
       if (!isFree) {
-        if (isE && !isE.value && azE && azE.value) {
-          // Automatisch berechnen
-          base = parseZ(azE.value, PAUZ[dow]);
-          if (isDo) base += 0.5; // +0:30 Pausenanrechnung
-          if (isE) isE.value = base.toFixed(2);
-        } else if (isE && isE.value) {
-          base = parseFloat(isE.value) || 0;
+        if (isE&&!isE.value&&azE&&azE.value) {
+          base=parseZ(azE.value,PAUZ[dow]);
+          if (isDo) base+=0.5;
+          isE.value=decToHM(base);
+        } else if (isE&&isE.value) {
+          base=hmToDec(isE.value);
         }
       }
 
-      var ist = base + (isDo && !isFree ? (tmMin[day]||60)/60 : 0);
-      var df  = ist - tS;
+      var ist=base+(isDo&&!isFree?(tmMin[day]||60)/60:0);
+      var df=ist-tS;
 
-      if (dfE) {
-        dfE.textContent = (df>=0?'+':'')+df.toFixed(2)+'h';
-        dfE.className = df<-0.001?'neg':df>0.001?'pos':'neu';
+      if (dfE&&!isFree) {
+        dfE.textContent=(df>=0?'+':'')+decToHM(df)+'h';
+        dfE.className='diff-badge '+(df<-0.001?'diff-neg':df>0.001?'diff-pos':'diff-neu');
       }
       wI+=ist; wS+=tS; totI+=ist; totS+=tS;
     }
 
-    var wb = document.getElementById('wb-'+wn);
-    if (wb) {
+    var wsEl=document.getElementById('ws-'+wn);
+    if (wsEl) {
       var wd=wI-wS;
-      wb.innerHTML = 'Gesamt SOLL Woche:&nbsp;<strong>'+wS.toFixed(2)+'</strong><br>'
-                   + 'Gesamt IST Woche:&nbsp;<strong>'+wI.toFixed(2)+'</strong><br>'
-                   + '+/-Stunden:&nbsp;<strong class="'+(wd<-0.001?'neg':wd>0.001?'pos':'')+'">'
-                   + (wd>=0?'+':'')+wd.toFixed(2)+'</strong>';
+      wsEl.textContent='SOLL '+decToHM(wS)+'h | IST '+decToHM(wI)+'h | '+(wd>=0?'+':'')+decToHM(wd)+'h';
+      wsEl.style.color=wd<-0.001?'#ffcdd2':wd>0.001?'#c8e6c9':'rgba(255,255,255,0.8)';
     }
   }
 
   // Vorbereitungszeit
-  var vE = document.getElementById('vsp');
-  var vm = vE ? parseInt(vE.getAttribute('data-min')||'60') : 60;
-  var wN=0, d=new Date(year,month,1);
-  while(d.getMonth()===month){if(d.getDay()===1)wN++;d.setDate(d.getDate()+1);}
+  var wN=0, cd=new Date(curYear,curMonth,1);
+  while(cd.getMonth()===curMonth){if(cd.getDay()===1)wN++;cd.setDate(cd.getDate()+1);}
   if(wN===0)wN=1;
-  totI += (vm/60)*wN;
+  var vGes=(vMin/60)*wN;
 
-  var md=totI-totS+ueb;
-  var mI=document.getElementById('m-ist');
-  var mS=document.getElementById('m-sol');
-  var mD=document.getElementById('m-dif');
-  var pD=document.getElementById('p-dif');
-  var pN=document.getElementById('p-neu');
+  var ueb=parseFloat((localStorage.getItem('sz_ueb_'+curYear+'_'+curMonth)||'0'));
+  var md=totI+vGes-totS+ueb;
 
-  if(mI) mI.textContent=totI.toFixed(2)+'h';
-  if(mS) mS.textContent=totS.toFixed(2)+'h';
-  if(mD){mD.textContent=(md>=0?'+':'')+md.toFixed(2)+'h';mD.className=md<-0.001?'neg':md>0.001?'pos':'neu';}
-  if(pD) pD.textContent=(md>=0?'+':'')+md.toFixed(2)+'h';
-  if(pN) pN.textContent=(md>=0?'+':'')+md.toFixed(2)+'h';
+  var mI=document.getElementById('mIst');
+  var mS=document.getElementById('mSoll');
+  var mV=document.getElementById('mVorb');
+  var mU=document.getElementById('mUeb');
+  var mD=document.getElementById('mDiff');
+
+  if(mI) mI.textContent=decToHM(totI)+'h';
+  if(mS) mS.textContent=decToHM(totS)+'h';
+  if(mV) mV.textContent='+'+decToHM(vGes)+'h ('+wN+' Wochen)';
+  if(mU) mU.textContent=(ueb>=0?'+':'')+decToHM(ueb)+'h';
+  if(mD){mD.textContent=(md>=0?'+':'')+decToHM(md)+'h';
+         mD.style.color=md<-0.001?'#c62828':md>0.001?'#2e7d32':'inherit';}
 }
+
+// ===== EINGABE-HANDLER =====
+function onAZ(day) { saveData(); calc(); }
+function onH(day)  { saveData(); calc(); }
 
 function adjH(day, amt) {
   var el=document.getElementById('ist-'+day);
   if(!el) return;
-  el.value=Math.max(0,(parseFloat(el.value)||0)+amt).toFixed(2);
-  calc();
+  var cur=hmToDec(el.value);
+  el.value=decToHM(Math.max(0,cur+amt));
+  saveData(); calc();
 }
-
 function adjT(day, mc) {
   tmMin[day]=Math.max(0,(tmMin[day]||60)+mc);
   var sp=document.getElementById('tm-'+day);
   if(sp) sp.textContent=hm(tmMin[day]);
-  calc();
+  saveData(); calc();
+}
+function adjV(mc) {
+  vMin=Math.max(0,vMin+mc);
+  document.getElementById('vorbVal').textContent=hm(vMin);
+  saveData(); calc();
+}
+function toggleFrei(day) {
+  var frEl=document.getElementById('fr-'+day);
+  var isFree=frEl&&(frEl.value==='1'||frEl.checked);
+  // Neu generieren mit geändertem Status
+  var weeks=getWeeks(curYear,curMonth);
+  var saved=loadData()||{rows:{}};
+  if(!saved.rows) saved.rows={};
+  if(!saved.rows[day]) saved.rows[day]={az:AZ[0],ist:'',gr:'',fr:false};
+  saved.rows[day].fr=!isFree;
+  saved.tmMin=tmMin; saved.vMin=vMin;
+  localStorage.setItem(saveKey(),JSON.stringify(saved));
+  gen();
 }
 
-function adjV(mc) {
-  var el=document.getElementById('vsp');
-  if(!el) return;
-  vMin=Math.max(0,vMin+mc);
-  el.setAttribute('data-min',vMin);
-  el.textContent=hm(vMin);
-  calc();
+// ===== DRUCKEN =====
+function doPrint() {
+  var weeks=getWeeks(curYear,curMonth);
+  var ueb=parseFloat((localStorage.getItem('sz_ueb_'+curYear+'_'+curMonth)||'0'));
+  var saved=loadData()||{rows:{}};
+  var totI=0,totS=0;
+
+  var wN=0,cd=new Date(curYear,curMonth,1);
+  while(cd.getMonth()===curMonth){if(cd.getDay()===1)wN++;cd.setDate(cd.getDate()+1);}
+  if(wN===0)wN=1;
+  var vGes=(vMin/60)*wN;
+
+  var html='';
+  // Header
+  html+='<div class="phdr-top"><div class="prgt">RGT</div><div class="pawo">AWO</div></div>';
+  html+='<div class="phdr-row">Name:&nbsp;<span class="pul">Marc Hoß</span>&nbsp;&nbsp;';
+  html+='Monat:&nbsp;<span class="pul">'+MN[curMonth]+' '+curYear+'</span>&nbsp;&nbsp;';
+  html+='Wochenstunden:&nbsp;<span class="pul">31</span></div>';
+  html+='<div class="puerow">Übertrag Mehr-/Minderarbeitsstunden:&nbsp;<span class="pul">'+(ueb!==0?(ueb>0?'+':'')+ueb.toFixed(2):'&nbsp;&nbsp;&nbsp;&nbsp;')+'</span></div>';
+
+  html+='<table class="ptable"><thead><tr>';
+  html+='<th style="width:12%">Datum</th>';
+  html+='<th style="width:18%">Arbeitszeit</th>';
+  html+='<th style="width:9%">Pause</th>';
+  html+='<th style="width:12%">Stunden</th>';
+  html+='<th>Begründung<br>Mehr-/Minderarbeit</th>';
+  html+='<th style="width:15%;border:2px solid #333"></th>';
+  html+='</tr></thead><tbody>';
+
+  for (var wi=0;wi<weeks.length;wi++) {
+    var wk=weeks[wi],wn=wi+1,rs=wk.length;
+    var wI=0,wS=0;
+
+    // Vorab Wochensumme berechnen
+    for(var di2=0;di2<wk.length;di2++){
+      var d2=wk[di2].day,dw2=wk[di2].dow,isDo2=(dw2===3);
+      var sr2=saved.rows&&saved.rows[d2]?saved.rows[d2]:null;
+      var ts2=isDo2?SOLL[3]+1:SOLL[dw2];
+      wS+=ts2; totS+=ts2;
+      var base2=0;
+      if(!sr2||!sr2.fr){
+        base2=sr2&&sr2.ist?hmToDec(sr2.ist):0;
+        if(!base2&&sr2&&sr2.az){base2=parseZ(sr2.az,PAUZ[dw2]);if(isDo2)base2+=0.5;}
+        var ist2=base2+(isDo2?(tmMin[d2]||60)/60:0);
+        wI+=ist2; totI+=ist2;
+      }
+    }
+
+    for (var di=0;di<wk.length;di++) {
+      var day=wk[di].day, dow=wk[di].dow;
+      var isDo=(dow===3);
+      var isFirst=(di===0);
+      var ds=String(day).padStart(2,'0')+'.'+String(curMonth+1).padStart(2,'0')+'.';
+      var sr=saved.rows&&saved.rows[day]?saved.rows[day]:null;
+      var azV=sr?sr.az:AZ[dow];
+      var istEl=document.getElementById('ist-'+day);
+      var istV=istEl?istEl.value:(sr?sr.ist:'');
+      var isDo=(dow===3);
+      var grV=sr?sr.gr:'';
+      var isFree=sr&&sr.fr;
+
+      // Für Druck: Stunden anzeigen
+      var dispH='';
+      if(!isFree){
+        if(istV) { dispH=istV; }
+        else {
+          var b=parseZ(azV,PAUZ[dow]);
+          if(isDo)b+=0.5;
+          var t=b+(isDo?(tmMin[day]||60)/60:0);
+          dispH=decToHM(t);
+        }
+      }
+
+      html+='<tr>';
+      html+='<td style="text-align:center"><strong>'+WT[dow]+'&nbsp;'+ds+'</strong></td>';
+      html+='<td style="text-align:center">'+(isFree?'Frei/Krank':azV)+'</td>';
+      html+='<td style="text-align:center">'+(isFree?'—':PTXT_SHORT[dow])+'</td>';
+      html+='<td style="text-align:center">'+(isFree?'—':dispH)+'</td>';
+      html+='<td>'+(grV||'')+'</td>';
+      if(isFirst){
+        var wd=wI-wS;
+        html+='<td class="pwbox" rowspan="'+rs+'">'
+             +'Gesamt SOLL Woche: <strong>'+decToHM(wS)+'</strong><br>'
+             +'Gesamt IST Woche: <strong>'+decToHM(wI)+'</strong><br>'
+             +'+/-Stunden: <strong>'+(wd>=0?'+':'')+decToHM(wd)+'</strong>'
+             +'</td>';
+      }
+      html+='</tr>';
+    }
+  }
+  html+='</tbody></table>';
+
+  var md=totI+vGes-totS+ueb;
+  html+='<div class="pfoot">';
+  html+='<p>Gesamt Monat +/-Stunden:&nbsp;<span class="pul2">'+(md>=0?'+':'')+decToHM(md)+'h</span></p>';
+  html+='<p>Mehr-/Minderarbeitsstunden neu:&nbsp;<span class="pul2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>';
+  html+='</div>';
+  html+='<div class="psigs">';
+  html+='<div class="psig">Datum, Unterschrift Mitarbeiter*in</div>';
+  html+='<div class="psig">Datum, Unterschrift Koordinator*in</div>';
+  html+='</div>';
+
+  document.getElementById('print-area').innerHTML=html;
+  window.print();
 }
+
+// ===== PWA INSTALL =====
+var deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault(); deferredPrompt=e;
+  document.getElementById('installBtn').style.display='block';
+});
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(){deferredPrompt=null;});
+  }
+}
+
+// iPhone-Hinweis
+var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+var isStandalone=window.matchMedia('(display-mode: standalone)').matches;
+if (isIOS && !isStandalone) {
+  document.getElementById('installBanner').style.display='block';
+}
+
+// ===== START =====
+window.addEventListener('load', function() {
+  updateMonthLabel();
+  // Gespeicherte Daten direkt laden wenn vorhanden
+  var saved=loadData();
+  if (saved) {
+    gen();
+  }
+});
 </script>
 </body>
 </html>
