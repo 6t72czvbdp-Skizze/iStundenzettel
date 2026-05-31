@@ -359,6 +359,15 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 #saveBtn,#resetBtn{display:none!important;}
 
 
+/* ===== STARTSEITE: VORBEREITUNGSZEIT VERSTECKEN ===== */
+#vorbCard{
+  display:none !important;
+}
+body.generated #vorbCard{
+  display:none !important;
+}
+
+
 /* ===== AUFGERÄUMTE MONATSÜBERSICHT ===== */
 .monat-card{
   border-left:6px solid #1565C0;
@@ -366,9 +375,6 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 .monat-title{
   font-size:18px !important;
   margin-bottom:12px !important;
-}
-.monat-row span:first-child{
-  color:#455a64;
 }
 .monat-row:last-child{
   background:#eef7ff;
@@ -383,7 +389,7 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
   @page { size:A4 portrait; margin:7mm 7mm; }
   body { background:white; }
   .app-header, .month-nav, .content > .info-box,
-  .print-card, .save-card, .save-status, .install-banner,
+  .vorb-card, .print-card, .save-card, .save-status, .install-banner,
   .spin-btn, .frei-btn, .team-row, .diff-badge,
   .week-header .week-summary,
   .monat-card { display:none !important; }
@@ -572,7 +578,29 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
       </div>
     </div>
   </div>
-<div class="bottom-action-row" id="bottomActionRow" style="display:none">
+
+  <!-- Vorbereitungszeit -->
+  <div class="vorb-card" id="vorbCard" style="display:none">
+    <div class="vorb-label">📚 Vorbereitungszeit<br><span style="font-weight:normal;font-size:11px;">zu Hause, pro Woche</span></div>
+    <button class="spin-btn spin-minus" onclick="adjV(-15)">−</button>
+    <div class="vorb-val" id="vorbVal">1:00</div>
+    <button class="spin-btn spin-plus" onclick="adjV(15)">+</button>
+  </div>
+
+  <div id="appContent"></div>
+
+  <!-- Monatssumme -->
+  <div class="monat-card" id="monatCard" style="display:none">
+    <div class="monat-title">📊 Monatsübersicht</div>
+    <div class="monat-row"><span>Gesamt SOLL:</span><span id="mSoll">—</span></div>
+    <div class="monat-row"><span>Gesamt IST:</span><span id="mIst">—</span></div>
+    <div class="monat-row"><span>Vorbereitungszeit:</span><span id="mVorb">—</span></div>
+    <div class="monat-row"><span>Übertrag aus Vormonat:</span><span id="mUeb">—</span></div>
+    <div class="monat-row" style="color:var(--blue)"><span>Neuer Stand +/-:</span><span id="mDiff">—</span></div>
+  </div>
+
+
+  <div class="bottom-action-row" id="bottomActionRow" style="display:none">
     <button class="bottom-save-btn" onclick="manualSave()">Speichern</button>
     <button class="bottom-reset-btn" onclick="resetMonthData()">Zurücksetzen</button>
   </div>
@@ -1117,7 +1145,11 @@ function adjT(day, mc) {
   if(sp) sp.textContent=hm(tmMin[day]);
   saveData(); calc();
 }
-function adjV(mc) { vMin = 60; saveData(); calc(); }
+function adjV(mc) {
+  vMin=Math.max(0,vMin+mc);
+  document.getElementById('vorbVal').textContent=hm(vMin);
+  saveData(); calc();
+}
 function setStatus(day, status) {
   var weeks=getWeeks(curYear,curMonth);
   var saved=loadData()||{rows:{}};
