@@ -235,6 +235,17 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
   .scan-page{width:190mm!important;height:270mm!important;margin:0 auto!important;overflow:hidden!important;}
 }
 
+
+/* ===== SAFARI-DRUCKFIX: nur 1 Seite ===== */
+@media print{
+  @page{size:A4 portrait;margin:0!important;}
+  html,body{width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;overflow:hidden!important;background:white!important;}
+  #app-area{display:none!important;}
+  #print-area{display:block!important;width:175mm!important;height:248mm!important;margin:0 auto!important;padding:0!important;overflow:hidden!important;page-break-after:avoid!important;break-after:avoid!important;}
+  .scan-page{width:175mm!important;height:248mm!important;margin:0 auto!important;overflow:hidden!important;page-break-inside:avoid!important;break-inside:avoid!important;}
+  .scan-bg{width:100%!important;height:100%!important;object-fit:fill!important;}
+}
+
 </style>
 </head>
 <body>
@@ -296,6 +307,9 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
   </div>
   <div class="save-status" id="saveStatus"></div>
 
+  <div class="save-card" onclick="resetMonthData()" id="resetBtn" style="display:none;border-color:#f44336;color:#c62828;">
+    🧹 Gespeicherte Daten löschen
+  </div>
   <div class="print-card" onclick="doPrint()" id="printBtn" style="display:none">
     🖨️ Ausdrucken / Als PDF speichern
   </div>
@@ -527,6 +541,7 @@ function gen() {
   document.getElementById('vorbCard').style.display='flex';
   document.getElementById('monatCard').style.display='block';
   document.getElementById('printBtn').style.display='block';
+  var rb=document.getElementById('resetBtn'); if(rb) rb.style.display='block';
   document.getElementById('saveBtn').style.display='block';
   document.getElementById('infoBox').style.display='none';
 
@@ -592,7 +607,7 @@ function calc() {
   var vGes=(vMin/60)*wN;
 
   var ueb=parseFloat((localStorage.getItem('sz_ueb_'+curYear+'_'+curMonth)||'0'));
-  var md=totI+vGes-totS+ueb;
+  var md=totI-totS+ueb;
 
   var mI=document.getElementById('mIst');
   var mS=document.getElementById('mSoll');
@@ -662,6 +677,15 @@ function setStatus(day, status) {
 
 // Alte Funktion bleibt als Sicherheit erhalten
 function toggleFrei(day) { setStatus(day,'frei'); }
+
+function resetMonthData() {
+  localStorage.removeItem(saveKey());
+  tmMin = {};
+  vMin = 60;
+  var st=document.getElementById('saveStatus');
+  if(st){st.textContent='🧹 Gespeicherte Daten für diesen Monat gelöscht.';}
+  gen();
+}
 
 function manualSave() {
   saveData();
