@@ -170,12 +170,19 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
   color:white; font-size:15px; font-weight:bold; box-shadow:0 3px 10px rgba(33,150,243,0.4);
 }
 
+.save-card {
+  background:#ffffff; border:2px solid var(--green); border-radius:12px; padding:13px;
+  text-align:center; margin-bottom:12px; cursor:pointer;
+  color:#2e7d32; font-size:15px; font-weight:bold; box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+.save-status { font-size:12px; color:#2e7d32; text-align:center; margin:-4px 0 12px; min-height:18px; }
+
 /* ===== PRINT STYLES ===== */
 @media print {
   @page { size:A4 portrait; margin:7mm 7mm; }
   body { background:white; }
   .app-header, .month-nav, .content > .info-box,
-  .vorb-card, .print-card, .install-banner,
+  .vorb-card, .print-card, .save-card, .save-status, .install-banner,
   .spin-btn, .frei-btn, .team-row, .diff-badge,
   .week-header .week-summary,
   .monat-card { display:none !important; }
@@ -240,7 +247,7 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 
 <div class="content">
   <div class="info-box" id="infoBox">
-    Monat wählen und auf <strong>Generieren</strong> tippen.
+    Monat wählen und auf <strong>Generieren</strong> tippen. Danach kannst du alles ändern und mit <strong>Speichern</strong> sichern.
     <br><br>
     <button class="btn-gen2" onclick="gen()">▶ Stundenzettel generieren</button>
   </div>
@@ -264,6 +271,11 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
     <div class="monat-row"><span>Übertrag:</span><span id="mUeb">—</span></div>
     <div class="monat-row" style="color:var(--blue)"><span>Gesamt +/-:</span><span id="mDiff">—</span></div>
   </div>
+
+  <div class="save-card" onclick="manualSave()" id="saveBtn" style="display:none">
+    💾 Speichern
+  </div>
+  <div class="save-status" id="saveStatus"></div>
 
   <div class="print-card" onclick="doPrint()" id="printBtn" style="display:none">
     🖨️ Ausdrucken / Als PDF speichern
@@ -362,12 +374,14 @@ function saveData() {
           az:azE?azE.value:'',
           ist:isE?isE.value:'',
           gr:grE?grE.value:'',
-          fr:frE?frE.checked:false
+          fr:frE?(frE.value==='1'||frE.checked):false
         };
       }
     }
   }
   localStorage.setItem(saveKey(), JSON.stringify(data));
+  var st=document.getElementById('saveStatus');
+  if(st){st.textContent='Gespeichert: '+new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});}
 }
 function loadData() {
   var raw=localStorage.getItem(saveKey());
@@ -481,6 +495,7 @@ function gen() {
   document.getElementById('vorbCard').style.display='flex';
   document.getElementById('monatCard').style.display='block';
   document.getElementById('printBtn').style.display='block';
+  document.getElementById('saveBtn').style.display='block';
   document.getElementById('infoBox').style.display='none';
 
   setTimeout(calc, 80);
@@ -590,6 +605,16 @@ function toggleFrei(day) {
   localStorage.setItem(saveKey(),JSON.stringify(saved));
   gen();
 }
+
+function manualSave() {
+  saveData();
+  var st=document.getElementById('saveStatus');
+  if(st){st.textContent='✅ Alles gespeichert. Beim nächsten Öffnen ist es wieder da.';}
+}
+
+// Automatisch zusätzlich speichern, sobald etwas eingegeben oder verändert wird
+window.addEventListener('input', function(){ if(generated) saveData(); });
+window.addEventListener('change', function(){ if(generated) saveData(); });
 
 // ===== DRUCKEN =====
 function doPrint() {
