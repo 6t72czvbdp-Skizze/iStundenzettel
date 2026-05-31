@@ -183,6 +183,30 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 }
 .save-status { font-size:12px; color:#2e7d32; text-align:center; margin:-4px 0 12px; min-height:18px; }
 
+
+/* ===== STAMMDATEN / EINSTELLUNGEN ===== */
+.settings-card{
+  background:white; border-radius:12px; padding:14px; margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+.settings-title{font-size:15px;font-weight:bold;margin-bottom:10px;color:var(--dark);}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.settings-grid label{font-size:11px;color:#555;font-weight:bold;}
+.settings-grid input{
+  width:100%;border:1px solid #ddd;border-radius:7px;padding:8px;
+  font-size:13px;margin-top:3px;
+}
+.settings-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.settings-actions button{
+  border:none;border-radius:9px;padding:9px 10px;font-size:13px;font-weight:bold;cursor:pointer;
+}
+.btn-settings{background:#e3f2fd;color:#1565c0;}
+.btn-save-settings{background:var(--green);color:white;}
+.btn-close-settings{background:#eeeeee;color:#444;}
+.settings-hint{font-size:11px;color:#666;margin-top:8px;line-height:1.35;}
+@media(max-width:430px){.settings-grid{grid-template-columns:1fr;}}
+@media print{.settings-card{display:none!important;}}
+
 /* ===== PRINT STYLES ===== */
 @media print {
   @page { size:A4 portrait; margin:7mm 7mm; }
@@ -256,7 +280,7 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 <div class="app-header">
   <div>
     <div class="app-title">📋 Stundenzettel</div>
-    <div class="app-sub">Marc Hoß · RGT · AWO</div>
+    <div class="app-sub" id="appSub">Marc Hoß · RGT · AWO</div>
   </div>
   <button class="btn-install" id="installBtn" onclick="installApp()">
     📲 Installieren
@@ -280,6 +304,67 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
     Monat wählen und auf <strong>Generieren</strong> tippen. Danach kannst du alles ändern und mit <strong>Speichern</strong> sichern.
     <br><br>
     <button class="btn-gen2" onclick="gen()">▶ Stundenzettel generieren</button>
+  </div>
+
+
+  <div class="settings-card">
+    <div class="settings-actions" style="margin-top:0">
+      <button class="btn-settings" onclick="toggleSettings()">⚙️ Stammdaten / Einstellungen</button>
+    </div>
+    <div id="settingsPanel" style="display:none;margin-top:12px;">
+      <div class="settings-title">Einmal eintragen – auf diesem Gerät gespeichert</div>
+      <div class="settings-grid">
+        <label>Name
+          <input id="setName" type="text" placeholder="z.B. Marc Hoß">
+        </label>
+        <label>Arbeitgeber / Bereich
+          <input id="setSub" type="text" placeholder="z.B. RGT · AWO">
+        </label>
+        <label>Wochenstunden
+          <input id="setWeekHours" type="text" placeholder="z.B. 31">
+        </label>
+        <label>Übertrag +/- Stunden
+          <input id="setTransfer" type="text" placeholder="z.B. -2,20 oder 1,30">
+        </label>
+        <label>Montag Arbeitszeit
+          <input id="setAz0" type="text" placeholder="7:30-15:00">
+        </label>
+        <label>Montag Pause
+          <input id="setPause0" type="text" placeholder="0:30">
+        </label>
+        <label>Dienstag Arbeitszeit
+          <input id="setAz1" type="text" placeholder="10:00-14:20">
+        </label>
+        <label>Dienstag Pause
+          <input id="setPause1" type="text" placeholder="-">
+        </label>
+        <label>Mittwoch Arbeitszeit
+          <input id="setAz2" type="text" placeholder="8:00-13:30">
+        </label>
+        <label>Mittwoch Pause
+          <input id="setPause2" type="text" placeholder="-">
+        </label>
+        <label>Donnerstag Arbeitszeit
+          <input id="setAz3" type="text" placeholder="8:00-16:00">
+        </label>
+        <label>Donnerstag Pause
+          <input id="setPause3" type="text" placeholder="0:15">
+        </label>
+        <label>Freitag Arbeitszeit
+          <input id="setAz4" type="text" placeholder="10:00-15:00">
+        </label>
+        <label>Freitag Pause
+          <input id="setPause4" type="text" placeholder="-">
+        </label>
+      </div>
+      <div class="settings-actions">
+        <button class="btn-save-settings" onclick="saveSettings()">💾 Stammdaten speichern</button>
+        <button class="btn-close-settings" onclick="toggleSettings()">Schließen</button>
+      </div>
+      <div class="settings-hint">
+        Die Daten werden nur auf diesem Gerät in diesem Browser gespeichert. Keine Anmeldung, keine Datenbank, keine Daten von Kolleginnen und Kollegen online.
+      </div>
+    </div>
   </div>
 
   <!-- Vorbereitungszeit -->
@@ -336,6 +421,90 @@ var curYear  = new Date().getFullYear();
 var tmMin    = {};
 var vMin     = 60;
 var generated = false;
+
+
+// ===== STAMMDATEN / EINSTELLUNGEN =====
+var SETTINGS_KEY = 'sz_settings_v1';
+var USER = {
+  name: (USER.name||''),
+  sub: 'RGT · AWO',
+  weekHours: '31',
+  transfer: '0',
+  az: {0:'7:30-15:00', 1:'10:00-14:20', 2:'8:00-13:30', 3:'8:00-16:00', 4:'10:00-15:00'},
+  pauseTxt: {0:'0:30', 1:'-', 2:'-', 3:'0:15', 4:'-'}
+};
+
+function pauseTextFull(v){
+  v = (v||'-').trim();
+  if(v==='-' || v==='0' || v==='0:00') return 'Keine Pause';
+  return 'Pause '+v;
+}
+function pauseMinutes(v){
+  v = (v||'-').trim();
+  if(v==='-' || v==='0' || v==='0:00') return 0;
+  v = v.replace(',',':');
+  if(v.indexOf(':')>=0){
+    var p=v.split(':'); return (parseInt(p[0])||0)*60 + (parseInt(p[1])||0);
+  }
+  var n=parseInt(v)||0; return n;
+}
+function loadSettings(){
+  var raw=localStorage.getItem(SETTINGS_KEY);
+  if(raw){
+    try{
+      var s=JSON.parse(raw);
+      USER = Object.assign(USER, s);
+      USER.az = Object.assign({0:'7:30-15:00',1:'10:00-14:20',2:'8:00-13:30',3:'8:00-16:00',4:'10:00-15:00'}, USER.az||{});
+      USER.pauseTxt = Object.assign({0:'0:30',1:'-',2:'-',3:'0:15',4:'-'}, USER.pauseTxt||{});
+    }catch(e){}
+  }
+  applySettings();
+}
+function applySettings(){
+  AZ = USER.az;
+  for(var i=0;i<5;i++){
+    PTXT_SHORT[i]=USER.pauseTxt[i]||'-';
+    PAUZ[i]=pauseMinutes(PTXT_SHORT[i]);
+    PTXT[i]=pauseTextFull(PTXT_SHORT[i]);
+    SOLL[i]=parseZ(AZ[i], PAUZ[i]);
+  }
+  var sub=document.getElementById('appSub');
+  if(sub) sub.textContent=(USER.name||'')+' · '+(USER.sub||'');
+}
+function fillSettingsForm(){
+  var el;
+  if((el=document.getElementById('setName'))) el.value=USER.name||'';
+  if((el=document.getElementById('setSub'))) el.value=USER.sub||'';
+  if((el=document.getElementById('setWeekHours'))) el.value=USER.weekHours||'';
+  if((el=document.getElementById('setTransfer'))) el.value=USER.transfer||'0';
+  for(var i=0;i<5;i++){
+    if((el=document.getElementById('setAz'+i))) el.value=USER.az[i]||'';
+    if((el=document.getElementById('setPause'+i))) el.value=USER.pauseTxt[i]||'-';
+  }
+}
+function toggleSettings(){
+  var p=document.getElementById('settingsPanel');
+  if(!p) return;
+  fillSettingsForm();
+  p.style.display = p.style.display==='none' ? 'block' : 'none';
+}
+function saveSettings(){
+  USER.name=(document.getElementById('setName').value||'').trim() || 'Name';
+  USER.sub=(document.getElementById('setSub').value||'').trim() || 'RGT · AWO';
+  USER.weekHours=(document.getElementById('setWeekHours').value||'31').trim();
+  USER.transfer=(document.getElementById('setTransfer').value||'0').trim();
+  USER.az={}; USER.pauseTxt={};
+  for(var i=0;i<5;i++){
+    USER.az[i]=(document.getElementById('setAz'+i).value||AZ[i]||'').trim();
+    USER.pauseTxt[i]=(document.getElementById('setPause'+i).value||'-').trim();
+  }
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(USER));
+  localStorage.setItem('sz_ueb_'+curYear+'_'+curMonth, String(hmToDec(USER.transfer)));
+  applySettings();
+  var st=document.getElementById('saveStatus');
+  if(st) st.textContent='✅ Stammdaten gespeichert. Sie bleiben auf diesem Gerät erhalten.';
+  if(generated) gen();
+}
 
 // ===== HILFSFUNKTIONEN =====
 function hm(min) {
@@ -433,7 +602,8 @@ function changeMonth(dir) {
   curMonth += dir;
   if (curMonth > 11) { curMonth=0; curYear++; }
   if (curMonth < 0)  { curMonth=11; curYear--; }
-  updateMonthLabel();
+  loadSettings();
+updateMonthLabel();
   if (generated) gen();
 }
 
@@ -606,7 +776,7 @@ function calc() {
   if(wN===0)wN=1;
   var vGes=(vMin/60)*wN;
 
-  var ueb=parseFloat((localStorage.getItem('sz_ueb_'+curYear+'_'+curMonth)||'0'));
+  var ueb=parseFloat((localStorage.getItem('sz_ueb_'+curYear+'_'+curMonth)||String(hmToDec(USER.transfer||'0'))||'0'));
   var md=totI-totS+ueb;
 
   var mI=document.getElementById('mIst');
@@ -701,7 +871,7 @@ window.addEventListener('change', function(){ if(generated) saveData(); });
 function doPrint() {
   saveData();
   var weeks=getWeeks(curYear,curMonth);
-  var ueb=parseFloat((localStorage.getItem('sz_ueb_'+curYear+'_'+curMonth)||'0'));
+  var ueb=parseFloat((localStorage.getItem('sz_ueb_'+curYear+'_'+curMonth)||String(hmToDec(USER.transfer||'0'))||'0'));
   var saved=loadData()||{rows:{}};
   if(!saved.rows) saved.rows={};
 
@@ -721,9 +891,9 @@ function doPrint() {
   }
 
   var html='<div class="scan-page"><img class="scan-bg" src="scan-bg.JPG" onerror="this.onerror=null;this.src=\'scan-bg.jpg\'">';
-  html+=field(100,140,210,28,'Marc Hoß','left');
+  html+=field(100,140,210,28,(USER.name||''),'left');
   html+=field(515,140,180,28,MN[curMonth]+' '+curYear,'center');
-  html+=field(960,140,70,28,'31','center');
+  html+=field(960,140,80,28,USER.weekHours||'','center');
   html+=field(500,196,130,28,ueb!==0?((ueb>0?'+':'')+decToHM(ueb)):'','center');
 
   var totI=0, totS=0, rowIndex=0;
