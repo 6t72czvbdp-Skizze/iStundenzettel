@@ -231,6 +231,93 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
 @media(max-width:430px){.closure-row{grid-template-columns:1fr;}}
 @media print{.closure-card{display:none!important;}}
 
+
+/* ===== OBERER STAND + HAUPT-AKTIONEN ===== */
+.top-balance-card{
+  background:#ffffff;
+  border-left:6px solid #1565C0;
+  border-radius:14px;
+  padding:14px 16px;
+  margin-bottom:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
+.top-balance-label{
+  font-size:11px;
+  font-weight:800;
+  color:#546e7a;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.top-balance-value{
+  font-size:30px;
+  line-height:1.1;
+  font-weight:900;
+  margin-top:4px;
+  color:#1565C0;
+}
+.top-balance-note{
+  font-size:12px;
+  color:#607d8b;
+  margin-top:4px;
+}
+.top-balance-card.plus{border-left-color:#2e7d32;}
+.top-balance-card.plus .top-balance-value{color:#2e7d32;}
+.top-balance-card.minus{border-left-color:#c62828;}
+.top-balance-card.minus .top-balance-value{color:#c62828;}
+.top-balance-card.zero{border-left-color:#78909c;}
+.top-balance-card.zero .top-balance-value{color:#455a64;}
+
+.main-action-row{
+  display:grid;
+  grid-template-columns:1.35fr 1fr;
+  gap:10px;
+  margin-bottom:12px;
+}
+.main-action-btn{
+  border:none;
+  border-radius:14px;
+  min-height:70px;
+  padding:12px 14px;
+  cursor:pointer;
+  text-align:left;
+  box-shadow:0 2px 10px rgba(0,0,0,0.10);
+}
+.main-action-btn .main-action-title{
+  display:block;
+  font-size:16px;
+  font-weight:900;
+  margin-bottom:4px;
+}
+.main-action-btn .main-action-sub{
+  display:block;
+  font-size:11px;
+  opacity:.9;
+  line-height:1.25;
+}
+.main-action-btn.plan{
+  background:#1565C0;
+  color:white;
+}
+.main-action-btn.closure{
+  background:#ffffff;
+  color:#1b5e20;
+  border:2px solid #43A047;
+}
+@media(max-width:430px){
+  .main-action-row{grid-template-columns:1fr 1fr;gap:8px;}
+  .main-action-btn{min-height:64px;padding:10px;}
+  .main-action-btn .main-action-title{font-size:14px;}
+  .main-action-btn .main-action-sub{font-size:10px;}
+}
+@media print{
+  .top-balance-card,.main-action-row{display:none!important;}
+}
+
+
+/* alte Einzel-Buttons in den Karten ausblenden, die neuen Hauptbuttons steuern die Panels */
+.settings-card > .settings-actions:first-child,
+.closure-card > .closure-actions:first-child{display:none;}
+
 /* ===== PRINT STYLES ===== */
 @media print {
   @page { size:A4 portrait; margin:7mm 7mm; }
@@ -330,6 +417,23 @@ body { font-family:-apple-system, Arial, sans-serif; background:#f0f2f5; }
     <button class="btn-gen2" onclick="gen()">▶ Stundenzettel generieren</button>
   </div>
 
+
+  <div class="top-balance-card zero" id="topBalanceCard">
+    <div class="top-balance-label">Aktueller Stand zum Monatsanfang</div>
+    <div class="top-balance-value" id="topBalanceValue">0:00 h</div>
+    <div class="top-balance-note">Automatischer Übertrag aus dem Vormonat</div>
+  </div>
+
+  <div class="main-action-row">
+    <button class="main-action-btn plan" onclick="toggleSettings()">
+      <span class="main-action-title">Mein Arbeitsplan</span>
+      <span class="main-action-sub">Name, Zeiten und Pausen</span>
+    </button>
+    <button class="main-action-btn closure" onclick="toggleClosures()">
+      <span class="main-action-title">Schließtage</span>
+      <span class="main-action-sub">Brückentage und freie Tage</span>
+    </button>
+  </div>
 
   <div class="settings-card">
     <div class="settings-actions" style="margin-top:0">
@@ -548,6 +652,7 @@ function saveSettings(){
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(USER));
   localStorage.setItem('sz_ueb_'+curYear+'_'+curMonth, String(hmToDec(USER.transfer)));
   applySettings();
+  updateTopBalance();
   var st=document.getElementById('saveStatus');
   if(st) st.textContent='✅ Arbeitsplan gespeichert. Sie bleiben auf diesem Gerät erhalten.';
   if(generated) gen();
@@ -644,6 +749,19 @@ function saveSaldoAndNextTransfer(year, month, saldo){
   localStorage.setItem(transferKey(n.year, n.month), String(saldo));
 }
 
+
+function updateTopBalance(){
+  var v = getTransferForMonth(curYear, curMonth);
+  var card = document.getElementById('topBalanceCard');
+  var val = document.getElementById('topBalanceValue');
+  if(!card || !val) return;
+  val.textContent = (v>=0?'+':'') + decToHM(v) + ' h';
+  card.classList.remove('plus','minus','zero');
+  if(v > 0.001) card.classList.add('plus');
+  else if(v < -0.001) card.classList.add('minus');
+  else card.classList.add('zero');
+}
+
 // ===== HILFSFUNKTIONEN =====
 function hm(min) {
   var s=min<0?'-':''; var a=Math.abs(Math.round(min));
@@ -735,6 +853,7 @@ function loadData() {
 // ===== MONATSNAVIGATION =====
 function updateMonthLabel() {
   document.getElementById('monthLabel').textContent = MN[curMonth]+' '+curYear;
+  updateTopBalance();
 }
 function changeMonth(dir) {
   curMonth += dir;
@@ -921,6 +1040,7 @@ function calc() {
   var ueb=getTransferForMonth(curYear, curMonth);
   var md=totI-totS+ueb;
   saveSaldoAndNextTransfer(curYear, curMonth, md);
+  updateTopBalance();
 
   var mI=document.getElementById('mIst');
   var mS=document.getElementById('mSoll');
