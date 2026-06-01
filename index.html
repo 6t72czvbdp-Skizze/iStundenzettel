@@ -1,301 +1,596 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stundenzettel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Stundenzettel">
+<title>📋 Stundenzettel</title>
 <style>
-body { margin: 0; padding: 0; background: #f0f7ff; font-family: system-ui; }
-.header { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; padding: 16px; text-align: center; box-shadow: 0 2px 8px rgba(76,175,80,0.2); }
-.header h1 { font-size: 22px; margin: 0; font-weight: 700; }
-.header p { margin: 4px 0 0 0; opacity: 0.9; font-size: 13px; }
-.nav { background: white; padding: 12px; display: flex; gap: 10px; justify-content: center; border-bottom: 1px solid #e0e8f7; }
-.nav button { width: 40px; height: 40px; border: 1px solid #4CAF50; background: #f1f8f5; border-radius: 8px; cursor: pointer; font-size: 18px; color: #2e7d32; font-weight: 600; }
-.nav button:active { background: #4CAF50; color: white; }
-.nav-text { font-weight: 600; color: #2e7d32; font-size: 16px; flex: 1; text-align: center; }
-.container { max-width: 540px; margin: 0 auto; padding: 12px; }
-.card { background: white; border-radius: 12px; padding: 14px; margin-bottom: 10px; border: 2px solid #e0e8f7; box-shadow: 0 2px 6px rgba(76,175,80,0.08); }
-
-.day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.day-label { font-weight: 700; color: #2e7d32; font-size: 16px; }
-.time-display { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 14px; }
-
-.input-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
-.day-input { flex: 1; padding: 8px; border: 1px solid #c5d9f1; border-radius: 6px; background: #f8fbff; font-family: system-ui; font-size: 13px; }
-.day-input:focus { outline: none; border-color: #4CAF50; background: white; box-shadow: 0 0 0 3px rgba(76,175,80,0.1); }
-.hours-display { background: #f1f8f5; border: 2px solid #4CAF50; padding: 8px 12px; border-radius: 6px; font-weight: 700; font-size: 14px; color: #2e7d32; min-width: 60px; text-align: center; }
-
-.team-section { background: linear-gradient(135deg, rgba(76,175,80,0.08), rgba(76,175,80,0.04)); border: 1px solid rgba(76,175,80,0.2); border-radius: 8px; padding: 10px; margin: 10px 0; }
-.team-label { font-size: 12px; color: #2e7d32; font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-.team-remove { border: none; background: #ff5252; color: white; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; }
-.team-remove:active { background: #e53935; }
-.team-controls { display: flex; gap: 8px; align-items: center; justify-content: center; }
-.team-btn { width: 28px; height: 28px; border: 1px solid #4CAF50; background: #f1f8f5; border-radius: 6px; cursor: pointer; color: #4CAF50; font-weight: 700; font-size: 14px; }
-.team-btn:active { background: #4CAF50; color: white; }
-.team-val { min-width: 45px; text-align: center; font-weight: 600; font-size: 13px; color: #2e7d32; }
-
-.buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 10px 0; }
-.status { padding: 7px; border: 1px solid #4CAF50; background: #f1f8f5; color: #2e7d32; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; }
-.status.active { background: #4CAF50; color: white; }
-.status.frei { border-color: #ff9800; background: #fff3e0; color: #e65100; }
-.status.frei.active { background: #ff9800; color: white; border-color: #ff9800; }
-.status.keine { border-color: #f44336; background: #ffebee; color: #c62828; }
-.status.keine.active { background: #f44336; color: white; border-color: #f44336; }
-
-.day-input.begr { width: 100%; }
-
-.summary-box { background: linear-gradient(135deg, rgba(76,175,80,0.08), rgba(76,175,80,0.04)); border: 2px solid #4CAF50; border-radius: 12px; padding: 14px; margin: 12px 0; }
-.summary-title { font-weight: 700; color: #2e7d32; font-size: 16px; margin-bottom: 10px; }
-.summary-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(76,175,80,0.2); font-size: 14px; }
-.summary-row:last-child { border-bottom: none; }
-.summary-label { color: #2e7d32; font-weight: 600; }
-.summary-value { font-weight: 700; color: #4CAF50; }
-.summary-value.highlight { color: #2196F3; }
-
-.actions { display: flex; gap: 8px; margin: 12px 0; }
-.btn { flex: 1; padding: 11px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; }
-.btn-save { background: #4CAF50; color: white; }
-.btn-save:active { transform: scale(0.98); }
-.btn-reset { background: white; border: 2px solid #e64a19; color: #e64a19; }
-.btn-reset:active { background: #fff5f0; }
-.btn-print { background: linear-gradient(135deg, #2196F3, #1e88e5); color: white; width: 100%; margin-top: 8px; }
-.msg { text-align: center; color: #2e7d32; font-size: 11px; margin-top: 8px; font-weight: 600; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#f0f4f0;min-height:100vh;padding-bottom:80px}
+/* HEADER */
+#appHeader{background:#2e7d32;color:white;text-align:center;padding:14px 16px 10px}
+.hTitle{font-size:20px;font-weight:bold;letter-spacing:1px}
+.hSub{font-size:13px;opacity:.85;margin-top:2px}
+.hHrs{font-size:15px;font-weight:bold;margin-top:4px;color:#a5d6a7}
+/* MONTH NAV */
+#monthNav{background:#388e3c;display:flex;align-items:center;justify-content:space-between;padding:8px 20px}
+.navBtn{background:rgba(255,255,255,.2);color:white;border:none;border-radius:50%;width:36px;height:36px;font-size:20px;cursor:pointer;line-height:1}
+#monthLabel{color:white;font-size:16px;font-weight:bold}
+/* CARDS */
+.card{background:white;border-radius:12px;margin:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+/* TODAY CARD */
+#todayCard .td-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.td-label{font-size:12px;font-weight:bold;color:#2e7d32;text-transform:uppercase;letter-spacing:1px}
+.td-date{font-size:14px;font-weight:bold;color:#333}
+.td-az{font-size:12px;color:#666;margin-bottom:12px}
+.td-controls{display:flex;align-items:center;justify-content:center;gap:16px;margin:10px 0}
+.btn-adj{background:#4caf50;color:white;border:none;border-radius:50%;width:44px;height:44px;font-size:24px;cursor:pointer;line-height:1;font-weight:bold}
+.btn-adj.minus{background:#ef5350}
+.ist-display{font-size:28px;font-weight:bold;color:#1b5e20;min-width:90px;text-align:center}
+.td-team{display:flex;align-items:center;justify-content:center;gap:10px;margin:6px 0;background:#fff3e0;border-radius:8px;padding:6px 10px}
+.td-team-label{font-size:12px;color:#e65100;font-weight:bold}
+.btn-team{background:#ff9800;color:white;border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;font-weight:bold}
+.btn-team.minus{background:#f44336}
+.team-val{font-size:16px;font-weight:bold;color:#e65100;min-width:50px;text-align:center}
+.td-status{display:flex;gap:8px;margin-top:10px}
+.status-btn{flex:1;padding:8px;border:2px solid #ddd;border-radius:8px;background:white;font-size:13px;cursor:pointer;color:#666}
+.status-btn.active.frei{background:#e8f5e9;border-color:#4caf50;color:#2e7d32;font-weight:bold}
+.status-btn.active.krank{background:#fff3e0;border-color:#ff9800;color:#e65100;font-weight:bold}
+.weekend-msg{text-align:center;padding:12px;color:#666;font-size:14px}
+/* TABS */
+#tabs{display:flex;background:white;margin:0 12px;border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.tab{flex:1;padding:12px 4px;border:none;background:white;cursor:pointer;font-size:13px;color:#666;border-bottom:3px solid transparent;transition:all .2s}
+.tab.active{color:#2e7d32;border-bottom-color:#2e7d32;font-weight:bold;background:#f1f8e9}
+/* ÜBERSICHT (weekly) */
+.week-view{}
+.day-row{display:grid;grid-template-columns:70px 1fr 40px 1fr;align-items:center;gap:6px;padding:8px 4px;border-bottom:1px solid #f0f0f0}
+.day-row.today{background:#e8f5e9;border-radius:8px}
+.day-row.day-frei{opacity:.5}
+.day-row.day-krank{background:#fff8e1}
+.day-label{display:flex;flex-direction:column}
+.day-kz{font-weight:bold;font-size:13px;color:#333}
+.day-d{font-size:11px;color:#888}
+.day-az{font-size:11px;color:#555}
+.day-pause{font-size:11px;color:#999;text-align:center}
+.day-ctrl{display:flex;align-items:center;gap:4px;justify-content:flex-end}
+.btn-sm{background:#4caf50;color:white;border:none;border-radius:50%;width:26px;height:26px;font-size:16px;cursor:pointer;font-weight:bold;line-height:1}
+.btn-sm.minus{background:#ef5350}
+.day-ist{font-size:13px;font-weight:bold;color:#1b5e20;min-width:36px;text-align:center}
+.day-status-txt{font-size:12px;color:#888;text-align:right;font-style:italic}
+/* WEEK SUMMARY */
+.week-sum-card{background:#f1f8e9;border-radius:10px;padding:12px;margin-top:6px}
+.ws-row{display:flex;justify-content:space-between;padding:4px 0;font-size:14px}
+.ws-row span:first-child{color:#555}
+.ws-row span:last-child{font-weight:bold;color:#1b5e20}
+.ws-row .neg{color:#c62828}
+.vorb-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;margin-top:4px;border-top:1px solid #c8e6c9}
+.vorb-label{font-size:13px;color:#555}
+.vorb-ctrl{display:flex;align-items:center;gap:6px}
+.vorb-val{font-size:14px;font-weight:bold;color:#1b5e20;min-width:40px;text-align:center}
+/* MONATSÜBERSICHT */
+.mc-title{font-size:16px;font-weight:bold;color:#1b5e20;margin-bottom:12px}
+.mc-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px}
+.mc-row span:last-child{font-weight:bold}
+.mc-total{background:#e8f5e9;border-radius:8px;padding:10px 8px;margin-top:8px;border:none}
+.mc-total span:first-child{font-size:15px;font-weight:bold;color:#2e7d32}
+.mc-total span:last-child{font-size:18px}
+.pos{color:#2e7d32}
+.neg{color:#c62828}
+.ubertrag-ctrl{display:flex;align-items:center;gap:8px}
+.ubertrag-input{width:70px;padding:4px;border:1px solid #ddd;border-radius:6px;text-align:center;font-size:14px;font-weight:bold}
+/* KOMPAKT */
+.k-week{margin-bottom:8px}
+.k-wk-header{background:#e8f5e9;padding:6px 10px;border-radius:8px 8px 0 0;font-size:12px;font-weight:bold;color:#2e7d32}
+.k-row{display:grid;grid-template-columns:70px 1fr 50px 30px;align-items:center;gap:4px;padding:7px 10px;border-bottom:1px solid #f5f5f5;background:white}
+.k-row:last-child{border-bottom:none}
+.k-date{font-size:12px;font-weight:bold;color:#333}
+.k-az{font-size:11px;color:#666}
+.k-ist{font-size:13px;font-weight:bold;color:#1b5e20;text-align:right}
+.k-ist.k-frei{color:#9e9e9e;font-style:italic}
+.k-ist.k-krank{color:#ff9800;font-style:italic}
+.k-edit{background:none;border:none;color:#2196f3;font-size:14px;cursor:pointer;padding:2px 6px}
+.k-wsum{background:#f1f8e9;display:flex;justify-content:space-around;padding:6px 10px;border-radius:0 0 8px 8px;font-size:12px;color:#555}
+.k-wsum span{font-weight:bold}
+.k-wsum .neg{color:#c62828}
+.k-wsum .pos{color:#2e7d32}
+/* ACTION BUTTONS */
+#actions{position:fixed;bottom:0;left:0;right:0;background:white;padding:10px 12px;display:flex;gap:8px;box-shadow:0 -2px 10px rgba(0,0,0,.1)}
+.act-btn{flex:1;padding:12px 6px;border:none;border-radius:10px;font-size:13px;font-weight:bold;cursor:pointer}
+.btn-save{background:#2e7d32;color:white}
+.btn-reset{background:white;color:#e53935;border:2px solid #e53935}
+.btn-print{background:#1565c0;color:white}
+/* PRINT */
+@media print{
+  #appHeader,#monthNav,#todayCard,#tabs,#actions{display:none!important}
+  body{background:white;padding:0}
+  .card{box-shadow:none;margin:4px;padding:8px}
+  #tabContent{display:block!important}
+  .btn-sm,.btn-adj,.btn-team,.k-edit,.act-btn{display:none!important}
+}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>📋 Stundenzettel</h1>
-  <p>Marc Hoß · RGT · AWO</p>
+<div id="appHeader">
+  <div class="hTitle">📋 Stundenzettel</div>
+  <div class="hSub">Marc Hoß &middot; RGT &middot; AWO</div>
+  <div class="hHrs">= 31 Stunden</div>
 </div>
 
-<div class="nav">
-  <button onclick="prev()">‹</button>
-  <div class="nav-text" id="month">Mai 2026</div>
-  <button onclick="next()">›</button>
+<div id="monthNav">
+  <button class="navBtn" id="prevBtn">&#8249;</button>
+  <span id="monthLabel"></span>
+  <button class="navBtn" id="nextBtn">&#8250;</button>
 </div>
 
-<div class="container" id="container">
-  <div id="content"></div>
-  
-  <!-- Monatsübersicht -->
-  <div class="summary-box">
-    <div class="summary-title">📊 Monatsübersicht</div>
-    <div class="summary-row">
-      <span class="summary-label">Gesamt SOLL:</span>
-      <span class="summary-value" id="soll-total">127,20h</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-label">Gesamt IST:</span>
-      <span class="summary-value" id="ist-total">128,00h</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-label">Vorbereitung:</span>
-      <span class="summary-value">+ 4,00h</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-label">Übertrag Vormonat:</span>
-      <span class="summary-value" id="carryover">+ 0,00h</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-label">Neuer Stand +/-:</span>
-      <span class="summary-value highlight" id="new-balance">+ 0,40h</span>
-    </div>
-  </div>
-  
-  <div class="actions">
-    <button class="btn btn-save" onclick="save()">💾 Speichern</button>
-    <button class="btn btn-reset" onclick="reset()">↺ Zurücksetzen</button>
-  </div>
-  
-  <button class="btn btn-print" onclick="window.print()">🖨️ Ausdrucken / Als PDF speichern</button>
-  
-  <div class="msg" id="msg"></div>
+<div class="card" id="todayCard"></div>
+
+<div id="tabs">
+  <button class="tab active" data-t="uebersicht">📅 Übersicht</button>
+  <button class="tab" data-t="monat">📊 Monatsübersicht</button>
+  <button class="tab" data-t="kompakt">📋 Kompakt</button>
+</div>
+
+<div class="card" id="tabContent"></div>
+
+<div id="actions">
+  <button class="act-btn btn-save" id="saveBtn">💾 Speichern</button>
+  <button class="act-btn btn-reset" id="resetBtn">↺ Zurücksetzen</button>
+  <button class="act-btn btn-print" id="printBtn">🖨 Drucken</button>
 </div>
 
 <script>
-let y = 2026, m = 4;
-const MN = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-const WT = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+// ============================================================
+// KONFIGURATION
+// ============================================================
+const PLAN = {
+  1:{tag:'Montag',    kz:'Mo', az:'7:30–15:00',  soll:7.00, pause:'0:30', team:false},
+  2:{tag:'Dienstag',  kz:'Di', az:'10:00–14:20', soll:4.20, pause:'–',    team:false},
+  3:{tag:'Mittwoch',  kz:'Mi', az:'8:00–13:30',  soll:5.30, pause:'–',    team:false},
+  4:{tag:'Donnerstag',kz:'Do', az:'8:00–16:00',  soll:8.30, pause:'–',    team:true },
+  5:{tag:'Freitag',   kz:'Fr', az:'10:00–15:00', soll:5.00, pause:'–',    team:false},
+};
+const WOCHENSOLL = 31.00;  // Konstante Wochensollstunden
+const TEAM_DEF   = 1.00;   // Standard Teambesprechung Do
+const VORB_DEF   = 1.00;   // Standard Vorbereitungszeit/Woche
+const STEP       = 0.25;   // ±15 Min = ±0,25h
 
-// Korrigierte Sollstunden
-const STD_AZ = ['', '7:30-15:00', '10:00-14:20', '8:00-13:30', '8:00-16:00', '10:00-15:00', ''];
-const STD_SOLL = [0, 7.0, 4.2, 5.1, 8.3, 5.0, 0];
-const PREP_HOURS = 4;
+const MONATE = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const TAGE_KZ = ['So','Mo','Di','Mi','Do','Fr','Sa'];
 
-function getDays(y, m) {
-  let days = [];
-  let last = new Date(y, m + 1, 0).getDate();
-  for (let i = 1; i <= last; i++) {
-    days.push({ day: i, dow: new Date(y, m, i).getDay() });
+// ============================================================
+// STATE
+// ============================================================
+let S = {
+  year: new Date().getFullYear(),
+  month: new Date().getMonth() + 1,
+  tab: 'uebersicht',
+  data: {},    // {dateKey: {ist, status, team}}
+  vorb: {},    // {weekKey: h}
+  ubertrag: 0
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fH(n) {
+  if (isNaN(n)||n===null) return '–';
+  const s = n < 0 ? '-' : '';
+  const a = Math.abs(n);
+  const h = Math.floor(a);
+  const m = String(Math.round((a-h)*100)).padStart(2,'0');
+  return s+h+','+m;
+}
+
+function dKey(y,m,d) {
+  return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+
+function normalize(val) {
+  // Sicherstellen dass Minuten-Teil < 60
+  const h = Math.floor(Math.abs(val));
+  const m = Math.round((Math.abs(val)-h)*100);
+  if (m >= 60) {
+    return Math.sign(val||1)*((h+1)+(m-60)/100);
+  }
+  return val;
+}
+
+function addStep(val, dir) {
+  return Math.round(normalize(val + dir*STEP)*100)/100;
+}
+
+function wKey(y,m,d) {
+  const date = new Date(y,m-1,d);
+  const dow = date.getDay()||7;
+  const mon = new Date(date);
+  mon.setDate(d-(dow-1));
+  // ISO week
+  const tmp = new Date(Date.UTC(mon.getFullYear(),mon.getMonth(),mon.getDate()));
+  const dayN = tmp.getUTCDay()||7;
+  tmp.setUTCDate(tmp.getUTCDate()+4-dayN);
+  const ys = new Date(Date.UTC(tmp.getUTCFullYear(),0,1));
+  const wn = Math.ceil((((tmp-ys)/86400000)+1)/7);
+  return `${mon.getFullYear()}-W${String(wn).padStart(2,'0')}`;
+}
+
+// Alle Arbeitstage des Monats
+function workdays(y,m) {
+  const days=[], cnt=new Date(y,m,0).getDate();
+  for(let d=1;d<=cnt;d++){
+    const dow=new Date(y,m-1,d).getDay();
+    if(dow>=1&&dow<=5) days.push({d,dow,key:dKey(y,m,d)});
   }
   return days;
 }
 
-function getKey(y, m, day) {
-  return 'sz_' + y + '_' + m + '_' + day;
+// Tagesdaten (mit Defaults)
+function dayData(key,dow) {
+  const p=PLAN[dow]; if(!p) return null;
+  const stored=S.data[key]||{};
+  const team = stored.team!==undefined ? stored.team : (p.team?TEAM_DEF:0);
+  const defaultIst = p.soll + (p.team?team:0);
+  return {
+    ist:   stored.ist!==undefined ? stored.ist : defaultIst,
+    status:stored.status||'',
+    team
+  };
 }
 
-function getData(y, m, day) {
-  let key = getKey(y, m, day);
-  let dow = new Date(y, m, day).getDay();
-  try {
-    let data = JSON.parse(localStorage.getItem(key)) || { 
-      az: STD_AZ[dow] || '', 
-      ist: '', 
-      team: dow === 4 ? 60 : 0,
-      status: 'normal', 
-      gr: '' 
-    };
-    if (typeof data.team === 'undefined') data.team = dow === 4 ? 60 : 0;
-    return data;
-  } catch (e) {
-    return { az: STD_AZ[dow] || '', ist: '', team: dow === 4 ? 60 : 0, status: 'normal', gr: '' };
+// Wochengruppen des Monats
+function weeksInMonth(y,m) {
+  const weeks={};
+  workdays(y,m).forEach(({d,dow,key})=>{
+    const wk=wKey(y,m,d);
+    if(!weeks[wk]) weeks[wk]=[];
+    weeks[wk].push({d,dow,key});
+  });
+  return weeks;
+}
+
+// Woche SOLL
+function wSoll(days) {
+  const isFull = days.length === 5 ||
+    ([1,2,3,4,5].every(dow=> days.some(d=>d.dow===dow)));
+  if(isFull) return WOCHENSOLL;
+  // Teilwoche: Summe der Tages-SOLL
+  let s=0;
+  days.forEach(({dow,key})=>{
+    const dd=dayData(key,dow);
+    if(!dd||dd.status) return;
+    const p=PLAN[dow];
+    s+=p.soll+(p.team?(dd.team||TEAM_DEF):0);
+  });
+  return Math.round(s*100)/100;
+}
+
+// Woche IST
+function wIst(days) {
+  let s=0;
+  days.forEach(({dow,key})=>{
+    const dd=dayData(key,dow);
+    if(!dd||dd.status==='frei'||dd.status==='krank') return;
+    s+=dd.ist;
+  });
+  return Math.round(s*100)/100;
+}
+
+// Monatssummen
+function monthCalc(y,m) {
+  const weeks=weeksInMonth(y,m);
+  let tSoll=0,tIst=0,tVorb=0;
+  Object.entries(weeks).forEach(([wk,days])=>{
+    tSoll+=wSoll(days);
+    tIst+=wIst(days);
+    tVorb+=S.vorb[wk]!==undefined?S.vorb[wk]:VORB_DEF;
+  });
+  tSoll=Math.round(tSoll*100)/100;
+  tIst=Math.round(tIst*100)/100;
+  tVorb=Math.round(tVorb*100)/100;
+  const neuer=Math.round((tIst+tVorb-tSoll+S.ubertrag)*100)/100;
+  return {tSoll,tIst,tVorb,ubertrag:S.ubertrag,neuer};
+}
+
+// ============================================================
+// STORAGE
+// ============================================================
+function sKey(){return `sz2_${S.year}_${S.month}`;}
+function save(){localStorage.setItem(sKey(),JSON.stringify({data:S.data,vorb:S.vorb,ubertrag:S.ubertrag}));}
+function load(){
+  const raw=localStorage.getItem(sKey());
+  if(raw){const p=JSON.parse(raw);S.data=p.data||{};S.vorb=p.vorb||{};S.ubertrag=p.ubertrag||0;}
+  else{S.data={};S.vorb={};S.ubertrag=0;}
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderAll(){
+  document.getElementById('monthLabel').textContent=`${MONATE[S.month-1]} ${S.year}`;
+  renderToday();
+  renderTab();
+}
+
+// --- HEUTE KARTE ---
+function renderToday(){
+  const now=new Date();
+  const tod={y:now.getFullYear(),m:now.getMonth()+1,d:now.getDate()};
+  const dow=now.getDay(); // 0=So
+  const el=document.getElementById('todayCard');
+
+  if(dow===0||dow===6){
+    el.innerHTML=`<div class="weekend-msg">🌴 Wochenende – erhol dich gut!</div>`;
+    return;
+  }
+
+  const key=dKey(tod.y,tod.m,tod.d);
+  const dd=dayData(key,dow);
+  const p=PLAN[dow];
+  const isCurr=(tod.y===S.year&&tod.m===S.month);
+
+  el.innerHTML=`
+    <div class="td-header">
+      <span class="td-label">Heute</span>
+      <span class="td-date">${TAGE_KZ[dow]}, ${tod.d}. ${MONATE[tod.m-1]}</span>
+    </div>
+    <div class="td-az">${p.az} &nbsp;·&nbsp; Pause: ${p.pause}</div>
+    ${isCurr?`
+      <div class="td-controls">
+        <button class="btn-adj minus" onclick="adjDay('${key}',${dow},-1)">−</button>
+        <span class="ist-display">${fH(dd.ist)}h</span>
+        <button class="btn-adj" onclick="adjDay('${key}',${dow},1)">+</button>
+      </div>
+      ${p.team?`
+      <div class="td-team">
+        <span class="td-team-label">🤝 Team:</span>
+        <button class="btn-team minus" onclick="adjTeam('${key}',${dow},-1)">−</button>
+        <span class="team-val">${fH(dd.team)}h</span>
+        <button class="btn-team" onclick="adjTeam('${key}',${dow},1)">+</button>
+      </div>`:''}
+      <div class="td-status">
+        <button class="status-btn ${dd.status==='frei'?'active frei':''}"
+          onclick="togStatus('${key}',${dow},'frei')">🌿 Frei</button>
+        <button class="status-btn ${dd.status==='krank'?'active krank':''}"
+          onclick="togStatus('${key}',${dow},'krank')">🤒 Krank</button>
+      </div>` : `<div style="color:#999;font-size:13px;text-align:center">Anderer Monat</div>`}
+  `;
+}
+
+// --- TAB: ÜBERSICHT (aktuelle Woche) ---
+function renderUebersicht(){
+  const now=new Date();
+  const dow=now.getDay()||7; // 1-7
+  const mon=new Date(now);
+  mon.setDate(now.getDate()-(dow-1));
+
+  let html='';
+  const weekRows=[];
+
+  for(let i=0;i<5;i++){
+    const d=new Date(mon); d.setDate(mon.getDate()+i);
+    const y=d.getFullYear(),m=d.getMonth()+1,day=d.getDate(),dw=d.getDay();
+    const key=dKey(y,m,day);
+    const dd=dayData(key,dw);
+    const p=PLAN[dw];
+    const isToday=(y===now.getFullYear()&&m===now.getMonth()+1&&day===now.getDate());
+    const isCurr=(y===S.year&&m===S.month);
+
+    weekRows.push({dw,key,dd,isCurr});
+
+    html+=`<div class="day-row ${isToday?'today':''} ${dd&&dd.status?'day-'+dd.status:''}">
+      <div class="day-label">
+        <span class="day-kz">${p?p.kz:TAGE_KZ[dw]}</span>
+        <span class="day-d">${day}.${String(m).padStart(2,'0')}.</span>
+      </div>
+      <div class="day-az">${p?p.az:'–'}</div>
+      <div class="day-pause">${p?p.pause:'–'}</div>
+      ${isCurr&&p&&dd?`
+        <div class="day-ctrl">
+          ${dd.status?`<span class="day-status-txt">${dd.status}</span>`:`
+          <button class="btn-sm minus" onclick="adjDay('${key}',${dw},-1)">−</button>
+          <span class="day-ist">${fH(dd.ist)}</span>
+          <button class="btn-sm" onclick="adjDay('${key}',${dw},1)">+</button>`}
+        </div>` :
+        `<div class="day-ctrl"><span class="day-ist">${dd?(dd.status||fH(dd.ist)):'–'}</span></div>`}
+    </div>`;
+  }
+
+  // Wochensummary
+  const wkDaysInMonth=weekRows
+    .filter(r=>r.isCurr&&r.dd)
+    .map(r=>({dow:r.dw,key:r.key}));
+
+  if(wkDaysInMonth.length>0){
+    const wk=wKey(S.year,S.month,wkDaysInMonth[0].key.split('-')[2]);
+    const ws=wSoll(wkDaysInMonth);
+    const wi=wIst(wkDaysInMonth);
+    const wd=Math.round((wi-ws)*100)/100;
+    const vorb=S.vorb[wk]!==undefined?S.vorb[wk]:VORB_DEF;
+
+    html+=`<div class="week-sum-card">
+      <div class="ws-row"><span>SOLL Woche:</span><span>${fH(ws)}h</span></div>
+      <div class="ws-row"><span>IST Woche:</span><span>${fH(wi)}h</span></div>
+      <div class="ws-row"><span>+/–:</span><span class="${wd<0?'neg':'pos'}">${wd>=0?'+':''}${fH(wd)}h</span></div>
+      <div class="vorb-row">
+        <span class="vorb-label">📝 Vorbereitung:</span>
+        <div class="vorb-ctrl">
+          <button class="btn-sm minus" onclick="adjVorb('${wk}',-1)">−</button>
+          <span class="vorb-val">${fH(vorb)}h</span>
+          <button class="btn-sm" onclick="adjVorb('${wk}',1)">+</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  return html;
+}
+
+// --- TAB: MONATSÜBERSICHT ---
+function renderMonat(){
+  const {tSoll,tIst,tVorb,ubertrag,neuer}=monthCalc(S.year,S.month);
+  return `
+    <div class="mc-title">📊 Monatsübersicht ${MONATE[S.month-1]} ${S.year}</div>
+    <div class="mc-row"><span>Gesamt SOLL:</span><span>${fH(tSoll)}h</span></div>
+    <div class="mc-row"><span>Gesamt IST:</span><span>${fH(tIst)}h</span></div>
+    <div class="mc-row"><span>Vorbereitung:</span><span class="pos">+${fH(tVorb)}h</span></div>
+    <div class="mc-row">
+      <span>Übertrag Vormonat:</span>
+      <div class="ubertrag-ctrl">
+        <button class="btn-sm minus" onclick="adjUb(-1)">−</button>
+        <input class="ubertrag-input" id="ubIn" value="${fH(ubertrag)}" onchange="setUb(this.value)">
+        <button class="btn-sm" onclick="adjUb(1)">+</button>
+      </div>
+    </div>
+    <div class="mc-row mc-total">
+      <span>Neuer Stand +/–:</span>
+      <span class="${neuer<0?'neg':'pos'}">${neuer>=0?'+':''}${fH(neuer)}h</span>
+    </div>
+  `;
+}
+
+// --- TAB: KOMPAKT ---
+function renderKompakt(){
+  const weeks=weeksInMonth(S.year,S.month);
+  let html='';
+
+  Object.entries(weeks).forEach(([wk,days])=>{
+    const ws=wSoll(days), wi=wIst(days);
+    const wd=Math.round((wi-ws)*100)/100;
+    const vorb=S.vorb[wk]!==undefined?S.vorb[wk]:VORB_DEF;
+
+    html+=`<div class="k-week">
+      <div class="k-wk-header">KW ${wk.split('-W')[1]} — SOLL ${fH(ws)}h</div>`;
+
+    days.forEach(({d,dow,key})=>{
+      const dd=dayData(key,dow), p=PLAN[dow];
+      html+=`<div class="k-row">
+        <span class="k-date">${p.kz} ${d}.${String(S.month).padStart(2,'0')}.</span>
+        <span class="k-az">${p.az}</span>
+        <span class="k-ist ${dd.status?'k-'+dd.status:''}">${dd.status||fH(dd.ist)}</span>
+        <button class="k-edit" onclick="quickEdit('${key}',${dow})">✎</button>
+      </div>`;
+    });
+
+    html+=`<div class="k-wsum">
+      <span>IST: ${fH(wi)}h</span>
+      <span class="${wd<0?'neg':'pos'}">${wd>=0?'+':''}${fH(wd)}h</span>
+      <span>Vorb: ${fH(vorb)}h</span>
+    </div></div>`;
+  });
+
+  return html;
+}
+
+function renderTab(){
+  const el=document.getElementById('tabContent');
+  switch(S.tab){
+    case 'uebersicht': el.innerHTML=renderUebersicht(); break;
+    case 'monat':      el.innerHTML=renderMonat(); break;
+    case 'kompakt':    el.innerHTML=renderKompakt(); break;
   }
 }
 
-function saveData(y, m, day, data) {
-  let key = getKey(y, m, day);
-  localStorage.setItem(key, JSON.stringify(data));
+// ============================================================
+// AKTIONEN
+// ============================================================
+function adjDay(key,dow,dir){
+  const dd=dayData(key,dow);
+  if(!S.data[key]) S.data[key]={...dd};
+  S.data[key].ist=Math.max(0, addStep(S.data[key].ist!==undefined?S.data[key].ist:dd.ist, dir));
+  save(); renderAll();
 }
 
-function show() {
-  let days = getDays(y, m);
-  let html = '';
-  let totSoll = 0, totIst = 0;
-  
-  for (let day of days) {
-    let dow = day.dow;
-    if (dow === 0 || dow === 6) continue;
-    
-    let data = getData(y, m, day.day);
-    let az = data.az || STD_AZ[dow];
-    let sollStunden = STD_SOLL[dow];
-    let istInput = data.ist;
-    let ist = istInput ? parseFloat(istInput.replace(',', '.')) : sollStunden;
-    let teamMin = data.team || 0;
-    let status = data.status;
-    
-    if (dow === 4) {
-      ist += (teamMin / 60);
-      sollStunden += (teamMin / 60);
+function adjTeam(key,dow,dir){
+  const dd=dayData(key,dow);
+  if(!S.data[key]) S.data[key]={...dd};
+  const newTeam=Math.max(0, addStep(S.data[key].team!==undefined?S.data[key].team:TEAM_DEF, dir));
+  S.data[key].team=newTeam;
+  // IST = Dienst + Team
+  S.data[key].ist=Math.round((PLAN[dow].soll+newTeam)*100)/100;
+  save(); renderAll();
+}
+
+function togStatus(key,dow,status){
+  const dd=dayData(key,dow);
+  if(!S.data[key]) S.data[key]={...dd};
+  S.data[key].status=(S.data[key].status===status?'':status);
+  save(); renderAll();
+}
+
+function adjVorb(wk,dir){
+  const cur=S.vorb[wk]!==undefined?S.vorb[wk]:VORB_DEF;
+  S.vorb[wk]=Math.max(0, Math.round(addStep(cur,dir)*100)/100);
+  save(); renderTab();
+}
+
+function adjUb(dir){
+  S.ubertrag=Math.round(addStep(S.ubertrag,dir)*100)/100;
+  save(); renderTab();
+}
+
+function setUb(val){
+  const n=parseFloat(String(val).replace(',','.'));
+  if(!isNaN(n)){S.ubertrag=Math.round(n*100)/100; save(); renderTab();}
+}
+
+function quickEdit(key,dow){
+  const dd=dayData(key,dow), p=PLAN[dow];
+  const inp=prompt(`${p.tag} – Stunden eingeben (z.B. 7,30):`, fH(dd.ist));
+  if(inp!==null){
+    const v=parseFloat(inp.replace(',','.'));
+    if(!isNaN(v)){
+      if(!S.data[key]) S.data[key]={...dd};
+      S.data[key].ist=Math.round(v*100)/100;
+      save(); renderTab();
     }
-    
-    totSoll += sollStunden;
-    totIst += ist;
-    
-    html += '<div class="card">';
-    html += '<div class="day-header"><div class="day-label">' + WT[dow] + ' ' + String(day.day).padStart(2,'0') + '.' + String(m+1).padStart(2,'0') + '.</div><div class="time-display">' + az + '</div></div>';
-    
-    html += '<div class="input-row">';
-    html += '<input type="text" id="az' + day.day + '" class="day-input" value="' + az + '" placeholder="Arbeitszeit" style="display:none;" onchange="updateDay(' + y + ',' + m + ',' + day.day + ')">';
-    html += '<input type="text" id="ist' + day.day + '" class="day-input" value="' + (istInput || sollStunden.toFixed(2).replace('.', ',')) + '" placeholder="Stunden" onchange="updateDay(' + y + ',' + m + ',' + day.day + ')">';
-    html += '<div class="hours-display">' + (istInput || sollStunden.toFixed(2).replace('.', ',')) + 'h</div>';
-    html += '</div>';
-    
-    if (dow === 4) {
-      let isTeamActive = teamMin > 0;
-      html += '<div class="team-section">';
-      html += '<div class="team-label"><span>⭐ Team 16:15-17:15</span><button class="team-remove" onclick="toggleTeam(' + y + ',' + m + ',' + day.day + ')">' + (isTeamActive ? '✕ Aus' : '✓ An') + '</button></div>';
-      
-      if (isTeamActive) {
-        html += '<div class="team-controls">';
-        html += '<button class="team-btn" onclick="adjustTeam(' + y + ',' + m + ',' + day.day + ',-15)">−</button>';
-        html += '<div class="team-val" id="team' + day.day + '">' + (teamMin / 60).toFixed(2).replace('.', ',') + 'h</div>';
-        html += '<button class="team-btn" onclick="adjustTeam(' + y + ',' + m + ',' + day.day + ',15)">+</button>';
-        html += '</div>';
-      }
-      html += '</div>';
-    }
-    
-    html += '<div class="buttons">';
-    html += '<button class="status' + (status === 'normal' ? ' active' : '') + '" onclick="setStatus(' + y + ',' + m + ',' + day.day + ', \'normal\')">Normal</button>';
-    html += '<button class="status' + (status === 'krank' ? ' active' : '') + '" onclick="setStatus(' + y + ',' + m + ',' + day.day + ', \'krank\')">Krank</button>';
-    html += '<button class="status frei' + (status === 'frei' ? ' active' : '') + '" onclick="setStatus(' + y + ',' + m + ',' + day.day + ', \'frei\')">Frei</button>';
-    html += '<button class="status keine' + (status === 'keine' ? ' active' : '') + '" onclick="setStatus(' + y + ',' + m + ',' + day.day + ', \'keine\')">Keine Schule</button>';
-    html += '</div>';
-    
-    html += '<input type="text" id="gr' + day.day + '" class="day-input begr" value="' + (data.gr || '') + '" placeholder="Begründung (z.B. kein Team, Vertretung...)" onchange="updateDay(' + y + ',' + m + ',' + day.day + ')">';
-    html += '</div>';
   }
-  
-  document.getElementById('content').innerHTML = html;
-  document.getElementById('month').textContent = MN[m] + ' ' + y;
-  
-  document.getElementById('soll-total').textContent = totSoll.toFixed(2).replace('.', ',') + 'h';
-  document.getElementById('ist-total').textContent = totIst.toFixed(2).replace('.', ',') + 'h';
-  
-  let newBalance = (totIst + PREP_HOURS) - totSoll;
-  document.getElementById('new-balance').textContent = (newBalance >= 0 ? '+' : '') + newBalance.toFixed(2).replace('.', ',') + 'h';
 }
 
-function updateDay(y, m, day) {
-  let dow = new Date(y, m, day).getDay();
-  let az = document.getElementById('az' + day).value;
-  let ist = document.getElementById('ist' + day).value;
-  let gr = document.getElementById('gr' + day).value;
-  let status = 'normal';
-  
-  let data = getData(y, m, day);
-  data.az = az;
-  data.ist = ist;
-  data.status = status;
-  data.gr = gr;
-  
-  saveData(y, m, day, data);
-  show();
-}
+// ============================================================
+// EVENTS
+// ============================================================
+document.getElementById('prevBtn').onclick=()=>{
+  S.month--; if(S.month<1){S.month=12;S.year--;}
+  load(); renderAll();
+};
+document.getElementById('nextBtn').onclick=()=>{
+  S.month++; if(S.month>12){S.month=1;S.year++;}
+  load(); renderAll();
+};
 
-function adjustTeam(y, m, day, delta) {
-  let data = getData(y, m, day);
-  data.team = Math.max(0, (data.team || 0) + delta);
-  saveData(y, m, day, data);
-  show();
-}
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.onclick=()=>{
+    S.tab=btn.dataset.t;
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTab();
+  };
+});
 
-function toggleTeam(y, m, day) {
-  let data = getData(y, m, day);
-  if (data.team > 0) {
-    data.team = 0;
-    data.ist = '8,30';
-  } else {
-    data.team = 60;
-    data.ist = '9,30';
+document.getElementById('saveBtn').onclick=()=>{
+  save();
+  const b=document.getElementById('saveBtn');
+  b.textContent='✅ Gespeichert!'; b.style.background='#1b5e20';
+  setTimeout(()=>{b.textContent='💾 Speichern';b.style.background='';},2000);
+};
+
+document.getElementById('resetBtn').onclick=()=>{
+  if(confirm(`Alle Daten für ${MONATE[S.month-1]} ${S.year} zurücksetzen?`)){
+    S.data={}; S.vorb={}; S.ubertrag=0;
+    localStorage.removeItem(sKey());
+    renderAll();
   }
-  saveData(y, m, day, data);
-  show();
-}
+};
 
-function setStatus(y, m, day, status) {
-  let data = getData(y, m, day);
-  let dow = new Date(y, m, day).getDay();
-  data.status = status;
-  
-  if (status === 'krank') {
-    data.ist = STD_SOLL[dow].toFixed(2).replace('.', ',');
-    data.gr = 'krank';
-  } else if (status === 'frei') {
-    data.ist = '0,00';
-    data.gr = 'frei';
-  } else if (status === 'keine') {
-    data.ist = '-' + STD_SOLL[dow].toFixed(2).replace('.', ',');
-    data.gr = 'keine Schule';
-  } else {
-    data.ist = '';
-    data.gr = '';
-  }
-  
-  saveData(y, m, day, data);
-  show();
-}
+document.getElementById('printBtn').onclick=()=>window.print();
 
-function prev() { m--; if (m < 0) { m = 11; y--; } show(); }
-function next() { m++; if (m > 11) { m = 0; y++; } show(); }
-function save() { document.getElementById('msg').textContent = '✅ Gespeichert!'; setTimeout(() => document.getElementById('msg').textContent = '', 2000); }
-function reset() { if (confirm('Alle Einträge löschen?')) { for (let i = 1; i <= 31; i++) { localStorage.removeItem('sz_' + y + '_' + m + '_' + i); } show(); } }
-
-show();
+// ============================================================
+// START
+// ============================================================
+load();
+renderAll();
 </script>
-
 </body>
 </html>
