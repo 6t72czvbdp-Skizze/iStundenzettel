@@ -4,593 +4,846 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Stundenzettel">
-<title>📋 Stundenzettel</title>
+<meta name="color-scheme" content="light">
+<title>Stundenzettel</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:#f0f4f0;min-height:100vh;padding-bottom:80px}
-/* HEADER */
-#appHeader{background:#2e7d32;color:white;text-align:center;padding:14px 16px 10px}
-.hTitle{font-size:20px;font-weight:bold;letter-spacing:1px}
-.hSub{font-size:13px;opacity:.85;margin-top:2px}
-.hHrs{font-size:15px;font-weight:bold;margin-top:4px;color:#a5d6a7}
-/* MONTH NAV */
-#monthNav{background:#388e3c;display:flex;align-items:center;justify-content:space-between;padding:8px 20px}
-.navBtn{background:rgba(255,255,255,.2);color:white;border:none;border-radius:50%;width:36px;height:36px;font-size:20px;cursor:pointer;line-height:1}
-#monthLabel{color:white;font-size:16px;font-weight:bold}
-/* CARDS */
-.card{background:white;border-radius:12px;margin:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
-/* TODAY CARD */
-#todayCard .td-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.td-label{font-size:12px;font-weight:bold;color:#2e7d32;text-transform:uppercase;letter-spacing:1px}
-.td-date{font-size:14px;font-weight:bold;color:#333}
-.td-az{font-size:12px;color:#666;margin-bottom:12px}
-.td-controls{display:flex;align-items:center;justify-content:center;gap:16px;margin:10px 0}
-.btn-adj{background:#4caf50;color:white;border:none;border-radius:50%;width:44px;height:44px;font-size:24px;cursor:pointer;line-height:1;font-weight:bold}
-.btn-adj.minus{background:#ef5350}
-.ist-display{font-size:28px;font-weight:bold;color:#1b5e20;min-width:90px;text-align:center}
-.td-team{display:flex;align-items:center;justify-content:center;gap:10px;margin:6px 0;background:#fff3e0;border-radius:8px;padding:6px 10px}
-.td-team-label{font-size:12px;color:#e65100;font-weight:bold}
-.btn-team{background:#ff9800;color:white;border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;font-weight:bold}
-.btn-team.minus{background:#f44336}
-.team-val{font-size:16px;font-weight:bold;color:#e65100;min-width:50px;text-align:center}
-.td-status{display:flex;gap:8px;margin-top:10px}
-.status-btn{flex:1;padding:8px;border:2px solid #ddd;border-radius:8px;background:white;font-size:13px;cursor:pointer;color:#666}
-.status-btn.active.frei{background:#e8f5e9;border-color:#4caf50;color:#2e7d32;font-weight:bold}
-.status-btn.active.krank{background:#fff3e0;border-color:#ff9800;color:#e65100;font-weight:bold}
-.weekend-msg{text-align:center;padding:12px;color:#666;font-size:14px}
-/* TABS */
-#tabs{display:flex;background:white;margin:0 12px;border-radius:10px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.1)}
-.tab{flex:1;padding:12px 4px;border:none;background:white;cursor:pointer;font-size:13px;color:#666;border-bottom:3px solid transparent;transition:all .2s}
-.tab.active{color:#2e7d32;border-bottom-color:#2e7d32;font-weight:bold;background:#f1f8e9}
-/* ÜBERSICHT (weekly) */
-.week-view{}
-.day-row{display:grid;grid-template-columns:70px 1fr 40px 1fr;align-items:center;gap:6px;padding:8px 4px;border-bottom:1px solid #f0f0f0}
-.day-row.today{background:#e8f5e9;border-radius:8px}
-.day-row.day-frei{opacity:.5}
-.day-row.day-krank{background:#fff8e1}
-.day-label{display:flex;flex-direction:column}
-.day-kz{font-weight:bold;font-size:13px;color:#333}
-.day-d{font-size:11px;color:#888}
-.day-az{font-size:11px;color:#555}
-.day-pause{font-size:11px;color:#999;text-align:center}
-.day-ctrl{display:flex;align-items:center;gap:4px;justify-content:flex-end}
-.btn-sm{background:#4caf50;color:white;border:none;border-radius:50%;width:26px;height:26px;font-size:16px;cursor:pointer;font-weight:bold;line-height:1}
-.btn-sm.minus{background:#ef5350}
-.day-ist{font-size:13px;font-weight:bold;color:#1b5e20;min-width:36px;text-align:center}
-.day-status-txt{font-size:12px;color:#888;text-align:right;font-style:italic}
-/* WEEK SUMMARY */
-.week-sum-card{background:#f1f8e9;border-radius:10px;padding:12px;margin-top:6px}
-.ws-row{display:flex;justify-content:space-between;padding:4px 0;font-size:14px}
-.ws-row span:first-child{color:#555}
-.ws-row span:last-child{font-weight:bold;color:#1b5e20}
-.ws-row .neg{color:#c62828}
-.vorb-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;margin-top:4px;border-top:1px solid #c8e6c9}
-.vorb-label{font-size:13px;color:#555}
-.vorb-ctrl{display:flex;align-items:center;gap:6px}
-.vorb-val{font-size:14px;font-weight:bold;color:#1b5e20;min-width:40px;text-align:center}
-/* MONATSÜBERSICHT */
-.mc-title{font-size:16px;font-weight:bold;color:#1b5e20;margin-bottom:12px}
-.mc-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:14px}
-.mc-row span:last-child{font-weight:bold}
-.mc-total{background:#e8f5e9;border-radius:8px;padding:10px 8px;margin-top:8px;border:none}
-.mc-total span:first-child{font-size:15px;font-weight:bold;color:#2e7d32}
-.mc-total span:last-child{font-size:18px}
-.pos{color:#2e7d32}
-.neg{color:#c62828}
-.ubertrag-ctrl{display:flex;align-items:center;gap:8px}
-.ubertrag-input{width:70px;padding:4px;border:1px solid #ddd;border-radius:6px;text-align:center;font-size:14px;font-weight:bold}
-/* KOMPAKT */
-.k-week{margin-bottom:8px}
-.k-wk-header{background:#e8f5e9;padding:6px 10px;border-radius:8px 8px 0 0;font-size:12px;font-weight:bold;color:#2e7d32}
-.k-row{display:grid;grid-template-columns:70px 1fr 50px 30px;align-items:center;gap:4px;padding:7px 10px;border-bottom:1px solid #f5f5f5;background:white}
-.k-row:last-child{border-bottom:none}
-.k-date{font-size:12px;font-weight:bold;color:#333}
-.k-az{font-size:11px;color:#666}
-.k-ist{font-size:13px;font-weight:bold;color:#1b5e20;text-align:right}
-.k-ist.k-frei{color:#9e9e9e;font-style:italic}
-.k-ist.k-krank{color:#ff9800;font-style:italic}
-.k-edit{background:none;border:none;color:#2196f3;font-size:14px;cursor:pointer;padding:2px 6px}
-.k-wsum{background:#f1f8e9;display:flex;justify-content:space-around;padding:6px 10px;border-radius:0 0 8px 8px;font-size:12px;color:#555}
-.k-wsum span{font-weight:bold}
-.k-wsum .neg{color:#c62828}
-.k-wsum .pos{color:#2e7d32}
-/* ACTION BUTTONS */
-#actions{position:fixed;bottom:0;left:0;right:0;background:white;padding:10px 12px;display:flex;gap:8px;box-shadow:0 -2px 10px rgba(0,0,0,.1)}
-.act-btn{flex:1;padding:12px 6px;border:none;border-radius:10px;font-size:13px;font-weight:bold;cursor:pointer}
-.btn-save{background:#2e7d32;color:white}
-.btn-reset{background:white;color:#e53935;border:2px solid #e53935}
-.btn-print{background:#1565c0;color:white}
-/* PRINT */
+:root{
+  color-scheme:light;
+  --grn:#1a7a2e;--grn2:#34a853;--grn-light:#e8f5ec;
+  --red:#d93025;--ora:#e07b00;--pin:#c2185b;
+  --bg:#a8c8a0;--card:#fff;--border:#e0e0e0;
+  --txt:#111;--sub:#666;--faint:#bbb;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg);color-scheme:light}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  background:var(--bg)!important;color:var(--txt);min-height:100vh;padding-bottom:0}
+
+/* ── HEADER ── */
+#hdr{background:linear-gradient(160deg,#1a7a2e 0%,#34a853 100%);padding:18px 20px 14px;text-align:center}
+#hdr h1{color:#fff;font-size:26px;font-weight:800}
+#hdr p{color:rgba(255,255,255,.75);font-size:13px;margin-top:3px}
+.hBadge{display:inline-block;background:rgba(0,0,0,.22);border-radius:99px;
+  padding:5px 18px;margin-top:8px;color:#fff;font-size:14px;font-weight:700;
+  border:1.5px solid rgba(255,255,255,.3)}
+
+/* ── MONTH NAV ── */
+#mnav{background:rgba(0,0,0,.15);display:flex;align-items:center;
+  justify-content:space-between;padding:10px 24px}
+.mnav-btn{background:none;border:none;color:#fff;font-size:28px;cursor:pointer;padding:2px 10px}
+#monthLabel{color:#fff;font-size:18px;font-weight:700}
+
+/* ── SCROLLBARER INHALT ── */
+#mainScroll{padding:12px 14px;padding-bottom:80px;background:var(--bg)}
+
+/* ── HEUTE KARTE ── */
+.heute-card{background:#fff;border-radius:18px;padding:18px 20px;
+  box-shadow:0 4px 20px rgba(0,0,0,.2);margin-bottom:14px;border:1.5px solid rgba(255,255,255,.9)}
+.h-top{display:flex;justify-content:space-between;align-items:center;
+  background:var(--grn-light);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.h-tag{font-size:15px;font-weight:800;color:var(--grn);text-transform:uppercase;letter-spacing:1px}
+.h-right{text-align:right}
+.h-dat{font-size:15px;font-weight:700;color:var(--txt)}
+.h-az{font-size:12px;color:var(--sub);margin-top:2px}
+.h-main{display:flex;align-items:center;justify-content:center;gap:24px;margin:10px 0}
+.h-btn{width:52px;height:52px;border-radius:50%;border:none;color:#fff;font-size:28px;
+  cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center}
+.h-btn.m{background:var(--red)}.h-btn.p{background:var(--grn)}
+.h-std{font-size:42px;font-weight:800;color:var(--grn);min-width:110px;text-align:center;letter-spacing:-1px}
+.h-std.zero{color:var(--red)}
+.h-team{background:#fffbf0;border:1px solid #fde8b0;border-radius:12px;
+  display:flex;align-items:center;padding:9px 12px;gap:10px;margin-bottom:10px}
+.h-team-lbl{font-size:13px;color:var(--ora);font-weight:600;flex:1}
+.t-btn{width:32px;height:32px;border-radius:50%;border:none;color:#fff;font-size:18px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center}
+.t-btn.m{background:var(--red)}.t-btn.p{background:var(--ora)}
+.h-team-val{font-size:15px;font-weight:700;color:var(--ora);min-width:46px;text-align:center}
+/* Fortschrittsbalken */
+.prog-wrap{margin:0 0 12px}
+.prog-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-bottom:5px}
+.prog-bg{height:7px;background:#e8e8e8;border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--grn),#34a853);transition:width .4s ease}
+.prog-fill.over{background:linear-gradient(90deg,var(--ora),#ffb300)}
+/* Status Buttons */
+.h-status{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.st-btn{padding:11px 6px;border-radius:12px;border:1.5px solid var(--border);
+  background:var(--card);font-size:14px;cursor:pointer;color:var(--sub);font-weight:500}
+.st-btn.ak-frei{background:#f0faf2;border-color:var(--grn);color:var(--grn);font-weight:700}
+.st-btn.ak-krank{background:#fff8f0;border-color:var(--ora);color:var(--ora);font-weight:700}
+.st-btn.ak-ks{background:#fdf0f5;border-color:var(--pin);color:var(--pin);font-weight:700}
+
+/* ── HOME: NAVIGATIONS-BUTTONS ── */
+.nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.nav-card{background:#fff;border-radius:16px;padding:18px 12px;
+  text-align:center;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.1);
+  border:none;transition:transform .1s,box-shadow .1s;display:flex;flex-direction:column;
+  align-items:center;gap:8px}
+.nav-card:active{transform:scale(.97);box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.nav-card .nc-icon{font-size:28px}
+.nav-card .nc-lbl{font-size:15px;font-weight:700;color:var(--grn)}
+.nav-card .nc-sub{font-size:12px;color:var(--sub)}
+.nav-card-full{background:#fff;border-radius:16px;padding:16px 20px;
+  text-align:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.18);
+  border:1.5px solid rgba(255,255,255,.9);width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+  margin-bottom:14px}
+.nav-card-full .nc-lbl{font-size:15px;font-weight:700;color:var(--grn)}
+.nav-card-full .nc-sub{font-size:12px;color:var(--sub);margin-top:1px}
+
+/* ── SUB-VIEWS ── */
+#subView{display:none;padding-bottom:80px;background:var(--bg);min-height:100vh}
+
+/* Zurück-Header */
+.sub-header{display:flex;align-items:center;padding:12px 16px 6px;background:var(--bg)}
+.back-btn{background:none;border:none;font-size:28px;color:var(--grn);cursor:pointer;
+  padding:4px 10px 4px 0;font-weight:300;line-height:1}
+.sub-title{font-size:18px;font-weight:700;color:var(--txt)}
+
+.sub-content{padding:4px 14px 8px}
+
+/* ── ÜBERSICHT ── */
+.d-card{background:#fff;border-radius:16px;margin-bottom:10px;
+  box-shadow:0 4px 16px rgba(0,0,0,.18);overflow:hidden;border:1.5px solid rgba(255,255,255,.9)}
+.d-head{display:flex;justify-content:space-between;align-items:center;
+  padding:12px 16px;background:#fafafa;border-bottom:1px solid #f0f0f0}
+.d-head.h-today{background:var(--grn-light)}
+.d-head.h-krank{background:#fff9f5}
+.d-head.h-frei{background:#f8f8f8}
+.d-head.h-keine-schule{background:#fdf5f8}
+.d-name{font-size:16px;font-weight:700;color:var(--grn)}
+.d-name.grau{color:var(--sub)}
+.d-badge{font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;background:var(--grn);color:#fff}
+.d-badge.b-frei{background:#888}
+.d-badge.b-krank{background:var(--ora)}
+.d-badge.b-ks{background:var(--pin)}
+.d-body{padding:14px 16px}
+.d-h-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.d-h-inp{flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:16px}
+.d-h-inp:disabled{opacity:.35;background:#f5f5f5}
+.d-h-show{background:var(--grn-light);border-radius:10px;padding:10px 16px;
+  font-size:16px;font-weight:700;color:var(--grn);white-space:nowrap;min-width:72px;text-align:center}
+.d-h-show.neg{background:#fdf0f5;color:var(--pin)}
+.d-team{background:#fffbf0;border:1px solid #fde8b0;border-radius:10px;
+  display:flex;align-items:center;padding:9px 12px;gap:8px;margin-bottom:10px}
+.d-team-lbl{font-size:12px;color:var(--ora);font-weight:600;flex:1}
+.d-team-val{font-size:14px;font-weight:700;color:var(--ora);min-width:40px;text-align:center}
+.d-st{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:10px}
+.d-st-btn{padding:9px 3px;border-radius:10px;border:1.5px solid var(--border);
+  background:#fff;font-size:12px;cursor:pointer;color:var(--sub);font-weight:500;white-space:nowrap}
+.d-st-btn.on-n{background:var(--grn-light);border-color:var(--grn);color:var(--grn);font-weight:700}
+.d-st-btn.on-k{background:#fff8f0;border-color:var(--ora);color:var(--ora);font-weight:700}
+.d-st-btn.on-f{background:#f5f0fa;border-color:#9c27b0;color:#6a1b9a;font-weight:700}
+.d-st-btn.on-s{background:#fdf0f5;border-color:var(--pin);color:var(--pin);font-weight:700}
+.d-grund{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px}
+.d-grund::placeholder{color:var(--faint)}
+.vorb-section{background:var(--card);border-radius:16px;padding:14px 16px;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);margin-bottom:10px}
+.vorb-section h3{font-size:14px;font-weight:700;color:var(--grn);margin-bottom:10px}
+.vorb-row{display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--border)}
+.vorb-row:last-child{border-bottom:none}
+.vorb-lbl{font-size:13px;color:var(--sub)}
+.vorb-ctrl{display:flex;align-items:center;gap:10px}
+.v-btn{width:30px;height:30px;border-radius:50%;border:none;color:#fff;font-size:18px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center}
+.v-btn.m{background:var(--red)}.v-btn.p{background:var(--grn)}
+.vorb-val{font-size:14px;font-weight:700;color:var(--grn);min-width:42px;text-align:center}
+
+/* ── KOMPAKT ── */
+.kw-block{background:var(--card);border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.08);
+  margin-bottom:10px;overflow:hidden}
+.kw-head{background:var(--grn-light);padding:10px 16px;display:flex;
+  justify-content:space-between;border-bottom:1px solid #c3e8cc}
+.kw-head span:first-child{font-size:13px;font-weight:700;color:var(--grn)}
+.kw-head span:last-child{font-size:12px;color:var(--sub)}
+.k-row{display:grid;grid-template-columns:64px 1fr 42px 1fr;
+  align-items:center;gap:6px;padding:10px 16px;border-bottom:1px solid var(--border)}
+.k-row:last-of-type{border-bottom:none}
+.k-row.k-today{background:var(--grn-light)}
+.k-row.k-frei{opacity:.45}
+.k-row.k-krank{background:#fffbf5}
+.k-row.k-keine-schule{background:#fdf5f8}
+.k-d{display:flex;flex-direction:column}
+.k-kz{font-size:13px;font-weight:700}
+.k-dt{font-size:11px;color:var(--faint)}
+.k-az{font-size:12px;color:var(--sub)}
+.k-pz{font-size:11px;color:var(--faint);text-align:center}
+.k-ctrl{display:flex;align-items:center;gap:5px;justify-content:flex-end}
+.k-ist{font-size:14px;font-weight:700;color:var(--grn);min-width:40px;text-align:center}
+.k-stat{font-size:11px;color:var(--faint);font-style:italic;text-align:right}
+.s-btn{width:28px;height:28px;border-radius:50%;border:none;color:#fff;font-size:16px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center}
+.s-btn.m{background:var(--red)}.s-btn.p{background:var(--grn)}
+.k-sum{background:#f8fdf9;padding:12px 16px;border-top:1px solid var(--border);
+  display:flex;justify-content:space-around}
+.k-sum-item{text-align:center}
+.k-sum-item .lbl{font-size:11px;color:var(--sub);margin-bottom:2px}
+.k-sum-item .val{font-size:15px;font-weight:700;color:var(--grn)}
+.k-sum-item .val.neg{color:var(--red)}
+.kw-vorb{display:flex;justify-content:space-between;align-items:center;
+  padding:10px 16px;border-top:1px solid var(--border)}
+.pos{color:var(--grn)}.neg{color:var(--red)}
+
+/* ── MONAT ── */
+.m-card{background:var(--card);border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden}
+.m-row{display:flex;justify-content:space-between;align-items:center;
+  padding:14px 18px;border-bottom:1px solid var(--border)}
+.m-row:last-child{border-bottom:none}
+.m-row span:first-child{font-size:14px;color:var(--sub)}
+.m-row span:last-child{font-size:15px;font-weight:700}
+.m-ub{display:flex;align-items:center;gap:8px}
+.m-ub input{width:64px;padding:5px;border:1.5px solid var(--border);border-radius:8px;
+  text-align:center;font-size:14px;font-weight:700}
+.m-total{background:var(--grn-light);border-top:2px solid #c3e8cc;
+  display:flex;justify-content:space-between;align-items:center;padding:16px 18px}
+.m-total span:first-child{font-size:15px;font-weight:700;color:var(--grn)}
+.m-total .val{font-size:22px;font-weight:800}
+
+/* ── BOTTOM BAR ── */
+#bar{position:fixed;bottom:0;left:0;right:0;
+  background:#111;
+  display:none;gap:0;
+  padding-bottom:max(0px,env(safe-area-inset-bottom))}
+#bar.show{display:flex}
+/* Teilen: prominent */
+.bb-share{flex:1.4;padding:15px 6px;border:none;background:#fff;
+  color:#111;font-size:15px;font-weight:800;cursor:pointer;
+  border-right:1px solid #333}
+/* Speichern + Drucken: kleiner */
+.bb-save,.bb-print{flex:1;padding:15px 6px;border:none;background:#111;
+  color:rgba(255,255,255,.75);font-size:13px;font-weight:600;cursor:pointer}
+.bb-save{border-right:1px solid #333}
+.bb-save.done{color:#4caf50}
+
+/* Wochenende */
+.weekend-msg{text-align:center;padding:18px;color:var(--sub);font-size:15px}
+
+
+/* ── EVENTS WIDGET ── */
+.evt-card{background:#fff;border-radius:16px;padding:14px 16px;
+  box-shadow:0 4px 16px rgba(0,0,0,.18);border:1.5px solid rgba(255,255,255,.9);
+  margin-bottom:14px}
+.evt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.evt-title{font-size:13px;font-weight:700;color:var(--grn);text-transform:uppercase;letter-spacing:.8px}
+.evt-add-btn{background:var(--grn);color:#fff;border:none;border-radius:20px;
+  padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer}
+.evt-next{display:flex;align-items:center;gap:12px}
+.evt-dot{width:10px;height:10px;border-radius:50%;background:var(--grn);flex-shrink:0}
+.evt-dot.soon{background:var(--ora)}
+.evt-dot.today{background:var(--red)}
+.evt-info{flex:1}
+.evt-date{font-size:12px;color:var(--sub);margin-bottom:2px}
+.evt-name{font-size:15px;font-weight:700;color:var(--txt)}
+.evt-days{font-size:12px;font-weight:700;border-radius:20px;padding:3px 10px;background:var(--grn-light);color:var(--grn)}
+.evt-days.soon{background:#fff3e0;color:var(--ora)}
+.evt-days.today{background:#fce4ec;color:var(--red)}
+.evt-empty{font-size:14px;color:var(--sub);text-align:center;padding:6px 0}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:flex-end}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:22px 22px 0 0;padding:20px;width:100%;max-height:80vh;overflow-y:auto}
+.modal h2{font-size:18px;font-weight:800;color:var(--txt);margin-bottom:16px}
+.modal-close{float:right;background:none;border:none;font-size:24px;color:var(--sub);cursor:pointer;margin-top:-4px}
+.evt-list{}
+.evt-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.evt-item:last-child{border-bottom:none}
+.evt-item-date{font-size:13px;font-weight:700;color:var(--grn);min-width:52px}
+.evt-item-name{flex:1;font-size:14px;color:var(--txt)}
+.evt-del{background:none;border:none;color:var(--faint);font-size:18px;cursor:pointer;padding:2px 6px}
+.evt-del:hover{color:var(--red)}
+.evt-form{margin-top:16px;border-top:1px solid var(--border);padding-top:16px}
+.evt-form h3{font-size:14px;font-weight:700;color:var(--sub);margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px}
+.evt-inp{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;margin-bottom:8px}
+.evt-save-btn{width:100%;padding:13px;background:var(--grn);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
+
 @media print{
-  #appHeader,#monthNav,#todayCard,#tabs,#actions{display:none!important}
-  body{background:white;padding:0}
-  .card{box-shadow:none;margin:4px;padding:8px}
-  #tabContent{display:block!important}
-  .btn-sm,.btn-adj,.btn-team,.k-edit,.act-btn{display:none!important}
+  #hdr,#mnav,#mainScroll .nav-grid,#mainScroll .nav-card-full,#bar{display:none!important}
+  .sub-header{display:none!important}
+  body,html{background:#fff}
+  .d-st-btn,.d-grund,.h-btn,.t-btn,.v-btn,.s-btn{display:none!important}
 }
 </style>
 </head>
 <body>
 
-<div id="appHeader">
-  <div class="hTitle">📋 Stundenzettel</div>
-  <div class="hSub">Marc Hoß &middot; RGT &middot; AWO</div>
-  <div class="hHrs">= 31 Stunden</div>
+<!-- HEADER -->
+<div id="hdr">
+  <h1>Stundenzettel</h1>
+  <p>Marc Hoß · RGT · AWO</p>
+  <div class="hBadge">31 Std. / Woche</div>
 </div>
 
-<div id="monthNav">
-  <button class="navBtn" id="prevBtn">&#8249;</button>
+<!-- MONAT NAV -->
+<div id="mnav">
+  <button class="mnav-btn" id="prevBtn">‹</button>
   <span id="monthLabel"></span>
-  <button class="navBtn" id="nextBtn">&#8250;</button>
+  <button class="mnav-btn" id="nextBtn">›</button>
 </div>
 
-<div class="card" id="todayCard"></div>
+<!-- STARTSEITE -->
+<div id="mainScroll">
+  <!-- HEUTE KARTE -->
+  <div id="todayCard"></div>
 
-<div id="tabs">
-  <button class="tab active" data-t="uebersicht">📅 Übersicht</button>
-  <button class="tab" data-t="monat">📊 Monatsübersicht</button>
-  <button class="tab" data-t="kompakt">📋 Kompakt</button>
+
+  <!-- EVENTS WIDGET -->
+  <div class="evt-card" id="evtWidget">
+    <div class="evt-header">
+      <span class="evt-title">📅 Nächster Termin</span>
+      <button class="evt-add-btn" onclick="openEvtModal()">+ Termin</button>
+    </div>
+    <div id="evtNext"></div>
+  </div>
+  <!-- NAVIGATIONS-BUTTONS -->
+  <div class="nav-grid">
+    <button class="nav-card" onclick="openView('kompakt')">
+      <span class="nc-icon">⚡</span>
+      <span class="nc-lbl">Kompakt</span>
+      <span class="nc-sub">Aktuelle Woche</span>
+    </button>
+    <button class="nav-card" onclick="openView('monat')">
+      <span class="nc-icon">📊</span>
+      <span class="nc-lbl">Monat</span>
+      <span class="nc-sub">Gesamtübersicht</span>
+    </button>
+  </div>
+  <button class="nav-card-full" onclick="openView('uebersicht')">
+    <span style="font-size:22px">📅</span>
+    <div style="text-align:left">
+      <div class="nc-lbl">Alle Tage – Übersicht</div>
+      <div class="nc-sub">Jeden Tag einzeln bearbeiten</div>
+    </div>
+    <span style="font-size:20px;color:var(--faint);margin-left:auto">›</span>
+  </button>
 </div>
 
-<div class="card" id="tabContent"></div>
+<!-- SUB-VIEW -->
+<div id="subView">
+  <div class="sub-header">
+    <button class="back-btn" onclick="closeView()">‹</button>
+    <span class="sub-title" id="subTitle"></span>
+  </div>
+  <div class="sub-content" id="subContent"></div>
+</div>
 
-<div id="actions">
-  <button class="act-btn btn-save" id="saveBtn">💾 Speichern</button>
-  <button class="act-btn btn-reset" id="resetBtn">↺ Zurücksetzen</button>
-  <button class="act-btn btn-print" id="printBtn">🖨 Drucken</button>
+<!-- BOTTOM BAR (nur in Sub-Views) -->
+<div id="bar">
+  <button class="bb-share" id="shareBtn">📤 Teilen</button>
+  <button class="bb-save"  id="saveBtn">💾 Speichern</button>
+  <button class="bb-print" id="printBtn">🖨 Drucken</button>
 </div>
 
 <script>
-// ============================================================
-// KONFIGURATION
-// ============================================================
-const PLAN = {
-  1:{tag:'Montag',    kz:'Mo', az:'7:30–15:00',  soll:7.00, pause:'0:30', team:false},
-  2:{tag:'Dienstag',  kz:'Di', az:'10:00–14:20', soll:4.20, pause:'–',    team:false},
-  3:{tag:'Mittwoch',  kz:'Mi', az:'8:00–13:30',  soll:5.30, pause:'–',    team:false},
-  4:{tag:'Donnerstag',kz:'Do', az:'8:00–16:00',  soll:8.30, pause:'–',    team:true },
-  5:{tag:'Freitag',   kz:'Fr', az:'10:00–15:00', soll:5.00, pause:'–',    team:false},
+const PLAN={
+  1:{kz:'Mo',az:'7:30–15:00', soll:7.00,pause:'0:30',team:false},
+  2:{kz:'Di',az:'10:00–14:20',soll:4.20,pause:'–',   team:false},
+  3:{kz:'Mi',az:'8:00–13:30', soll:5.30,pause:'–',   team:false},
+  4:{kz:'Do',az:'8:00–16:00', soll:8.30,pause:'–',   team:true },
+  5:{kz:'Fr',az:'10:00–15:00',soll:5.00,pause:'–',   team:false},
 };
-const WOCHENSOLL = 31.00;  // Konstante Wochensollstunden
-const TEAM_DEF   = 1.00;   // Standard Teambesprechung Do
-const VORB_DEF   = 1.00;   // Standard Vorbereitungszeit/Woche
-const STEP       = 0.25;   // ±15 Min = ±0,25h
+const WSOLL=31.00,TDEF=1.00,VDEF=1.00,STEP=0.25;
+const MN=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const TKZ=['So','Mo','Di','Mi','Do','Fr','Sa'];
 
-const MONATE = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
-const TAGE_KZ = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+let S={year:new Date().getFullYear(),month:new Date().getMonth()+1,view:'home',data:{},vorb:{},ubertrag:0};
 
-// ============================================================
-// STATE
-// ============================================================
-let S = {
-  year: new Date().getFullYear(),
-  month: new Date().getMonth() + 1,
-  tab: 'uebersicht',
-  data: {},    // {dateKey: {ist, status, team}}
-  vorb: {},    // {weekKey: h}
-  ubertrag: 0
-};
+function fH(n){if(n==null||isNaN(n))return'–';const s=n<0?'-':'',a=Math.abs(n),h=Math.floor(a),m=String(Math.round((a-h)*100)).padStart(2,'0');return s+h+','+m;}
+function dKey(y,m,d){return`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+function step(v,d){let r=Math.round((v+d*STEP)*100)/100;const h=Math.floor(Math.abs(r)),fr=Math.round((Math.abs(r)-h)*100);if(fr>=60)r=Math.sign(r||1)*((h+1)+(fr-60)/100);return Math.max(0,r);}
+function wdays(y,m){const a=[],c=new Date(y,m,0).getDate();for(let d=1;d<=c;d++){const dw=new Date(y,m-1,d).getDay();if(dw>=1&&dw<=5)a.push({d,dow:dw,key:dKey(y,m,d)});}return a;}
+function wKey(y,m,d){const dt=new Date(Date.UTC(y,m-1,d));dt.setUTCDate(dt.getUTCDate()+4-(dt.getUTCDay()||7));const y1=new Date(Date.UTC(dt.getUTCFullYear(),0,1));return`${dt.getUTCFullYear()}-W${String(Math.ceil((((dt-y1)/86400000)+1)/7)).padStart(2,'0')}`;}
+function weeksOf(y,m){const w={};wdays(y,m).forEach(({d,dow,key})=>{const k=wKey(y,m,d);if(!w[k])w[k]=[];w[k].push({d,dow,key});});return w;}
+function dd(key,dow){const p=PLAN[dow];if(!p)return null;const st=S.data[key]||{},team=st.team!==undefined?st.team:(p.team?TDEF:0),def=p.soll+(p.team?team:0);return{ist:st.ist!==undefined?st.ist:def,status:st.status||'',team,grund:st.grund||''};}
+function cIst(d){if(!d||d.status)return 0;return d.ist;}
+function wSoll(days){const full=days.length===5||[1,2,3,4,5].every(dw=>days.some(x=>x.dow===dw));if(full)return WSOLL;let s=0;days.forEach(({dow,key})=>{const d=dd(key,dow);if(!d)return;s+=PLAN[dow].soll+(PLAN[dow].team?(d.team||TDEF):0);});return Math.round(s*100)/100;}
+function wIst(days){let s=0;days.forEach(({dow,key})=>s+=cIst(dd(key,dow)));return Math.round(s*100)/100;}
+function mCalc(){const w=weeksOf(S.year,S.month);let ts=0,ti=0,tv=0;Object.entries(w).forEach(([k,days])=>{ts+=wSoll(days);ti+=wIst(days);tv+=S.vorb[k]!==undefined?S.vorb[k]:VDEF;});ts=Math.round(ts*100)/100;ti=Math.round(ti*100)/100;tv=Math.round(tv*100)/100;return{ts,ti,tv,ub:S.ubertrag,neu:Math.round((ti+tv-ts+S.ubertrag)*100)/100};}
 
-// ============================================================
-// HELPERS
-// ============================================================
-function fH(n) {
-  if (isNaN(n)||n===null) return '–';
-  const s = n < 0 ? '-' : '';
-  const a = Math.abs(n);
-  const h = Math.floor(a);
-  const m = String(Math.round((a-h)*100)).padStart(2,'0');
-  return s+h+','+m;
+function sk(){return`sz5_${S.year}_${S.month}`;}
+function save(){localStorage.setItem(sk(),JSON.stringify({data:S.data,vorb:S.vorb,ubertrag:S.ubertrag}));}
+function load(){const r=localStorage.getItem(sk());if(r){const p=JSON.parse(r);S.data=p.data||{};S.vorb=p.vorb||{};S.ubertrag=p.ubertrag||0;}else{S.data={};S.vorb={};S.ubertrag=0;}}
+
+// ── NAVIGATION ──
+function openView(v){
+  S.view=v;
+  document.getElementById('mainScroll').style.display='none';
+  document.getElementById('subView').style.display='block';
+  document.getElementById('bar').classList.add('show');
+  const titles={uebersicht:'📅 Übersicht',kompakt:'⚡ Kompakt',monat:'📊 Monat'};
+  document.getElementById('subTitle').textContent=titles[v];
+  renderSubView();
+}
+function closeView(){
+  S.view='home';
+  document.getElementById('mainScroll').style.display='block';
+  document.getElementById('subView').style.display='none';
+  document.getElementById('bar').classList.remove('show');
 }
 
-function dKey(y,m,d) {
-  return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-}
-
-function normalize(val) {
-  // Sicherstellen dass Minuten-Teil < 60
-  const h = Math.floor(Math.abs(val));
-  const m = Math.round((Math.abs(val)-h)*100);
-  if (m >= 60) {
-    return Math.sign(val||1)*((h+1)+(m-60)/100);
-  }
-  return val;
-}
-
-function addStep(val, dir) {
-  return Math.round(normalize(val + dir*STEP)*100)/100;
-}
-
-function wKey(y,m,d) {
-  const date = new Date(y,m-1,d);
-  const dow = date.getDay()||7;
-  const mon = new Date(date);
-  mon.setDate(d-(dow-1));
-  // ISO week
-  const tmp = new Date(Date.UTC(mon.getFullYear(),mon.getMonth(),mon.getDate()));
-  const dayN = tmp.getUTCDay()||7;
-  tmp.setUTCDate(tmp.getUTCDate()+4-dayN);
-  const ys = new Date(Date.UTC(tmp.getUTCFullYear(),0,1));
-  const wn = Math.ceil((((tmp-ys)/86400000)+1)/7);
-  return `${mon.getFullYear()}-W${String(wn).padStart(2,'0')}`;
-}
-
-// Alle Arbeitstage des Monats
-function workdays(y,m) {
-  const days=[], cnt=new Date(y,m,0).getDate();
-  for(let d=1;d<=cnt;d++){
-    const dow=new Date(y,m-1,d).getDay();
-    if(dow>=1&&dow<=5) days.push({d,dow,key:dKey(y,m,d)});
-  }
-  return days;
-}
-
-// Tagesdaten (mit Defaults)
-function dayData(key,dow) {
-  const p=PLAN[dow]; if(!p) return null;
-  const stored=S.data[key]||{};
-  const team = stored.team!==undefined ? stored.team : (p.team?TEAM_DEF:0);
-  const defaultIst = p.soll + (p.team?team:0);
-  return {
-    ist:   stored.ist!==undefined ? stored.ist : defaultIst,
-    status:stored.status||'',
-    team
-  };
-}
-
-// Wochengruppen des Monats
-function weeksInMonth(y,m) {
-  const weeks={};
-  workdays(y,m).forEach(({d,dow,key})=>{
-    const wk=wKey(y,m,d);
-    if(!weeks[wk]) weeks[wk]=[];
-    weeks[wk].push({d,dow,key});
-  });
-  return weeks;
-}
-
-// Woche SOLL
-function wSoll(days) {
-  const isFull = days.length === 5 ||
-    ([1,2,3,4,5].every(dow=> days.some(d=>d.dow===dow)));
-  if(isFull) return WOCHENSOLL;
-  // Teilwoche: Summe der Tages-SOLL
-  let s=0;
-  days.forEach(({dow,key})=>{
-    const dd=dayData(key,dow);
-    if(!dd||dd.status) return;
-    const p=PLAN[dow];
-    s+=p.soll+(p.team?(dd.team||TEAM_DEF):0);
-  });
-  return Math.round(s*100)/100;
-}
-
-// Woche IST
-function wIst(days) {
-  let s=0;
-  days.forEach(({dow,key})=>{
-    const dd=dayData(key,dow);
-    if(!dd||dd.status==='frei'||dd.status==='krank') return;
-    s+=dd.ist;
-  });
-  return Math.round(s*100)/100;
-}
-
-// Monatssummen
-function monthCalc(y,m) {
-  const weeks=weeksInMonth(y,m);
-  let tSoll=0,tIst=0,tVorb=0;
-  Object.entries(weeks).forEach(([wk,days])=>{
-    tSoll+=wSoll(days);
-    tIst+=wIst(days);
-    tVorb+=S.vorb[wk]!==undefined?S.vorb[wk]:VORB_DEF;
-  });
-  tSoll=Math.round(tSoll*100)/100;
-  tIst=Math.round(tIst*100)/100;
-  tVorb=Math.round(tVorb*100)/100;
-  const neuer=Math.round((tIst+tVorb-tSoll+S.ubertrag)*100)/100;
-  return {tSoll,tIst,tVorb,ubertrag:S.ubertrag,neuer};
-}
-
-// ============================================================
-// STORAGE
-// ============================================================
-function sKey(){return `sz2_${S.year}_${S.month}`;}
-function save(){localStorage.setItem(sKey(),JSON.stringify({data:S.data,vorb:S.vorb,ubertrag:S.ubertrag}));}
-function load(){
-  const raw=localStorage.getItem(sKey());
-  if(raw){const p=JSON.parse(raw);S.data=p.data||{};S.vorb=p.vorb||{};S.ubertrag=p.ubertrag||0;}
-  else{S.data={};S.vorb={};S.ubertrag=0;}
-}
-
-// ============================================================
-// RENDER
-// ============================================================
-function renderAll(){
-  document.getElementById('monthLabel').textContent=`${MONATE[S.month-1]} ${S.year}`;
-  renderToday();
-  renderTab();
-}
-
-// --- HEUTE KARTE ---
-function renderToday(){
-  const now=new Date();
-  const tod={y:now.getFullYear(),m:now.getMonth()+1,d:now.getDate()};
-  const dow=now.getDay(); // 0=So
-  const el=document.getElementById('todayCard');
-
-  if(dow===0||dow===6){
-    el.innerHTML=`<div class="weekend-msg">🌴 Wochenende – erhol dich gut!</div>`;
-    return;
-  }
-
-  const key=dKey(tod.y,tod.m,tod.d);
-  const dd=dayData(key,dow);
-  const p=PLAN[dow];
-  const isCurr=(tod.y===S.year&&tod.m===S.month);
-
-  el.innerHTML=`
-    <div class="td-header">
-      <span class="td-label">Heute</span>
-      <span class="td-date">${TAGE_KZ[dow]}, ${tod.d}. ${MONATE[tod.m-1]}</span>
+// ── HEUTE KARTE ──
+function rToday(){
+  const now=new Date(),dow=now.getDay(),el=document.getElementById('todayCard');
+  if(dow===0||dow===6){el.innerHTML=`<div class="heute-card"><div class="weekend-msg">🌴 Wochenende</div></div>`;return;}
+  const y=now.getFullYear(),m=now.getMonth()+1,d=now.getDate();
+  const key=dKey(y,m,d),D=dd(key,dow),p=PLAN[dow];
+  const cur=y===S.year&&m===S.month,st=D?D.status:'';
+  const zeig=st?'0,00':fH(D?D.ist:p.soll);
+  const soll=p.soll+(p.team?(D?D.team:TDEF):0);
+  const ist=D?D.ist:soll;
+  const pct=Math.min(Math.round(ist/soll*100),100);
+  const diff=Math.round((ist-soll)*100)/100;
+  const diffTxt=diff===0?'✓ genau':diff>0?`+${fH(diff)}h über Soll`:`${fH(diff)}h unter Soll`;
+  const diffCol=diff>0?'var(--ora)':diff<0?'var(--red)':'var(--grn)';
+  el.innerHTML=`<div class="heute-card">
+    <div class="h-top">
+      <span class="h-tag">HEUTE</span>
+      <div class="h-right"><div class="h-dat">${TKZ[dow]}, ${d}. ${MN[m-1]}</div><div class="h-az">${p.az}</div></div>
     </div>
-    <div class="td-az">${p.az} &nbsp;·&nbsp; Pause: ${p.pause}</div>
-    ${isCurr?`
-      <div class="td-controls">
-        <button class="btn-adj minus" onclick="adjDay('${key}',${dow},-1)">−</button>
-        <span class="ist-display">${fH(dd.ist)}h</span>
-        <button class="btn-adj" onclick="adjDay('${key}',${dow},1)">+</button>
-      </div>
-      ${p.team?`
-      <div class="td-team">
-        <span class="td-team-label">🤝 Team:</span>
-        <button class="btn-team minus" onclick="adjTeam('${key}',${dow},-1)">−</button>
-        <span class="team-val">${fH(dd.team)}h</span>
-        <button class="btn-team" onclick="adjTeam('${key}',${dow},1)">+</button>
-      </div>`:''}
-      <div class="td-status">
-        <button class="status-btn ${dd.status==='frei'?'active frei':''}"
-          onclick="togStatus('${key}',${dow},'frei')">🌿 Frei</button>
-        <button class="status-btn ${dd.status==='krank'?'active krank':''}"
-          onclick="togStatus('${key}',${dow},'krank')">🤒 Krank</button>
-      </div>` : `<div style="color:#999;font-size:13px;text-align:center">Anderer Monat</div>`}
-  `;
+    ${cur?`<div class="h-main">
+      <button class="h-btn m" onclick="adjD('${key}',${dow},-1)">−</button>
+      <span class="h-std${st?' zero':''}">${zeig}h</span>
+      <button class="h-btn p" onclick="adjD('${key}',${dow},1)">+</button>
+    </div>
+    ${!st?`<div class="prog-wrap">
+      <div class="prog-lbl"><span>${fH(ist)}h</span><span style="color:${diffCol}">${diffTxt}</span></div>
+      <div class="prog-bg"><div class="prog-fill${diff>0?' over':''}" style="width:${pct}%"></div></div>
+    </div>`:''}
+    ${p.team?`<div class="h-team"><span class="h-team-lbl">🤝 Teambesprechung</span>
+      <button class="t-btn m" onclick="adjT('${key}',${dow},-1)">−</button>
+      <span class="h-team-val">${fH(D?D.team:TDEF)}h</span>
+      <button class="t-btn p" onclick="adjT('${key}',${dow},1)">+</button></div>`:''}
+    <div class="h-status">
+      <button class="st-btn${st==='frei'?' ak-frei':''}" onclick="togS('${key}',${dow},'frei')">⭐ Frei</button>
+      <button class="st-btn${st==='krank'?' ak-krank':''}" onclick="togS('${key}',${dow},'krank')">🤒 Krank</button>
+      <button class="st-btn${st==='keine_schule'?' ak-ks':''}" onclick="togS('${key}',${dow},'keine_schule')">🚫 K.Schule</button>
+    </div>`:`<div style="text-align:center;color:var(--faint);font-size:13px;padding:8px">anderer Monat</div>`}
+  </div>`;
 }
 
-// --- TAB: ÜBERSICHT (aktuelle Woche) ---
-function renderUebersicht(){
-  const now=new Date();
-  const dow=now.getDay()||7; // 1-7
-  const mon=new Date(now);
-  mon.setDate(now.getDate()-(dow-1));
+// ── SUB-VIEWS ──
+function renderSubView(){
+  const el=document.getElementById('subContent');
+  if(S.view==='uebersicht') el.innerHTML=rUebersicht();
+  else if(S.view==='kompakt') el.innerHTML=rKompakt();
+  else el.innerHTML=rMonat();
+}
 
-  let html='';
-  const weekRows=[];
-
-  for(let i=0;i<5;i++){
-    const d=new Date(mon); d.setDate(mon.getDate()+i);
-    const y=d.getFullYear(),m=d.getMonth()+1,day=d.getDate(),dw=d.getDay();
-    const key=dKey(y,m,day);
-    const dd=dayData(key,dw);
-    const p=PLAN[dw];
-    const isToday=(y===now.getFullYear()&&m===now.getMonth()+1&&day===now.getDate());
-    const isCurr=(y===S.year&&m===S.month);
-
-    weekRows.push({dw,key,dd,isCurr});
-
-    html+=`<div class="day-row ${isToday?'today':''} ${dd&&dd.status?'day-'+dd.status:''}">
-      <div class="day-label">
-        <span class="day-kz">${p?p.kz:TAGE_KZ[dw]}</span>
-        <span class="day-d">${day}.${String(m).padStart(2,'0')}.</span>
-      </div>
-      <div class="day-az">${p?p.az:'–'}</div>
-      <div class="day-pause">${p?p.pause:'–'}</div>
-      ${isCurr&&p&&dd?`
-        <div class="day-ctrl">
-          ${dd.status?`<span class="day-status-txt">${dd.status}</span>`:`
-          <button class="btn-sm minus" onclick="adjDay('${key}',${dw},-1)">−</button>
-          <span class="day-ist">${fH(dd.ist)}</span>
-          <button class="btn-sm" onclick="adjDay('${key}',${dw},1)">+</button>`}
-        </div>` :
-        `<div class="day-ctrl"><span class="day-ist">${dd?(dd.status||fH(dd.ist)):'–'}</span></div>`}
-    </div>`;
-  }
-
-  // Wochensummary
-  const wkDaysInMonth=weekRows
-    .filter(r=>r.isCurr&&r.dd)
-    .map(r=>({dow:r.dw,key:r.key}));
-
-  if(wkDaysInMonth.length>0){
-    const wk=wKey(S.year,S.month,wkDaysInMonth[0].key.split('-')[2]);
-    const ws=wSoll(wkDaysInMonth);
-    const wi=wIst(wkDaysInMonth);
-    const wd=Math.round((wi-ws)*100)/100;
-    const vorb=S.vorb[wk]!==undefined?S.vorb[wk]:VORB_DEF;
-
-    html+=`<div class="week-sum-card">
-      <div class="ws-row"><span>SOLL Woche:</span><span>${fH(ws)}h</span></div>
-      <div class="ws-row"><span>IST Woche:</span><span>${fH(wi)}h</span></div>
-      <div class="ws-row"><span>+/–:</span><span class="${wd<0?'neg':'pos'}">${wd>=0?'+':''}${fH(wd)}h</span></div>
-      <div class="vorb-row">
-        <span class="vorb-label">📝 Vorbereitung:</span>
-        <div class="vorb-ctrl">
-          <button class="btn-sm minus" onclick="adjVorb('${wk}',-1)">−</button>
-          <span class="vorb-val">${fH(vorb)}h</span>
-          <button class="btn-sm" onclick="adjVorb('${wk}',1)">+</button>
+function rUebersicht(){
+  const days=wdays(S.year,S.month);
+  const now=new Date(),tod=dKey(now.getFullYear(),now.getMonth()+1,now.getDate());
+  let h='';
+  days.forEach(({d,dow,key})=>{
+    const D=dd(key,dow),p=PLAN[dow],st=D.status;
+    const isT=key===tod&&S.year===now.getFullYear()&&S.month===now.getMonth()+1;
+    const hc=isT?'h-today':st?'h-'+st.replace('_','-'):'';
+    const bl=st==='frei'?'⭐ Frei':st==='krank'?'🤒 Krank':st==='keine_schule'?'🚫 K.Schule':p.az;
+    const bc=st==='frei'?'b-frei':st==='krank'?'b-krank':st==='keine_schule'?'b-ks':'';
+    const disp=st?'0,00':fH(D.ist);
+    h+=`<div class="d-card"><div class="d-head ${hc}">
+      <span class="d-name${st?' grau':''}">${p.kz} ${d}.${String(S.month).padStart(2,'0')}.</span>
+      <span class="d-badge ${bc}">${bl}</span></div>
+      <div class="d-body">
+        <div class="d-h-row">
+          <input class="d-h-inp" type="text" value="${fH(D.ist)}"${st?' disabled':''} onchange="setI('${key}',${dow},this.value)">
+          <span class="d-h-show${st==='keine_schule'?' neg':''}">${disp}h</span>
         </div>
-      </div>
+        ${p.team?`<div class="d-team"><span class="d-team-lbl">🤝 Teambesprechung</span>
+          <button class="s-btn m" onclick="adjT('${key}',${dow},-1)">−</button>
+          <span class="d-team-val">${fH(D.team)}h</span>
+          <button class="s-btn p" onclick="adjT('${key}',${dow},1)">+</button></div>`:''}
+        <div class="d-st">
+          <button class="d-st-btn${!st?' on-n':''}" onclick="togS('${key}',${dow},'')">✅ Normal</button>
+          <button class="d-st-btn${st==='krank'?' on-k':''}" onclick="togS('${key}',${dow},'krank')">🤒 Krank</button>
+          <button class="d-st-btn${st==='frei'?' on-f':''}" onclick="togS('${key}',${dow},'frei')">⭐ Frei</button>
+          <button class="d-st-btn${st==='keine_schule'?' on-s':''}" onclick="togS('${key}',${dow},'keine_schule')">🚫</button>
+        </div>
+        <input class="d-grund" type="text" placeholder="Begründung (z.B. kein Team, Vertretung...)"
+          value="${D.grund}" onchange="setG('${key}',${dow},this.value)">
+      </div></div>`;
+  });
+  const weeks=weeksOf(S.year,S.month);
+  h+=`<div class="vorb-section"><h3>📝 Vorbereitungszeit pro Woche</h3>`;
+  Object.entries(weeks).forEach(([wk,days])=>{
+    const v=S.vorb[wk]!==undefined?S.vorb[wk]:VDEF;
+    const kw=wk.split('-W')[1],d1=days[0].d,d2=days[days.length-1].d;
+    h+=`<div class="vorb-row"><span class="vorb-lbl">KW ${kw} (${d1}.–${d2}.)</span>
+      <div class="vorb-ctrl">
+        <button class="v-btn m" onclick="adjV('${wk}',-1)">−</button>
+        <span class="vorb-val">${fH(v)}h</span>
+        <button class="v-btn p" onclick="adjV('${wk}',1)">+</button>
+      </div></div>`;
+  });
+  return h+'</div>';
+}
+
+function rKompakt(){
+  const now=new Date(),dow=(now.getDay()||7);
+  const mon=new Date(now);mon.setDate(now.getDate()-(dow-1));
+  const tod=dKey(now.getFullYear(),now.getMonth()+1,now.getDate());
+  let h='<div class="kw-block">',wkRows=[];
+  for(let i=0;i<5;i++){
+    const dt=new Date(mon);dt.setDate(mon.getDate()+i);
+    const y=dt.getFullYear(),m=dt.getMonth()+1,day=dt.getDate(),dw=dt.getDay();
+    const key=dKey(y,m,day),D=dd(key,dw),p=PLAN[dw];
+    const cur=y===S.year&&m===S.month,isT=key===tod&&cur,st=D?D.status:'';
+    wkRows.push({dw,key,D,cur});
+    h+=`<div class="k-row${isT?' k-today':''}${st?' k-'+st.replace('_','-'):''}">
+      <div class="k-d"><span class="k-kz">${p.kz}</span><span class="k-dt">${day}.${String(m).padStart(2,'0')}.</span></div>
+      <span class="k-az">${p.az}</span><span class="k-pz">${p.pause}</span>
+      ${cur&&D?`<div class="k-ctrl">${st
+        ?`<span class="k-stat">${st==='keine_schule'?'K.Sch.':st}</span>`
+        :`<button class="s-btn m" onclick="adjD('${key}',${dw},-1)">−</button>
+           <span class="k-ist">${fH(D.ist)}</span>
+           <button class="s-btn p" onclick="adjD('${key}',${dw},1)">+</button>`
+      }</div>`:`<div class="k-ctrl"><span class="k-ist">${D?(st||fH(D.ist)):'–'}</span></div>`}
     </div>`;
   }
-
-  return html;
+  const wkInM=wkRows.filter(r=>r.cur&&r.D).map(r=>({dow:r.dw,key:r.key}));
+  if(wkInM.length){
+    const wk=wKey(S.year,S.month,wkInM[0].key.split('-')[2]);
+    const ws=wSoll(wkInM),wi=wIst(wkInM),wd=Math.round((wi-ws)*100)/100;
+    const v=S.vorb[wk]!==undefined?S.vorb[wk]:VDEF;
+    h+=`<div class="k-sum">
+      <div class="k-sum-item"><div class="lbl">SOLL</div><div class="val">${fH(ws)}h</div></div>
+      <div class="k-sum-item"><div class="lbl">IST</div><div class="val">${fH(wi)}h</div></div>
+      <div class="k-sum-item"><div class="lbl">+/–</div><div class="val${wd<0?' neg':' pos'}">${wd>=0?'+':''}${fH(wd)}h</div></div>
+    </div><div class="kw-vorb"><span style="font-size:13px;color:var(--sub)">📝 Vorbereitung</span>
+      <div class="vorb-ctrl">
+        <button class="v-btn m" onclick="adjV('${wk}',-1)">−</button>
+        <span class="vorb-val">${fH(v)}h</span>
+        <button class="v-btn p" onclick="adjV('${wk}',1)">+</button>
+      </div></div>`;
+  }
+  return h+'</div>';
 }
 
-// --- TAB: MONATSÜBERSICHT ---
-function renderMonat(){
-  const {tSoll,tIst,tVorb,ubertrag,neuer}=monthCalc(S.year,S.month);
-  return `
-    <div class="mc-title">📊 Monatsübersicht ${MONATE[S.month-1]} ${S.year}</div>
-    <div class="mc-row"><span>Gesamt SOLL:</span><span>${fH(tSoll)}h</span></div>
-    <div class="mc-row"><span>Gesamt IST:</span><span>${fH(tIst)}h</span></div>
-    <div class="mc-row"><span>Vorbereitung:</span><span class="pos">+${fH(tVorb)}h</span></div>
-    <div class="mc-row">
-      <span>Übertrag Vormonat:</span>
-      <div class="ubertrag-ctrl">
-        <button class="btn-sm minus" onclick="adjUb(-1)">−</button>
-        <input class="ubertrag-input" id="ubIn" value="${fH(ubertrag)}" onchange="setUb(this.value)">
-        <button class="btn-sm" onclick="adjUb(1)">+</button>
-      </div>
-    </div>
-    <div class="mc-row mc-total">
-      <span>Neuer Stand +/–:</span>
-      <span class="${neuer<0?'neg':'pos'}">${neuer>=0?'+':''}${fH(neuer)}h</span>
-    </div>
-  `;
-}
-
-// --- TAB: KOMPAKT ---
-function renderKompakt(){
-  const weeks=weeksInMonth(S.year,S.month);
-  let html='';
-
-  Object.entries(weeks).forEach(([wk,days])=>{
-    const ws=wSoll(days), wi=wIst(days);
-    const wd=Math.round((wi-ws)*100)/100;
-    const vorb=S.vorb[wk]!==undefined?S.vorb[wk]:VORB_DEF;
-
-    html+=`<div class="k-week">
-      <div class="k-wk-header">KW ${wk.split('-W')[1]} — SOLL ${fH(ws)}h</div>`;
-
-    days.forEach(({d,dow,key})=>{
-      const dd=dayData(key,dow), p=PLAN[dow];
-      html+=`<div class="k-row">
-        <span class="k-date">${p.kz} ${d}.${String(S.month).padStart(2,'0')}.</span>
-        <span class="k-az">${p.az}</span>
-        <span class="k-ist ${dd.status?'k-'+dd.status:''}">${dd.status||fH(dd.ist)}</span>
-        <button class="k-edit" onclick="quickEdit('${key}',${dow})">✎</button>
-      </div>`;
-    });
-
-    html+=`<div class="k-wsum">
-      <span>IST: ${fH(wi)}h</span>
-      <span class="${wd<0?'neg':'pos'}">${wd>=0?'+':''}${fH(wd)}h</span>
-      <span>Vorb: ${fH(vorb)}h</span>
+function rMonat(){
+  const{ts,ti,tv,neu}=mCalc();
+  return`<div class="m-card">
+    <div class="m-row"><span>Gesamt SOLL</span><span>${fH(ts)}h</span></div>
+    <div class="m-row"><span>Gesamt IST</span><span>${fH(ti)}h</span></div>
+    <div class="m-row"><span>Vorbereitung</span><span class="pos">+${fH(tv)}h</span></div>
+    <div class="m-row"><span>Übertrag Vormonat</span>
+      <div class="m-ub">
+        <button class="s-btn m" onclick="adjU(-1)">−</button>
+        <input type="text" id="ubIn" value="${fH(S.ubertrag)}" onchange="setU(this.value)">
+        <button class="s-btn p" onclick="adjU(1)">+</button>
+      </div></div>
+    <div class="m-total"><span>Neuer Stand +/–</span>
+      <span class="val${neu<0?' neg':' pos'}">${neu>=0?'+':''}${fH(neu)}h</span>
     </div></div>`;
-  });
-
-  return html;
 }
 
-function renderTab(){
-  const el=document.getElementById('tabContent');
-  switch(S.tab){
-    case 'uebersicht': el.innerHTML=renderUebersicht(); break;
-    case 'monat':      el.innerHTML=renderMonat(); break;
-    case 'kompakt':    el.innerHTML=renderKompakt(); break;
-  }
+// ── AKTIONEN ──
+function adjD(k,dw,d){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};S.data[k].ist=step(S.data[k].ist!==undefined?S.data[k].ist:D.ist,d);save();rToday();if(S.view!=='home')renderSubView();}
+function adjT(k,dw,d){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};const nt=step(S.data[k].team!==undefined?S.data[k].team:TDEF,d);S.data[k].team=nt;S.data[k].ist=Math.round((PLAN[dw].soll+nt)*100)/100;save();rToday();if(S.view!=='home')renderSubView();}
+function togS(k,dw,st){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};S.data[k].status=S.data[k].status===st?'':st;save();rToday();if(S.view!=='home')renderSubView();}
+function setI(k,dw,v){const n=parseFloat(String(v).replace(',','.'));if(!isNaN(n)){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};S.data[k].ist=Math.round(n*100)/100;save();renderSubView();}}
+function setG(k,dw,v){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};S.data[k].grund=v;save();}
+function adjV(wk,d){const c=S.vorb[wk]!==undefined?S.vorb[wk]:VDEF;S.vorb[wk]=step(c,d);save();renderSubView();}
+function adjU(d){S.ubertrag=step(S.ubertrag,d);save();renderSubView();}
+function setU(v){const n=parseFloat(String(v).replace(',','.'));if(!isNaN(n)){S.ubertrag=Math.round(n*100)/100;save();renderSubView();}}
+
+// ── EVENTS ──
+document.getElementById('prevBtn').onclick=()=>{S.month--;if(S.month<1){S.month=12;S.year--;}
+// ── EVENTS SYSTEM ──
+const DEFAULT_EVENTS = [
+  {id:'e1', date:'2026-06-19', name:'Fronleichnam (Feiertag)'},
+  {id:'e2', date:'2026-10-03', name:'Tag der Deutschen Einheit'},
+  {id:'e3', date:'2026-10-31', name:'Reformationstag'},
+  {id:'e4', date:'2026-11-01', name:'Allerheiligen (Feiertag)'},
+  {id:'e5', date:'2026-12-25', name:'1. Weihnachtstag'},
+  {id:'e6', date:'2026-12-26', name:'2. Weihnachtstag'},
+  {id:'e7', date:'2027-01-01', name:'Neujahr 2027'},
+];
+
+function loadEvts(){
+  const raw=localStorage.getItem('sz_events');
+  if(raw) return JSON.parse(raw);
+  localStorage.setItem('sz_events', JSON.stringify(DEFAULT_EVENTS));
+  return DEFAULT_EVENTS;
+}
+function saveEvts(evts){ localStorage.setItem('sz_events', JSON.stringify(evts)); }
+
+function rEvtWidget(){
+  const evts=loadEvts();
+  const today=new Date(); today.setHours(0,0,0,0);
+  const future=evts
+    .map(e=>({...e,dt:new Date(e.date+'T00:00:00')}))
+    .filter(e=>e.dt>=today)
+    .sort((a,b)=>a.dt-b.dt);
+  const el=document.getElementById('evtNext');
+  if(!future.length){el.innerHTML='<div class="evt-empty">Keine Termine eingetragen</div>';return;}
+  const next=future[0];
+  const diff=Math.round((next.dt-today)/86400000);
+  const cls=diff===0?'today':diff<=7?'soon':'';
+  const daysTxt=diff===0?'Heute!':diff===1?'Morgen':`in ${diff} Tagen`;
+  const d=next.dt;
+  const dateStr=`${d.getDate()}. ${MN[d.getMonth()]} ${d.getFullYear()}`;
+  el.innerHTML=`<div class="evt-next">
+    <div class="evt-dot ${cls}"></div>
+    <div class="evt-info">
+      <div class="evt-date">${dateStr}</div>
+      <div class="evt-name">${next.name}</div>
+    </div>
+    <span class="evt-days ${cls}">${daysTxt}</span>
+  </div>`;
 }
 
-// ============================================================
-// AKTIONEN
-// ============================================================
-function adjDay(key,dow,dir){
-  const dd=dayData(key,dow);
-  if(!S.data[key]) S.data[key]={...dd};
-  S.data[key].ist=Math.max(0, addStep(S.data[key].ist!==undefined?S.data[key].ist:dd.ist, dir));
-  save(); renderAll();
+function openEvtModal(){
+  // Datum auf heute vorausfüllen
+  const today=new Date();
+  document.getElementById('evtDate').value=today.toISOString().split('T')[0];
+  rEvtList();
+  document.getElementById('evtModal').classList.add('open');
+}
+function closeEvtModal(){
+  document.getElementById('evtModal').classList.remove('open');
+  rEvtWidget();
 }
 
-function adjTeam(key,dow,dir){
-  const dd=dayData(key,dow);
-  if(!S.data[key]) S.data[key]={...dd};
-  const newTeam=Math.max(0, addStep(S.data[key].team!==undefined?S.data[key].team:TEAM_DEF, dir));
-  S.data[key].team=newTeam;
-  // IST = Dienst + Team
-  S.data[key].ist=Math.round((PLAN[dow].soll+newTeam)*100)/100;
-  save(); renderAll();
+function rEvtList(){
+  const evts=loadEvts().sort((a,b)=>a.date.localeCompare(b.date));
+  const el=document.getElementById('evtList');
+  if(!evts.length){el.innerHTML='<div class="evt-empty">Noch keine Termine</div>';return;}
+  el.innerHTML=evts.map(e=>{
+    const d=new Date(e.date+'T00:00:00');
+    const ds=`${d.getDate()}. ${MN[d.getMonth()]}`;
+    return`<div class="evt-item">
+      <span class="evt-item-date">${ds}</span>
+      <span class="evt-item-name">${e.name}</span>
+      <button class="evt-del" onclick="delEvt('${e.id}')">×</button>
+    </div>`;
+  }).join('');
 }
 
-function togStatus(key,dow,status){
-  const dd=dayData(key,dow);
-  if(!S.data[key]) S.data[key]={...dd};
-  S.data[key].status=(S.data[key].status===status?'':status);
-  save(); renderAll();
+function addEvt(){
+  const date=document.getElementById('evtDate').value;
+  const name=document.getElementById('evtName').value.trim();
+  if(!date||!name) return;
+  const evts=loadEvts();
+  evts.push({id:'e'+Date.now(), date, name});
+  saveEvts(evts);
+  document.getElementById('evtName').value='';
+  rEvtList();
 }
 
-function adjVorb(wk,dir){
-  const cur=S.vorb[wk]!==undefined?S.vorb[wk]:VORB_DEF;
-  S.vorb[wk]=Math.max(0, Math.round(addStep(cur,dir)*100)/100);
-  save(); renderTab();
+function delEvt(id){
+  const evts=loadEvts().filter(e=>e.id!==id);
+  saveEvts(evts);
+  rEvtList();
 }
 
-function adjUb(dir){
-  S.ubertrag=Math.round(addStep(S.ubertrag,dir)*100)/100;
-  save(); renderTab();
+load();init();
+rEvtWidget();};
+document.getElementById('nextBtn').onclick=()=>{S.month++;if(S.month>12){S.month=1;S.year++;}
+// ── EVENTS SYSTEM ──
+const DEFAULT_EVENTS = [
+  {id:'e1', date:'2026-06-19', name:'Fronleichnam (Feiertag)'},
+  {id:'e2', date:'2026-10-03', name:'Tag der Deutschen Einheit'},
+  {id:'e3', date:'2026-10-31', name:'Reformationstag'},
+  {id:'e4', date:'2026-11-01', name:'Allerheiligen (Feiertag)'},
+  {id:'e5', date:'2026-12-25', name:'1. Weihnachtstag'},
+  {id:'e6', date:'2026-12-26', name:'2. Weihnachtstag'},
+  {id:'e7', date:'2027-01-01', name:'Neujahr 2027'},
+];
+
+function loadEvts(){
+  const raw=localStorage.getItem('sz_events');
+  if(raw) return JSON.parse(raw);
+  localStorage.setItem('sz_events', JSON.stringify(DEFAULT_EVENTS));
+  return DEFAULT_EVENTS;
+}
+function saveEvts(evts){ localStorage.setItem('sz_events', JSON.stringify(evts)); }
+
+function rEvtWidget(){
+  const evts=loadEvts();
+  const today=new Date(); today.setHours(0,0,0,0);
+  const future=evts
+    .map(e=>({...e,dt:new Date(e.date+'T00:00:00')}))
+    .filter(e=>e.dt>=today)
+    .sort((a,b)=>a.dt-b.dt);
+  const el=document.getElementById('evtNext');
+  if(!future.length){el.innerHTML='<div class="evt-empty">Keine Termine eingetragen</div>';return;}
+  const next=future[0];
+  const diff=Math.round((next.dt-today)/86400000);
+  const cls=diff===0?'today':diff<=7?'soon':'';
+  const daysTxt=diff===0?'Heute!':diff===1?'Morgen':`in ${diff} Tagen`;
+  const d=next.dt;
+  const dateStr=`${d.getDate()}. ${MN[d.getMonth()]} ${d.getFullYear()}`;
+  el.innerHTML=`<div class="evt-next">
+    <div class="evt-dot ${cls}"></div>
+    <div class="evt-info">
+      <div class="evt-date">${dateStr}</div>
+      <div class="evt-name">${next.name}</div>
+    </div>
+    <span class="evt-days ${cls}">${daysTxt}</span>
+  </div>`;
 }
 
-function setUb(val){
-  const n=parseFloat(String(val).replace(',','.'));
-  if(!isNaN(n)){S.ubertrag=Math.round(n*100)/100; save(); renderTab();}
+function openEvtModal(){
+  // Datum auf heute vorausfüllen
+  const today=new Date();
+  document.getElementById('evtDate').value=today.toISOString().split('T')[0];
+  rEvtList();
+  document.getElementById('evtModal').classList.add('open');
+}
+function closeEvtModal(){
+  document.getElementById('evtModal').classList.remove('open');
+  rEvtWidget();
 }
 
-function quickEdit(key,dow){
-  const dd=dayData(key,dow), p=PLAN[dow];
-  const inp=prompt(`${p.tag} – Stunden eingeben (z.B. 7,30):`, fH(dd.ist));
-  if(inp!==null){
-    const v=parseFloat(inp.replace(',','.'));
-    if(!isNaN(v)){
-      if(!S.data[key]) S.data[key]={...dd};
-      S.data[key].ist=Math.round(v*100)/100;
-      save(); renderTab();
-    }
-  }
+function rEvtList(){
+  const evts=loadEvts().sort((a,b)=>a.date.localeCompare(b.date));
+  const el=document.getElementById('evtList');
+  if(!evts.length){el.innerHTML='<div class="evt-empty">Noch keine Termine</div>';return;}
+  el.innerHTML=evts.map(e=>{
+    const d=new Date(e.date+'T00:00:00');
+    const ds=`${d.getDate()}. ${MN[d.getMonth()]}`;
+    return`<div class="evt-item">
+      <span class="evt-item-date">${ds}</span>
+      <span class="evt-item-name">${e.name}</span>
+      <button class="evt-del" onclick="delEvt('${e.id}')">×</button>
+    </div>`;
+  }).join('');
 }
 
-// ============================================================
-// EVENTS
-// ============================================================
-document.getElementById('prevBtn').onclick=()=>{
-  S.month--; if(S.month<1){S.month=12;S.year--;}
-  load(); renderAll();
-};
-document.getElementById('nextBtn').onclick=()=>{
-  S.month++; if(S.month>12){S.month=1;S.year++;}
-  load(); renderAll();
-};
+function addEvt(){
+  const date=document.getElementById('evtDate').value;
+  const name=document.getElementById('evtName').value.trim();
+  if(!date||!name) return;
+  const evts=loadEvts();
+  evts.push({id:'e'+Date.now(), date, name});
+  saveEvts(evts);
+  document.getElementById('evtName').value='';
+  rEvtList();
+}
 
-document.querySelectorAll('.tab').forEach(btn=>{
-  btn.onclick=()=>{
-    S.tab=btn.dataset.t;
-    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    renderTab();
-  };
-});
+function delEvt(id){
+  const evts=loadEvts().filter(e=>e.id!==id);
+  saveEvts(evts);
+  rEvtList();
+}
 
-document.getElementById('saveBtn').onclick=()=>{
-  save();
-  const b=document.getElementById('saveBtn');
-  b.textContent='✅ Gespeichert!'; b.style.background='#1b5e20';
-  setTimeout(()=>{b.textContent='💾 Speichern';b.style.background='';},2000);
-};
-
-document.getElementById('resetBtn').onclick=()=>{
-  if(confirm(`Alle Daten für ${MONATE[S.month-1]} ${S.year} zurücksetzen?`)){
-    S.data={}; S.vorb={}; S.ubertrag=0;
-    localStorage.removeItem(sKey());
-    renderAll();
-  }
-};
-
+load();init();
+rEvtWidget();};
+document.getElementById('saveBtn').onclick=()=>{save();const b=document.getElementById('saveBtn');b.textContent='✅ Gespeichert';b.classList.add('done');setTimeout(()=>{b.textContent='💾 Speichern';b.classList.remove('done');},2000);};
+document.getElementById('shareBtn').onclick=()=>{save();if(navigator.share){navigator.share({title:'Stundenzettel',url:window.location.href});}else{navigator.clipboard.writeText(window.location.href).then(()=>{const b=document.getElementById('shareBtn');b.textContent='✅ Kopiert!';setTimeout(()=>{b.textContent='📤 Teilen';},2000);});}};
 document.getElementById('printBtn').onclick=()=>window.print();
 
-// ============================================================
-// START
-// ============================================================
-load();
-renderAll();
+function init(){
+  document.getElementById('monthLabel').textContent=`${MN[S.month-1]} ${S.year}`;
+  rToday();
+}
+
+
+// ── EVENTS SYSTEM ──
+const DEFAULT_EVENTS = [
+  {id:'e1', date:'2026-06-19', name:'Fronleichnam (Feiertag)'},
+  {id:'e2', date:'2026-10-03', name:'Tag der Deutschen Einheit'},
+  {id:'e3', date:'2026-10-31', name:'Reformationstag'},
+  {id:'e4', date:'2026-11-01', name:'Allerheiligen (Feiertag)'},
+  {id:'e5', date:'2026-12-25', name:'1. Weihnachtstag'},
+  {id:'e6', date:'2026-12-26', name:'2. Weihnachtstag'},
+  {id:'e7', date:'2027-01-01', name:'Neujahr 2027'},
+];
+
+function loadEvts(){
+  const raw=localStorage.getItem('sz_events');
+  if(raw) return JSON.parse(raw);
+  localStorage.setItem('sz_events', JSON.stringify(DEFAULT_EVENTS));
+  return DEFAULT_EVENTS;
+}
+function saveEvts(evts){ localStorage.setItem('sz_events', JSON.stringify(evts)); }
+
+function rEvtWidget(){
+  const evts=loadEvts();
+  const today=new Date(); today.setHours(0,0,0,0);
+  const future=evts
+    .map(e=>({...e,dt:new Date(e.date+'T00:00:00')}))
+    .filter(e=>e.dt>=today)
+    .sort((a,b)=>a.dt-b.dt);
+  const el=document.getElementById('evtNext');
+  if(!future.length){el.innerHTML='<div class="evt-empty">Keine Termine eingetragen</div>';return;}
+  const next=future[0];
+  const diff=Math.round((next.dt-today)/86400000);
+  const cls=diff===0?'today':diff<=7?'soon':'';
+  const daysTxt=diff===0?'Heute!':diff===1?'Morgen':`in ${diff} Tagen`;
+  const d=next.dt;
+  const dateStr=`${d.getDate()}. ${MN[d.getMonth()]} ${d.getFullYear()}`;
+  el.innerHTML=`<div class="evt-next">
+    <div class="evt-dot ${cls}"></div>
+    <div class="evt-info">
+      <div class="evt-date">${dateStr}</div>
+      <div class="evt-name">${next.name}</div>
+    </div>
+    <span class="evt-days ${cls}">${daysTxt}</span>
+  </div>`;
+}
+
+function openEvtModal(){
+  // Datum auf heute vorausfüllen
+  const today=new Date();
+  document.getElementById('evtDate').value=today.toISOString().split('T')[0];
+  rEvtList();
+  document.getElementById('evtModal').classList.add('open');
+}
+function closeEvtModal(){
+  document.getElementById('evtModal').classList.remove('open');
+  rEvtWidget();
+}
+
+function rEvtList(){
+  const evts=loadEvts().sort((a,b)=>a.date.localeCompare(b.date));
+  const el=document.getElementById('evtList');
+  if(!evts.length){el.innerHTML='<div class="evt-empty">Noch keine Termine</div>';return;}
+  el.innerHTML=evts.map(e=>{
+    const d=new Date(e.date+'T00:00:00');
+    const ds=`${d.getDate()}. ${MN[d.getMonth()]}`;
+    return`<div class="evt-item">
+      <span class="evt-item-date">${ds}</span>
+      <span class="evt-item-name">${e.name}</span>
+      <button class="evt-del" onclick="delEvt('${e.id}')">×</button>
+    </div>`;
+  }).join('');
+}
+
+function addEvt(){
+  const date=document.getElementById('evtDate').value;
+  const name=document.getElementById('evtName').value.trim();
+  if(!date||!name) return;
+  const evts=loadEvts();
+  evts.push({id:'e'+Date.now(), date, name});
+  saveEvts(evts);
+  document.getElementById('evtName').value='';
+  rEvtList();
+}
+
+function delEvt(id){
+  const evts=loadEvts().filter(e=>e.id!==id);
+  saveEvts(evts);
+  rEvtList();
+}
+
+load();init();
+rEvtWidget();
 </script>
+
+<!-- EVENTS MODAL -->
+<div class="modal-overlay" id="evtModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeEvtModal()">×</button>
+    <h2>📅 Termine</h2>
+    <div class="evt-list" id="evtList"></div>
+    <div class="evt-form">
+      <h3>Neuer Termin</h3>
+      <input class="evt-inp" type="date" id="evtDate">
+      <input class="evt-inp" type="text" id="evtName" placeholder="z.B. Geburtstag Mama, Brückentag...">
+      <button class="evt-save-btn" onclick="addEvt()">Termin speichern</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
