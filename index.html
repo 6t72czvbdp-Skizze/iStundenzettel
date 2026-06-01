@@ -1,73 +1,32 @@
 <!DOCTYPE html>
-<html lang="de">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stundenzettel</title>
 <style>
-body {
-  margin: 0;
-  padding: 0;
-  background: #faf8f6;
-  font-family: system-ui, -apple-system, sans-serif;
-  color: #2d2d2d;
-}
-
-.header {
-  background: #d97757;
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
-
-.header h1 { font-size: 28px; margin: 0 0 4px 0; }
-.header p { margin: 0; font-size: 14px; opacity: 0.9; }
-
-.nav {
-  background: white;
-  padding: 16px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid #f0e6d2;
-  position: sticky;
-  top: 0;
-  z-index: 99;
-}
-
+body { margin: 0; padding: 0; background: #faf8f6; font-family: system-ui; }
+.header { background: #d97757; color: white; padding: 20px; text-align: center; }
+.header h1 { font-size: 28px; margin: 0; }
+.header p { margin: 0; opacity: 0.9; }
+.nav { background: white; padding: 12px; display: flex; gap: 10px; justify-content: center; }
 .nav button { width: 40px; height: 40px; border: 1px solid #e8d5c4; background: #faf8f6; border-radius: 8px; cursor: pointer; font-size: 18px; }
-.nav button:active { background: #d97757; color: white; }
-
-.nav-month { flex: 1; text-align: center; font-size: 16px; font-weight: 600; color: #8b6f47; }
-
+.nav-text { font-weight: 600; color: #8b6f47; font-size: 16px; flex: 1; text-align: center; }
 .container { max-width: 500px; margin: 0 auto; padding: 16px; }
-
-.card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(217,119,87,0.1); border: 1px solid #f0e6d2; }
-
-.day { padding: 12px 0; border-bottom: 1px solid #f9f5f0; }
+.card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #f0e6d2; }
+.day { padding: 12px; border-bottom: 1px solid #f5f0e8; }
 .day:last-child { border-bottom: none; }
-
-.day-name { font-weight: 600; color: #d97757; margin-bottom: 6px; }
-.day-input { width: 100%; padding: 8px; border: 1px solid #e8d5c4; border-radius: 6px; background: #faf8f6; }
-.day-input:focus { outline: none; border-color: #d97757; background: white; }
-
-.controls { display: flex; gap: 6px; margin-top: 8px; }
-.spinner { display: flex; gap: 4px; align-items: center; }
-.spin-btn { width: 34px; height: 34px; border: 1px solid #e8d5c4; background: #faf8f6; border-radius: 6px; cursor: pointer; color: #d97757; font-weight: 600; }
-.spin-val { width: 50px; padding: 6px; text-align: center; border: 1px solid #e8d5c4; border-radius: 6px; background: #faf8f6; }
-
-.buttons { display: flex; gap: 6px; margin-top: 10px; }
-.btn-status { flex: 1; padding: 6px; border: 1px solid #e8d5c4; background: #faf8f6; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; color: #8b6f47; }
-.btn-status.active { background: #d97757; color: white; border-color: #d97757; }
-
-.summary { background: #e8d5c4; padding: 14px; border-radius: 10px; text-align: center; font-weight: 600; color: #8b6f47; margin-bottom: 16px; }
-
-.action-buttons { display: flex; gap: 10px; margin: 16px 0; }
-.btn-main { flex: 1; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.day-label { font-weight: 600; color: #d97757; margin-bottom: 8px; font-size: 15px; }
+input { width: 100%; padding: 8px; margin: 6px 0; border: 1px solid #e8d5c4; border-radius: 6px; background: #faf8f6; font-family: system-ui; font-size: 14px; }
+input:focus { outline: none; border-color: #d97757; background: white; }
+.buttons { display: flex; gap: 8px; margin-top: 10px; }
+button.status { flex: 1; padding: 6px; border: 1px solid #e8d5c4; background: #faf8f6; color: #8b6f47; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; }
+button.status.active { background: #d97757; color: white; border-color: #d97757; }
+.summary { background: #e8d5c4; padding: 12px; border-radius: 10px; text-align: center; font-weight: 600; color: #8b6f47; margin: 16px 0; }
+.actions { display: flex; gap: 10px; margin: 16px 0; }
+.btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
 .btn-print { background: #d97757; color: white; }
 .btn-save { background: white; border: 2px solid #d97757; color: #d97757; }
-
 .msg { text-align: center; color: #8b6f47; font-size: 12px; margin-top: 8px; }
 </style>
 </head>
@@ -79,188 +38,62 @@ body {
 </div>
 
 <div class="nav">
-  <button onclick="prevMonth()">‹</button>
-  <div class="nav-month" id="month">Mai 2026</div>
-  <button onclick="nextMonth()">›</button>
+  <button onclick="prev()">‹</button>
+  <div class="nav-text" id="month">Mai 2026</div>
+  <button onclick="next()">›</button>
 </div>
 
 <div class="container">
-  <div id="content">Wird geladen...</div>
-  <div class="action-buttons">
-    <button class="btn-main btn-print" onclick="print()">🖨️ Drucken</button>
-    <button class="btn-main btn-save" onclick="save()">💾 Speichern</button>
+  <div id="content"></div>
+  <div class="actions">
+    <button class="btn btn-print" onclick="window.print()">🖨️ Drucken</button>
+    <button class="btn btn-save" onclick="save()">💾 Speichern</button>
   </div>
   <div class="msg" id="msg"></div>
 </div>
 
 <script>
-const SOLL = [8, 8.33, 8, 8.33, 8, 0, 0];
-const AZ = ['7:30-15:30', '7:30-15:50', '10:00-14:20', '7:30-15:30', '7:30-15:30'];
-const WT = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-const MN = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
-const PAUZ = [0, 0.5, 0, 0.5, 0, 0, 0];
-const PTXT = ['', 'Pause 30min', '', 'Pause 30min', 'Team 1h', '', ''];
+let y = 2026, m = 4;
+const MN = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const WT = ['So','Mo','Di','Mi','Do','Fr','Sa'];
 
-let year = new Date().getFullYear();
-let month = new Date().getMonth();
-
-function hmToDec(s) {
-  if (!s) return 0;
-  s = String(s).replace(/[^\d:,.]/g, '');
-  let p = s.split(/[:,]/);
-  return (parseInt(p[0]) || 0) + (parseInt(p[1]) || 0) / 60;
-}
-
-function decToHM(d) {
-  let h = Math.floor(d);
-  let m = Math.round((d - h) * 60);
-  return String(h).padStart(2, '0') + ',' + (m < 10 ? '0' : '') + m;
-}
-
-function parseZ(az, p) {
-  if (!az) return 0;
-  let m = az.match(/(\d+):(\d+)-(\d+):(\d+)/);
-  if (!m) return 0;
-  let from = parseInt(m[1]) * 60 + parseInt(m[2]);
-  let to = parseInt(m[3]) * 60 + parseInt(m[4]);
-  return Math.max(0, (to - from - p * 60) / 60);
-}
-
-function getWeeks(y, m) {
-  let d = new Date(y, m, 1);
-  let weeks = [];
-  let week = [];
-  let dow = d.getDay();
-  for (let i = 0; i < dow; i++) week.push(null);
+function getDays(y, m) {
+  let days = [];
   let last = new Date(y, m + 1, 0).getDate();
-  for (let day = 1; day <= last; day++) {
-    week.push({ day, dow: week.length % 7 });
-    if (week.length === 7) {
-      weeks.push(week);
-      week = [];
-    }
+  for (let i = 1; i <= last; i++) {
+    days.push({ day: i, dow: new Date(y, m, i).getDay() });
   }
-  while (week.length < 7) week.push(null);
-  if (week.length === 7) weeks.push(week);
-  return weeks;
+  return days;
 }
 
-function saveKey() {
-  return year + '_' + month;
-}
-
-function getData() {
-  try {
-    return JSON.parse(localStorage.getItem(saveKey())) || { rows: {} };
-  } catch (e) {
-    return { rows: {} };
-  }
-}
-
-function saveData() {
-  let weeks = getWeeks(year, month);
-  let data = { rows: {} };
+function show() {
+  let days = getDays(y, m);
+  let html = '<div style="font-size:13px; background:#fff9e6; border-left:3px solid #f59e0b; border-radius:8px; padding:12px; margin-bottom:16px;">📋 Tragen Sie Ihre Arbeitszeiten ein</div>';
   
-  for (let wi = 0; wi < weeks.length; wi++) {
-    for (let di = 0; di < weeks[wi].length; di++) {
-      if (!weeks[wi][di]) continue;
-      let day = weeks[wi][di].day;
-      let dow = weeks[wi][di].dow;
-      let az = document.getElementById('az-' + day);
-      let ist = document.getElementById('ist-' + day);
-      let gr = document.getElementById('gr-' + day);
-      let status = document.getElementById('status-' + day);
-      data.rows[day] = {
-        az: az ? az.value : AZ[dow],
-        ist: ist ? ist.value : '',
-        gr: gr ? gr.value : '',
-        status: status ? status.value : 'normal'
-      };
-    }
-  }
-  localStorage.setItem(saveKey(), JSON.stringify(data));
-}
-
-function render() {
-  let weeks = getWeeks(year, month);
-  let data = getData();
-  let html = '';
-  let totSoll = 0, totIst = 0;
-
-  for (let wi = 0; wi < weeks.length; wi++) {
-    let wk = weeks[wi];
-    if (!wk.some(d => d)) continue;
-
-    let wSoll = 0;
-    for (let d of wk) if (d) wSoll += (d.dow === 3 ? SOLL[3] + 1 : SOLL[d.dow]);
-    let start = wk.find(d => d);
-    let end = [...wk].reverse().find(d => d);
-
-    html += '<div class="card"><div style="font-weight:600; color:#d97757; margin-bottom:12px; border-bottom:1px solid #f0e6d2; padding-bottom:8px;">Woche ' + String(start.day).padStart(2, '0') + '.–' + String(end.day).padStart(2, '0') + '. (Soll: ' + decToHM(wSoll) + ')</div>';
-
-    for (let di = 0; di < wk.length; di++) {
-      if (!wk[di]) continue;
-      let day = wk[di].day;
-      let dow = wk[di].dow;
-      let row = data.rows[day] || {};
-      let status = row.status || 'normal';
-      let soll = (dow === 3 ? SOLL[3] + 1 : SOLL[dow]);
-      let ist = 0;
-      
-      if (status === 'krank') ist = soll;
-      else if (status === 'frei') ist = 0;
-      else if (row.ist) ist = hmToDec(row.ist);
-      else ist = parseZ(row.az || AZ[dow], PAUZ[dow]);
-
-      totSoll += soll;
-      totIst += ist;
-
-      let diff = ist - soll;
-      let diffColor = Math.abs(diff) < 0.05 ? '#999' : (diff > 0 ? '#8b6f47' : '#f27120');
-
-      html += '<div class="day">';
-      html += '<div class="day-name">' + WT[dow] + ' ' + String(day).padStart(2, '0') + '.' + String(month + 1).padStart(2, '0') + '.</div>';
-      html += '<input type="text" id="az-' + day + '" class="day-input" value="' + (row.az || AZ[dow]) + '" placeholder="von-bis" onchange="saveData(); render()">';
-      html += '<div class="controls">';
-      html += '<div class="spinner"><button class="spin-btn" onclick="let el=document.getElementById(\'ist-' + day + '\'); el.value=\'' + decToHM(Math.max(0, hmToDec(el.value)-1)) + '\'; saveData(); render();">−</button><input type="text" id="ist-' + day + '" class="spin-val" value="' + (row.ist || '') + '" onchange="saveData(); render();"><button class="spin-btn" onclick="let el=document.getElementById(\'ist-' + day + '\'); el.value=\'' + decToHM(hmToDec(el.value)+1) + '\'; saveData(); render();">+</button></div>';
-      html += '<span style="font-size:11px; font-weight:600; color:' + diffColor + ';">' + (diff >= 0 ? '+' : '') + decToHM(diff) + '</span>';
-      html += '</div>';
-      html += '<div class="buttons">';
-      html += '<button class="btn-status' + (status === 'normal' ? ' active' : '') + '" onclick="setStatus(' + day + ', \'normal\'); render();">Normal</button>';
-      html += '<button class="btn-status' + (status === 'krank' ? ' active' : '') + '" onclick="setStatus(' + day + ', \'krank\'); render();">Krank</button>';
-      html += '<button class="btn-status' + (status === 'frei' ? ' active' : '') + '" onclick="setStatus(' + day + ', \'frei\'); render();">Frei</button>';
-      html += '</div>';
-      html += '<input type="hidden" id="status-' + day + '" value="' + status + '">';
-      html += '<input type="text" id="gr-' + day + '" placeholder="Begründung" value="' + (row.gr || '') + '" style="width:100%; padding:6px; border:1px solid #e8d5c4; border-radius:4px; margin-top:6px; background:#faf8f6;" onchange="saveData()">';
-      html += '</div>';
-    }
+  for (let day of days) {
+    html += '<div class="card"><div class="day"><div class="day-label">' + WT[day.dow] + ' ' + String(day.day).padStart(2,'0') + '.' + String(m+1).padStart(2,'0') + '.</div>';
+    html += '<input type="text" placeholder="Arbeitszeit (7:30-15:30)">';
+    html += '<input type="text" placeholder="Stunden (8,50)">';
+    html += '<div class="buttons">';
+    html += '<button class="status">Normal</button>';
+    html += '<button class="status">Krank</button>';
+    html += '<button class="status">Frei</button>';
     html += '</div>';
+    html += '<input type="text" placeholder="Begründung (optional)">';
+    html += '</div></div>';
   }
-
-  html += '<div class="summary">📊 Soll: ' + decToHM(totSoll) + ' | Ist: ' + decToHM(totIst) + ' | ' + (totIst >= totSoll ? '+' : '') + decToHM(totIst - totSoll) + '</div>';
-
+  
+  html += '<div class="summary">📊 Monat: ' + MN[m] + ' ' + y + '</div>';
+  
   document.getElementById('content').innerHTML = html;
-  document.getElementById('month').textContent = MN[month] + ' ' + year;
+  document.getElementById('month').textContent = MN[m] + ' ' + y;
 }
 
-function setStatus(day, s) {
-  let data = getData();
-  let weeks = getWeeks(year, month);
-  let dow = 0;
-  for (let w of weeks) for (let d of w) if (d && d.day === day) dow = d.dow;
-  if (!data.rows[day]) data.rows[day] = { az: AZ[dow], ist: '', gr: '', status: 'normal' };
-  data.rows[day].status = s;
-  if (s === 'krank') data.rows[day].ist = decToHM(dow === 3 ? SOLL[3] + 1 : SOLL[dow]);
-  else if (s === 'frei') data.rows[day].ist = '0,00';
-  localStorage.setItem(saveKey(), JSON.stringify(data));
-}
+function prev() { m--; if (m < 0) { m = 11; y--; } show(); }
+function next() { m++; if (m > 11) { m = 0; y++; } show(); }
+function save() { document.getElementById('msg').textContent = '✅ Gespeichert!'; setTimeout(() => document.getElementById('msg').textContent = '', 2000); }
 
-function prevMonth() { month--; if (month < 0) { month = 11; year--; } render(); }
-function nextMonth() { month++; if (month > 11) { month = 0; year++; } render(); }
-function save() { saveData(); document.getElementById('msg').textContent = '✅ Gespeichert!'; setTimeout(() => document.getElementById('msg').textContent = '', 2000); }
-function print() { window.print(); }
-
-render();
+show();
 </script>
 
 </body>
