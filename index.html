@@ -5,36 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stundenzettel</title>
 <style>
-body { margin: 0; padding: 0; background: #faf8f6; font-family: system-ui; }
-.header { background: #d97757; color: white; padding: 20px; text-align: center; }
-.header h1 { font-size: 28px; margin: 0; }
-.header p { margin: 0; opacity: 0.9; }
-.nav { background: white; padding: 12px; display: flex; gap: 10px; justify-content: center; }
-.nav button { width: 40px; height: 40px; border: 1px solid #e8d5c4; background: #faf8f6; border-radius: 8px; cursor: pointer; font-size: 18px; }
-.nav-text { font-weight: 600; color: #8b6f47; font-size: 16px; flex: 1; text-align: center; }
-.container { max-width: 500px; margin: 0 auto; padding: 16px; }
-.card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #f0e6d2; }
-.day { padding: 12px; border-bottom: 1px solid #f5f0e8; }
-.day:last-child { border-bottom: none; }
-.day-label { font-weight: 600; color: #d97757; margin-bottom: 8px; font-size: 15px; }
-input { width: 100%; padding: 8px; margin: 6px 0; border: 1px solid #e8d5c4; border-radius: 6px; background: #faf8f6; font-family: system-ui; font-size: 14px; }
-input:focus { outline: none; border-color: #d97757; background: white; }
-.buttons { display: flex; gap: 8px; margin-top: 10px; }
-button.status { flex: 1; padding: 6px; border: 1px solid #e8d5c4; background: #faf8f6; color: #8b6f47; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; }
-button.status.active { background: #d97757; color: white; border-color: #d97757; }
-.summary { background: #e8d5c4; padding: 12px; border-radius: 10px; text-align: center; font-weight: 600; color: #8b6f47; margin: 16px 0; }
-.actions { display: flex; gap: 10px; margin: 16px 0; }
-.btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; }
-.btn-print { background: #d97757; color: white; }
-.btn-save { background: white; border: 2px solid #d97757; color: #d97757; }
-.msg { text-align: center; color: #8b6f47; font-size: 12px; margin-top: 8px; }
+body { margin: 0; padding: 0; background: #f0f7ff; font-family: system-ui; }
+.header { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; padding: 16px; text-align: center; box-shadow: 0 2px 8px rgba(76,175,80,0.2); }
+.header h1 { font-size: 22px; margin: 0; font-weight: 700; }
+.header p { margin: 4px 0 0 0; opacity: 0.9; font-size: 13px; }
+.nav { background: white; padding: 12px; display: flex; gap: 10px; justify-content: center; border-bottom: 1px solid #e0e8f7; }
+.nav button { width: 40px; height: 40px; border: 1px solid #4CAF50; background: #f1f8f5; border-radius: 8px; cursor: pointer; font-size: 18px; color: #2e7d32; font-weight: 600; }
+.nav button:active { background: #4CAF50; color: white; }
+.nav-text { font-weight: 600; color: #2e7d32; font-size: 16px; flex: 1; text-align: center; }
+.container { max-width: 520px; margin: 0 auto; padding: 12px; }
+.card { background: white; border-radius: 12px; padding: 14px; margin-bottom: 10px; border: 2px solid #e0e8f7; box-shadow: 0 2px 6px rgba(76,175,80,0.08); }
+.day-label { font-weight: 700; color: #2e7d32; margin-bottom: 8px; font-size: 15px; }
+.day-input { width: 100%; padding: 8px; margin: 6px 0; border: 1px solid #c5d9f1; border-radius: 6px; background: #f8fbff; font-family: system-ui; font-size: 14px; }
+.day-input:focus { outline: none; border-color: #4CAF50; background: white; box-shadow: 0 0 0 3px rgba(76,175,80,0.1); }
+.team-section { background: linear-gradient(135deg, rgba(76,175,80,0.08), rgba(76,175,80,0.04)); border: 1px solid rgba(76,175,80,0.2); border-radius: 8px; padding: 8px; margin: 8px 0; }
+.team-label { font-size: 12px; color: #2e7d32; font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+.team-remove { border: none; background: #ff5252; color: white; padding: 3px 6px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; }
+.team-remove:active { background: #e53935; }
+.team-controls { display: flex; gap: 6px; align-items: center; justify-content: center; }
+.team-btn { width: 28px; height: 28px; border: 1px solid #4CAF50; background: #f1f8f5; border-radius: 6px; cursor: pointer; color: #4CAF50; font-weight: 700; font-size: 14px; }
+.team-btn:active { background: #4CAF50; color: white; }
+.team-val { min-width: 45px; text-align: center; font-weight: 600; font-size: 13px; color: #2e7d32; }
+.buttons { display: flex; gap: 6px; margin-top: 8px; }
+.status { flex: 1; padding: 5px; border: 1px solid #4CAF50; background: #f1f8f5; color: #2e7d32; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 11px; }
+.status.active { background: #4CAF50; color: white; }
+.summary-box { background: linear-gradient(135deg, rgba(76,175,80,0.08), rgba(76,175,80,0.04)); border: 2px solid #4CAF50; border-radius: 12px; padding: 14px; margin: 12px 0; }
+.summary-title { font-weight: 700; color: #2e7d32; font-size: 16px; margin-bottom: 10px; }
+.summary-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(76,175,80,0.2); font-size: 14px; }
+.summary-row:last-child { border-bottom: none; }
+.summary-label { color: #2e7d32; font-weight: 600; }
+.summary-value { font-weight: 700; color: #4CAF50; }
+.summary-value.highlight { color: #2196F3; }
+.actions { display: flex; gap: 8px; margin: 12px 0; }
+.btn { flex: 1; padding: 11px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; }
+.btn-save { background: #4CAF50; color: white; }
+.btn-save:active { transform: scale(0.98); }
+.btn-reset { background: white; border: 2px solid #e64a19; color: #e64a19; }
+.btn-reset:active { background: #fff5f0; }
+.btn-print { background: linear-gradient(135deg, #2196F3, #1e88e5); color: white; width: 100%; margin-top: 8px; }
+.msg { text-align: center; color: #2e7d32; font-size: 11px; margin-top: 8px; font-weight: 600; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🕐 Stundenzettel</h1>
-  <p>Marc Hoß</p>
+  <h1>📋 Stundenzettel</h1>
+  <p>Marc Hoß · RGT · AWO</p>
 </div>
 
 <div class="nav">
@@ -43,12 +59,41 @@ button.status.active { background: #d97757; color: white; border-color: #d97757;
   <button onclick="next()">›</button>
 </div>
 
-<div class="container">
+<div class="container" id="container">
   <div id="content"></div>
-  <div class="actions">
-    <button class="btn btn-print" onclick="window.print()">🖨️ Drucken</button>
-    <button class="btn btn-save" onclick="save()">💾 Speichern</button>
+  
+  <!-- Monatsübersicht -->
+  <div class="summary-box">
+    <div class="summary-title">📊 Monatsübersicht</div>
+    <div class="summary-row">
+      <span class="summary-label">Gesamt SOLL:</span>
+      <span class="summary-value" id="soll-total">127,20h</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Gesamt IST:</span>
+      <span class="summary-value" id="ist-total">128,00h</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Vorbereitung:</span>
+      <span class="summary-value">+ 4,00h</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Übertrag Vormonat:</span>
+      <span class="summary-value" id="carryover">+ 0,00h</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-label">Neuer Stand +/-:</span>
+      <span class="summary-value highlight" id="new-balance">+ 0,40h</span>
+    </div>
   </div>
+  
+  <div class="actions">
+    <button class="btn btn-save" onclick="save()">💾 Speichern</button>
+    <button class="btn btn-reset" onclick="reset()">↺ Zurücksetzen</button>
+  </div>
+  
+  <button class="btn btn-print" onclick="window.print()">🖨️ Ausdrucken / Als PDF speichern</button>
+  
   <div class="msg" id="msg"></div>
 </div>
 
@@ -56,6 +101,11 @@ button.status.active { background: #d97757; color: white; border-color: #d97757;
 let y = 2026, m = 4;
 const MN = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 const WT = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+
+// Korrigierte Sollstunden
+const STD_AZ = ['', '7:30-15:00', '10:00-14:20', '8:00-13:30', '8:00-16:00', '10:00-15:00', ''];
+const STD_SOLL = [0, 7.0, 4.2, 5.1, 9.3, 5.0, 0]; // Mo 7,0h statt 7,5h | Do 9,3h (mit Team)
+const PREP_HOURS = 4; // 1h Vorbereitung × 4 Wochen
 
 function getDays(y, m) {
   let days = [];
@@ -66,32 +116,170 @@ function getDays(y, m) {
   return days;
 }
 
+function minToHours(min) {
+  return (min / 60).toFixed(2).replace('.', ',');
+}
+
+function getKey(y, m, day) {
+  return 'sz_' + y + '_' + m + '_' + day;
+}
+
+function getData(y, m, day) {
+  let key = getKey(y, m, day);
+  let dow = new Date(y, m, day).getDay();
+  try {
+    let data = JSON.parse(localStorage.getItem(key)) || { 
+      az: STD_AZ[dow] || '', 
+      ist: '', 
+      team: dow === 4 ? 0 : 0, // Nur Do hat Team-Option
+      status: 'normal', 
+      gr: '' 
+    };
+    if (typeof data.team === 'undefined') data.team = dow === 4 ? 0 : 0;
+    return data;
+  } catch (e) {
+    return { az: STD_AZ[dow] || '', ist: '', team: 0, status: 'normal', gr: '' };
+  }
+}
+
+function saveData(y, m, day, data) {
+  let key = getKey(y, m, day);
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
 function show() {
   let days = getDays(y, m);
-  let html = '<div style="font-size:13px; background:#fff9e6; border-left:3px solid #f59e0b; border-radius:8px; padding:12px; margin-bottom:16px;">📋 Tragen Sie Ihre Arbeitszeiten ein</div>';
+  let html = '';
+  
+  let totSoll = 0, totIst = 0;
   
   for (let day of days) {
-    html += '<div class="card"><div class="day"><div class="day-label">' + WT[day.dow] + ' ' + String(day.day).padStart(2,'0') + '.' + String(m+1).padStart(2,'0') + '.</div>';
-    html += '<input type="text" placeholder="Arbeitszeit (7:30-15:30)">';
-    html += '<input type="text" placeholder="Stunden (8,50)">';
+    let dow = day.dow;
+    if (dow === 0 || dow === 6) continue; // Nur Mo-Fr
+    
+    let data = getData(y, m, day.day);
+    let az = data.az || STD_AZ[dow];
+    let sollStunden = STD_SOLL[dow];
+    let istInput = data.ist;
+    let ist = istInput ? parseFloat(istInput.replace(',', '.')) : sollStunden;
+    let teamMin = data.team || 0;
+    let status = data.status;
+    
+    // Team-Stunde hinzufügen für Donnerstag
+    if (dow === 4) {
+      ist += (teamMin / 60);
+      sollStunden += (teamMin / 60);
+    }
+    
+    totSoll += sollStunden;
+    totIst += ist;
+    
+    let diff = ist - sollStunden;
+    let diffColor = '#666';
+    if (diff > 0.05) diffColor = '#2e7d32';
+    if (diff < -0.05) diffColor = '#e64a19';
+    
+    html += '<div class="card"><div>';
+    html += '<div class="day-label">' + WT[dow] + ' ' + String(day.day).padStart(2,'0') + '.' + String(m+1).padStart(2,'0') + '.</div>';
+    
+    html += '<input type="text" id="az' + day.day + '" class="day-input" value="' + az + '" placeholder="Arbeitszeit" onchange="updateDay(' + y + ',' + m + ',' + day.day + ')">';
+    
+    html += '<input type="text" id="ist' + day.day + '" class="day-input" value="' + (istInput || sollStunden.toFixed(2).replace('.', ',')) + '" placeholder="Stunden" onchange="updateDay(' + y + ',' + m + ',' + day.day + ')">';
+    
+    // Team-Stunde nur für Donnerstag
+    if (dow === 4) {
+      let isTeamActive = teamMin > 0;
+      html += '<div class="team-section">';
+      html += '<div class="team-label"><span>⭐ Team 16:15-17:15</span><button class="team-remove" onclick="toggleTeam(' + y + ',' + m + ',' + day.day + ')">' + (isTeamActive ? '✕ Aus' : '✓ An') + '</button></div>';
+      
+      if (isTeamActive) {
+        html += '<div class="team-controls">';
+        html += '<button class="team-btn" onclick="adjustTeam(' + y + ',' + m + ',' + day.day + ',-15)">−</button>';
+        html += '<div class="team-val" id="team' + day.day + '">' + minToHours(teamMin) + 'h</div>';
+        html += '<button class="team-btn" onclick="adjustTeam(' + y + ',' + m + ',' + day.day + ',15)">+</button>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+    
     html += '<div class="buttons">';
-    html += '<button class="status">Normal</button>';
-    html += '<button class="status">Krank</button>';
-    html += '<button class="status">Frei</button>';
+    html += '<button class="status' + (status === 'normal' ? ' active' : '') + '" onclick="setStatus(' + y + ',' + m + ',' + day.day + ', \'normal\')">Normal</button>';
+    html += '<button class="status' + (status === 'krank' ? ' active' : '') + '" onclick="setStatus(' + y + ',' + m + ',' + day.day + ', \'krank\')">Krank</button>';
+    html += '<button class="status' + (status === 'frei' ? ' active' : '') + '" onclick="setStatus(' + y + ',' + m + ',' + day.day + ', \'frei\')">Frei/Schule zu</button>';
     html += '</div>';
-    html += '<input type="text" placeholder="Begründung (optional)">';
+    
+    html += '<input type="text" id="gr' + day.day + '" class="day-input" value="' + (data.gr || '') + '" placeholder="Begründung (z.B. kein Team, Vertretung...)">';
+    
     html += '</div></div>';
   }
   
-  html += '<div class="summary">📊 Monat: ' + MN[m] + ' ' + y + '</div>';
-  
   document.getElementById('content').innerHTML = html;
   document.getElementById('month').textContent = MN[m] + ' ' + y;
+  
+  // Update summary
+  document.getElementById('soll-total').textContent = totSoll.toFixed(2).replace('.', ',') + 'h';
+  document.getElementById('ist-total').textContent = totIst.toFixed(2).replace('.', ',') + 'h';
+  
+  let newBalance = (totIst + PREP_HOURS) - totSoll;
+  document.getElementById('new-balance').textContent = (newBalance >= 0 ? '+' : '') + newBalance.toFixed(2).replace('.', ',') + 'h';
+}
+
+function updateDay(y, m, day) {
+  let dow = new Date(y, m, day).getDay();
+  let az = document.getElementById('az' + day).value;
+  let ist = document.getElementById('ist' + day).value;
+  let gr = document.getElementById('gr' + day).value;
+  let status = 'normal';
+  
+  let data = getData(y, m, day);
+  data.az = az;
+  data.ist = ist;
+  data.status = status;
+  data.gr = gr;
+  
+  saveData(y, m, day, data);
+  show();
+}
+
+function adjustTeam(y, m, day, delta) {
+  let data = getData(y, m, day);
+  data.team = Math.max(0, (data.team || 0) + delta);
+  saveData(y, m, day, data);
+  show();
+}
+
+function toggleTeam(y, m, day) {
+  let data = getData(y, m, day);
+  if (data.team > 0) {
+    data.team = 0;
+  } else {
+    data.team = 60;
+  }
+  saveData(y, m, day, data);
+  show();
+}
+
+function setStatus(y, m, day, status) {
+  let data = getData(y, m, day);
+  let dow = new Date(y, m, day).getDay();
+  data.status = status;
+  
+  if (status === 'krank') {
+    data.ist = STD_SOLL[dow].toFixed(2).replace('.', ',');
+    data.gr = 'krank';
+  } else if (status === 'frei') {
+    data.ist = '0,00';
+    data.gr = 'frei / Schule zu';
+  }
+  
+  saveData(y, m, day, data);
+  show();
 }
 
 function prev() { m--; if (m < 0) { m = 11; y--; } show(); }
 function next() { m++; if (m > 11) { m = 0; y++; } show(); }
 function save() { document.getElementById('msg').textContent = '✅ Gespeichert!'; setTimeout(() => document.getElementById('msg').textContent = '', 2000); }
+function reset() { if (confirm('Alle Einträge löschen?')) { for (let i = 1; i <= 31; i++) { localStorage.removeItem('sz_' + y + '_' + m + '_' + i); } show(); } }
 
 show();
 </script>
