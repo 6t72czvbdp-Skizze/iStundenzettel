@@ -491,7 +491,7 @@ body {
     <button class="btn btn-reset" onclick="reset()">↺ Zurücksetzen</button>
   </div>
   
-  <button class="btn btn-print" onclick="window.print()">🖨️ Ausdrucken / Als PDF speichern</button>
+  <button class="btn btn-print" onclick="printPDF()">🖨️ Ausdrucken / Als PDF speichern</button>
   
   <div class="msg" id="msg"></div>
 </div>
@@ -685,6 +685,30 @@ function prev() { m--; if (m < 0) { m = 11; y--; } show(); }
 function next() { m++; if (m > 11) { m = 0; y++; } show(); }
 function save() { document.getElementById('msg').textContent = '✅ Gespeichert!'; setTimeout(() => document.getElementById('msg').textContent = '', 2000); }
 function reset() { if (confirm('Alle Einträge löschen?')) { for (let i = 1; i <= 31; i++) { localStorage.removeItem('sz_' + y + '_' + m + '_' + i); } show(); } }
+
+function printPDF() {
+  let days = getDays(y, m);
+  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{margin:0;padding:0;background:#fff}@media print{body{margin:0;padding:0}#page{margin:0;padding:0}}</style></head><body>';
+  html += '<div id="page" style="width:210mm;height:297mm;margin:0 auto;background:white;position:relative;background-image:url(scan-bg.JPG);background-size:contain;background-repeat:no-repeat;background-position:center;font-family:Arial,sans-serif;">';
+  
+  let yPos = 85; // Startposition (mm von oben)
+  for (let day of days) {
+    let dow = day.dow;
+    if (dow === 0 || dow === 6) continue;
+    let data = getData(y, m, day.day);
+    let timeStr = data.az || STD_AZ[dow];
+    let hoursStr = (data.ist || STD_SOLL[dow].toFixed(2)).replace('.', ',');
+    let grStr = data.gr || '';
+    html += '<div style="position:absolute;left:30mm;top:' + yPos + 'mm;font-size:8px;width:140mm;color:#000;">' + timeStr.substring(0,8) + ' | ' + hoursStr + 'h' + (grStr ? ' | ' + grStr : '') + '</div>';
+    yPos += 6.5;
+  }
+  html += '</div></body></html>';
+  
+  let w = window.open();
+  w.document.write(html);
+  w.document.close();
+  setTimeout(() => w.print(), 300);
+}
 
 show();
 </script>
