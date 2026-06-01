@@ -11,327 +11,350 @@
 <style>
 :root{
   color-scheme:light;
-  --grn:#1a7a2e;--grn2:#34a853;--grn-light:#e8f5ec;
-  --red:#d93025;--ora:#e07b00;--pin:#c2185b;
-  --bg:#a8c8a0;--card:#fff;--border:#e0e0e0;
-  --txt:#111;--sub:#666;--faint:#bbb;
+  --dark:#0d2b14;
+  --mid:#1a5c2a;
+  --grn:#2e9e4f;
+  --lime:#6deb6d;
+  --lime2:#4dd94d;
+  --bg:#b8d4b8;
+  --card:#ffffff;
+  --border:#d0ebd4;
+  --txt:#0d1f10;
+  --sub:#5a7a5e;
+  --faint:#b0ccb4;
+  --red:#d93025;
+  --ora:#e07b00;
+  --pin:#c2185b;
+  --grn-light:#d4f5d4;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{background:var(--bg);color-scheme:light}
+html,body{background:var(--bg)!important;color-scheme:light;min-height:100vh}
 body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
-  background:var(--bg)!important;color:var(--txt);min-height:100vh;padding-bottom:0}
+  color:var(--txt);padding-bottom:0}
 
-/* ── HEADER ── */
-#hdr{background:linear-gradient(160deg,#1a7a2e 0%,#34a853 100%);padding:18px 20px 14px;text-align:center}
-#hdr h1{color:#fff;font-size:26px;font-weight:800}
-#hdr p{color:rgba(255,255,255,.75);font-size:13px;margin-top:3px}
-.hBadge{display:inline-block;background:rgba(0,0,0,.22);border-radius:99px;
-  padding:5px 18px;margin-top:8px;color:#fff;font-size:14px;font-weight:700;
-  border:1.5px solid rgba(255,255,255,.3)}
+/* ── HERO HEADER ── */
+#hdr{background:linear-gradient(155deg,var(--dark) 0%,var(--mid) 55%,#1e7a35 100%);
+  padding:22px 20px 18px;text-align:center}
+.hdr-row{display:block}
+.hdr-app{font-size:17px;font-weight:600;color:rgba(255,255,255,.55);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.hdr-name{font-size:34px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1;margin-bottom:6px;text-shadow:0 2px 12px rgba(0,0,0,.25)}
+.hdr-badge{display:inline-block;background:rgba(255,255,255,.15);color:rgba(255,255,255,.7);border-radius:99px;
+  padding:5px 16px;font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,.25);margin-bottom:2px}
+.mnav{display:flex;justify-content:space-between;align-items:center;
+  padding:10px 20px 0}
+.mnav-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  color:#fff;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+#monthLabel{color:#fff;font-size:17px;font-weight:700}
 
-/* ── MONTH NAV ── */
-#mnav{background:rgba(0,0,0,.15);display:flex;align-items:center;
-  justify-content:space-between;padding:10px 24px}
-.mnav-btn{background:none;border:none;color:#fff;font-size:28px;cursor:pointer;padding:2px 10px}
-#monthLabel{color:#fff;font-size:18px;font-weight:700}
-
-/* ── SCROLLBARER INHALT ── */
-#mainScroll{padding:12px 14px;padding-bottom:80px;background:var(--bg)}
-
-/* ── HEUTE KARTE ── */
-.heute-card{background:#fff;border-radius:18px;padding:18px 20px;
-  box-shadow:0 4px 20px rgba(0,0,0,.2);margin-bottom:14px;border:1.5px solid rgba(255,255,255,.9)}
-.h-top{display:flex;justify-content:space-between;align-items:center;
-  background:var(--grn-light);border-radius:10px;padding:10px 12px;margin-bottom:10px}
-.h-tag{font-size:15px;font-weight:800;color:var(--grn);text-transform:uppercase;letter-spacing:1px}
-.h-right{text-align:right}
-.h-dat{font-size:15px;font-weight:700;color:var(--txt)}
-.h-az{font-size:12px;color:var(--sub);margin-top:2px}
-.h-main{display:flex;align-items:center;justify-content:center;gap:24px;margin:10px 0}
-.h-btn{width:52px;height:52px;border-radius:50%;border:none;color:#fff;font-size:28px;
-  cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center}
-.h-btn.m{background:var(--red)}.h-btn.p{background:var(--grn)}
-.h-std{font-size:42px;font-weight:800;color:var(--grn);min-width:110px;text-align:center;letter-spacing:-1px}
-.h-std.zero{color:var(--red)}
-.h-team{background:#fffbf0;border:1px solid #fde8b0;border-radius:12px;
-  display:flex;align-items:center;padding:9px 12px;gap:10px;margin-bottom:10px}
-.h-team-lbl{font-size:13px;color:var(--ora);font-weight:600;flex:1}
-.t-btn{width:32px;height:32px;border-radius:50%;border:none;color:#fff;font-size:18px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center}
-.t-btn.m{background:var(--red)}.t-btn.p{background:var(--ora)}
-.h-team-val{font-size:15px;font-weight:700;color:var(--ora);min-width:46px;text-align:center}
-/* Fortschrittsbalken */
-.prog-wrap{margin:0 0 12px}
-.prog-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-bottom:5px}
-.prog-bg{height:7px;background:#e8e8e8;border-radius:99px;overflow:hidden}
-.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--grn),#34a853);transition:width .4s ease}
-.prog-fill.over{background:linear-gradient(90deg,var(--ora),#ffb300)}
-/* Status Buttons */
-.h-status{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.st-btn{padding:11px 6px;border-radius:12px;border:1.5px solid var(--border);
-  background:var(--card);font-size:14px;cursor:pointer;color:var(--sub);font-weight:500}
-.st-btn.ak-frei{background:#f0faf2;border-color:var(--grn);color:var(--grn);font-weight:700}
-.st-btn.ak-krank{background:#fff8f0;border-color:var(--ora);color:var(--ora);font-weight:700}
-.st-btn.ak-ks{background:#fdf0f5;border-color:var(--pin);color:var(--pin);font-weight:700}
-
-/* ── HOME: NAVIGATIONS-BUTTONS ── */
-.nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.nav-card{background:#fff;border-radius:16px;padding:18px 12px;
-  text-align:center;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.1);
-  border:none;transition:transform .1s,box-shadow .1s;display:flex;flex-direction:column;
-  align-items:center;gap:8px}
-.nav-card:active{transform:scale(.97);box-shadow:0 1px 6px rgba(0,0,0,.08)}
-.nav-card .nc-icon{font-size:28px}
-.nav-card .nc-lbl{font-size:15px;font-weight:700;color:var(--grn)}
-.nav-card .nc-sub{font-size:12px;color:var(--sub)}
-.nav-card-full{background:#fff;border-radius:16px;padding:16px 20px;
-  text-align:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.18);
-  border:1.5px solid rgba(255,255,255,.9);width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+/* ── FLOATING TODAY CARD ── */
+#mainScroll{padding:6px 14px 80px;background:var(--bg)}
+.today-float{background:var(--card);border-radius:24px;padding:20px;
+  box-shadow:0 8px 32px rgba(13,43,20,.15);margin-bottom:12px;
+  border:1.5px solid var(--border)}
+.tf-top{display:flex;justify-content:space-between;align-items:center;
   margin-bottom:14px}
-.nav-card-full .nc-lbl{font-size:15px;font-weight:700;color:var(--grn)}
-.nav-card-full .nc-sub{font-size:12px;color:var(--sub);margin-top:1px}
+.tf-tag{font-size:13px;font-weight:900;color:#fff;text-transform:uppercase;
+  letter-spacing:2px;background:var(--grn);padding:5px 14px;border-radius:99px;
+  display:inline-block}
+.tf-right{text-align:right}
+.tf-dat{font-size:16px;font-weight:800;color:var(--txt)}
+.tf-az{font-size:12px;color:var(--sub);margin-top:2px}
+/* Stunden groß */
+.tf-main{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;padding:0 4px}
+.tf-adj{display:flex;flex-direction:row;gap:10px;align-items:center}
+.adj-btn{width:50px;height:50px;border-radius:50%;border:none;color:#fff;
+  font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-weight:300;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.adj-btn.m{background:var(--red)}.adj-btn.p{background:var(--grn)}
+.tf-std{font-size:54px;font-weight:900;color:var(--dark);letter-spacing:-3px;
+  text-align:center;flex:1;line-height:1}
+.tf-std .unit{font-size:28px;font-weight:700;color:var(--sub);letter-spacing:0;vertical-align:baseline}
+.tf-std.zero{color:var(--red)}
+/* Progress */
+.tf-prog{margin-bottom:14px}
+.tf-prog-lbl{display:flex;justify-content:space-between;font-size:11px;
+  color:var(--sub);margin-bottom:6px;font-weight:600}
+.tf-prog-bg{height:8px;background:var(--border);border-radius:99px;overflow:hidden}
+.tf-prog-fill{height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--grn),var(--lime));
+  transition:width .4s}
+.tf-prog-fill.over{background:linear-gradient(90deg,var(--ora),#ffd600)}
+/* Status buttons */
+.tf-status{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.tf-st-btn{padding:11px 4px;border-radius:12px;border:1.5px solid var(--border);
+  background:#fafffe;color:var(--sub);font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .15s;white-space:nowrap}
+.tf-st-btn.ak-frei{background:#FFB300;border-color:#e6a000;color:#1a1a1a;font-weight:900}
+.tf-st-btn.ak-krank{background:#fff3e0;border-color:var(--ora);color:var(--ora);font-weight:800}
+.tf-st-btn.ak-ks{background:#fce4ec;border-color:var(--pin);color:var(--pin);font-weight:800}
+/* Team */
+.tf-team{background:#fffbf0;border:1.5px solid #fde8b0;border-radius:12px;
+  display:flex;align-items:center;padding:10px 14px;gap:10px;margin-bottom:12px}
+.tf-team-lbl{font-size:13px;color:var(--ora);font-weight:700;flex:1}
+.t-btn{width:32px;height:32px;border-radius:50%;border:none;color:#fff;font-size:18px;cursor:pointer}
+.t-btn.m{background:var(--red)}.t-btn.p{background:var(--ora)}
+.tf-team-val{font-size:15px;font-weight:800;color:var(--ora);min-width:44px;text-align:center}
 
-/* ── SUB-VIEWS ── */
+/* ── EVENT CARD ── */
+.evt-card{background:var(--mid);border-radius:18px;padding:14px 16px;
+  box-shadow:0 6px 20px rgba(13,43,20,.25);margin-bottom:12px;border:none}
+.evt-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.evt-title{font-size:11px;font-weight:900;color:var(--lime);text-transform:uppercase;letter-spacing:1px}
+.evt-add{background:var(--lime);color:var(--dark);border:none;border-radius:50%;
+  width:34px;height:34px;font-size:22px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 3px 10px rgba(109,235,109,.4);flex-shrink:0;line-height:1}
+.evt-body{display:flex;align-items:center;gap:12px}
+.evt-strip{width:4px;border-radius:99px;background:var(--lime);flex-shrink:0;align-self:stretch;min-height:36px}
+.evt-strip.soon{background:#ffd600}.evt-strip.today{background:#ff5252}
+.evt-inf{flex:1}
+.evt-d{font-size:11px;color:rgba(255,255,255,.6);font-weight:600}
+.evt-n{font-size:15px;font-weight:800;color:#fff}
+.evt-pill{border-radius:99px;padding:5px 12px;font-size:12px;font-weight:800;
+  background:rgba(109,235,109,.25);color:var(--lime);
+  border:1px solid rgba(109,235,109,.3)}
+.evt-pill.soon{background:rgba(255,214,0,.2);color:#ffd600;border-color:rgba(255,214,0,.3)}
+.evt-pill.today{background:rgba(255,82,82,.2);color:#ff5252;border-color:rgba(255,82,82,.3)}
+.evt-empty{font-size:14px;color:rgba(255,255,255,.5);padding:4px 0;text-align:center}
+
+/* ── NAV BUTTONS ── */
+.nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.nav-card{background:var(--card);border-radius:18px;padding:16px 16px;
+  text-align:left;cursor:pointer;border:1.5px solid var(--border);
+  box-shadow:0 4px 14px rgba(13,43,20,.09);display:flex;flex-direction:column;
+  align-items:flex-start;gap:6px;transition:transform .1s}
+.nav-card:active{transform:scale(.97)}
+.nav-card .ic{font-size:32px;margin-bottom:2px}
+.nav-card .nl{font-size:16px;font-weight:900;color:var(--dark)}
+.nav-card .ns{font-size:12px;color:var(--sub)}
+.nav-full{background:var(--card);border-radius:18px;padding:16px 18px;
+  display:flex;align-items:center;gap:16px;cursor:pointer;
+  border:1.5px solid var(--border);box-shadow:0 4px 14px rgba(13,43,20,.09);
+  width:100%;margin-bottom:12px;text-align:left}
+.nav-full .nl{font-size:18px;font-weight:900;color:var(--dark)}
+.nav-full .ns{font-size:13px;color:var(--sub);margin-top:3px}
+.nav-full .arr{color:var(--faint);font-size:20px;margin-left:auto}
+.nav-full::before{content:'';width:4px;height:100%;min-height:44px;border-radius:99px;
+  background:var(--lime);flex-shrink:0;align-self:stretch}
+
+/* ── SUB VIEW ── */
 #subView{display:none;padding-bottom:80px;background:var(--bg);min-height:100vh}
+.sub-hdr{display:flex;align-items:center;padding:14px 16px 14px;
+  background:linear-gradient(155deg,var(--dark) 0%,var(--mid) 100%);gap:12px}
+.back-btn{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);color:#fff;cursor:pointer;
+  border-radius:12px;padding:9px 16px;font-size:14px;font-weight:800;
+  display:flex;align-items:center;gap:6px;flex-shrink:0;white-space:nowrap}
+.sub-title{font-size:20px;font-weight:900;color:#fff}
+.sub-content{padding:4px 14px}
 
-/* Zurück-Header */
-.sub-header{display:flex;align-items:center;padding:12px 16px 6px;background:var(--bg)}
-.back-btn{background:none;border:none;font-size:28px;color:var(--grn);cursor:pointer;
-  padding:4px 10px 4px 0;font-weight:300;line-height:1}
-.sub-title{font-size:18px;font-weight:700;color:var(--txt)}
-
-.sub-content{padding:4px 14px 8px}
-
-/* ── ÜBERSICHT ── */
-.d-card{background:#fff;border-radius:16px;margin-bottom:10px;
-  box-shadow:0 4px 16px rgba(0,0,0,.18);overflow:hidden;border:1.5px solid rgba(255,255,255,.9)}
+/* Tages-Karten */
+.d-card{background:var(--card);border-radius:16px;margin-bottom:10px;
+  border:1.5px solid var(--border);overflow:hidden;
+  box-shadow:0 3px 12px rgba(13,43,20,.08)}
 .d-head{display:flex;justify-content:space-between;align-items:center;
-  padding:12px 16px;background:#fafafa;border-bottom:1px solid #f0f0f0}
-.d-head.h-today{background:var(--grn-light)}
+  padding:12px 16px;background:linear-gradient(135deg,#e8f8e8,#f0fdf0);border-bottom:1px solid var(--border)}
+.d-head.h-today{background:linear-gradient(135deg,var(--lime2),#a8e8a8)}
 .d-head.h-krank{background:#fff9f5}
-.d-head.h-frei{background:#f8f8f8}
+.d-head.h-frei{background:#fff8e1}
 .d-head.h-keine-schule{background:#fdf5f8}
-.d-name{font-size:16px;font-weight:700;color:var(--grn)}
+.d-name{font-size:17px;font-weight:900;color:var(--dark)}
 .d-name.grau{color:var(--sub)}
 .d-badge{font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;background:var(--grn);color:#fff}
-.d-badge.b-frei{background:#888}
+.d-badge.b-frei{background:#FFB300;color:#1a1a1a}
 .d-badge.b-krank{background:var(--ora)}
 .d-badge.b-ks{background:var(--pin)}
 .d-body{padding:14px 16px}
-.d-h-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.d-h-inp{flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:16px}
+.d-h-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.d-h-inp{flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:16px;color:var(--txt)}
 .d-h-inp:disabled{opacity:.35;background:#f5f5f5}
-.d-h-show{background:var(--grn-light);border-radius:10px;padding:10px 16px;
-  font-size:16px;font-weight:700;color:var(--grn);white-space:nowrap;min-width:72px;text-align:center}
-.d-h-show.neg{background:#fdf0f5;color:var(--pin)}
+.d-h-show{background:var(--dark);border-radius:10px;padding:10px 14px;
+  font-size:16px;font-weight:900;color:var(--lime);white-space:nowrap;min-width:72px;text-align:center}
+.d-h-show.neg{background:#fce4ec;color:var(--pin)}
 .d-team{background:#fffbf0;border:1px solid #fde8b0;border-radius:10px;
   display:flex;align-items:center;padding:9px 12px;gap:8px;margin-bottom:10px}
-.d-team-lbl{font-size:12px;color:var(--ora);font-weight:600;flex:1}
-.d-team-val{font-size:14px;font-weight:700;color:var(--ora);min-width:40px;text-align:center}
+.d-team-lbl{font-size:12px;color:var(--ora);font-weight:700;flex:1}
+.d-team-val{font-size:14px;font-weight:800;color:var(--ora);min-width:40px;text-align:center}
 .d-st{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:10px}
-.d-st-btn{padding:9px 3px;border-radius:10px;border:1.5px solid var(--border);
-  background:#fff;font-size:12px;cursor:pointer;color:var(--sub);font-weight:500;white-space:nowrap}
-.d-st-btn.on-n{background:var(--grn-light);border-color:var(--grn);color:var(--grn);font-weight:700}
-.d-st-btn.on-k{background:#fff8f0;border-color:var(--ora);color:var(--ora);font-weight:700}
-.d-st-btn.on-f{background:#f5f0fa;border-color:#9c27b0;color:#6a1b9a;font-weight:700}
-.d-st-btn.on-s{background:#fdf0f5;border-color:var(--pin);color:var(--pin);font-weight:700}
-.d-grund{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:13px}
+.d-st-btn{padding:9px 2px;border-radius:10px;border:1.5px solid var(--border);
+  background:#fff;font-size:12px;cursor:pointer;color:var(--sub);font-weight:600;white-space:nowrap}
+.d-st-btn.on-n{background:var(--grn-light);border-color:var(--lime2);color:var(--dark);font-weight:800}
+.d-st-btn.on-k{background:#fff8f0;border-color:var(--ora);color:var(--ora);font-weight:800}
+.d-st-btn.on-f{background:#FFB300;border-color:#e6a000;color:#1a1a1a;font-weight:900}
+.d-st-btn.on-s{background:#fce4ec;border-color:var(--pin);color:var(--pin);font-weight:800}
+.d-grund{width:100%;padding:9px 12px;border:1.5px solid var(--border);
+  border-radius:10px;font-size:13px;color:var(--txt);background:#fafffe}
 .d-grund::placeholder{color:var(--faint)}
 .vorb-section{background:var(--card);border-radius:16px;padding:14px 16px;
-  box-shadow:0 2px 10px rgba(0,0,0,.08);margin-bottom:10px}
-.vorb-section h3{font-size:14px;font-weight:700;color:var(--grn);margin-bottom:10px}
+  border:1.5px solid var(--border);box-shadow:0 3px 12px rgba(13,43,20,.08);margin-bottom:10px}
+.vorb-section h3{font-size:14px;font-weight:900;color:var(--dark);margin-bottom:10px}
 .vorb-row{display:flex;justify-content:space-between;align-items:center;
   padding:8px 0;border-bottom:1px solid var(--border)}
 .vorb-row:last-child{border-bottom:none}
 .vorb-lbl{font-size:13px;color:var(--sub)}
 .vorb-ctrl{display:flex;align-items:center;gap:10px}
-.v-btn{width:30px;height:30px;border-radius:50%;border:none;color:#fff;font-size:18px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center}
+.v-btn{width:30px;height:30px;border-radius:50%;border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .v-btn.m{background:var(--red)}.v-btn.p{background:var(--grn)}
-.vorb-val{font-size:14px;font-weight:700;color:var(--grn);min-width:42px;text-align:center}
+.vorb-val{font-size:14px;font-weight:800;color:var(--grn);min-width:42px;text-align:center}
 
-/* ── KOMPAKT ── */
-.kw-block{background:var(--card);border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.08);
-  margin-bottom:10px;overflow:hidden}
-.kw-head{background:var(--grn-light);padding:10px 16px;display:flex;
-  justify-content:space-between;border-bottom:1px solid #c3e8cc}
-.kw-head span:first-child{font-size:13px;font-weight:700;color:var(--grn)}
-.kw-head span:last-child{font-size:12px;color:var(--sub)}
+/* KOMPAKT */
+.kw-block{background:var(--card);border-radius:16px;border:1.5px solid var(--border);
+  box-shadow:0 3px 12px rgba(13,43,20,.08);margin-bottom:10px;overflow:hidden}
+.kw-head{background:linear-gradient(135deg,var(--dark),var(--mid));padding:12px 16px;display:flex;
+  justify-content:space-between;border-bottom:none}
+.kw-head span:first-child{font-size:13px;font-weight:800;color:var(--lime)}
+.kw-head span:last-child{font-size:12px;color:rgba(255,255,255,.55)}
 .k-row{display:grid;grid-template-columns:64px 1fr 42px 1fr;
   align-items:center;gap:6px;padding:10px 16px;border-bottom:1px solid var(--border)}
 .k-row:last-of-type{border-bottom:none}
-.k-row.k-today{background:var(--grn-light)}
+.k-row.k-today{background:linear-gradient(135deg,#e8f8e8,#d4f5d4)}
 .k-row.k-frei{opacity:.45}
 .k-row.k-krank{background:#fffbf5}
 .k-row.k-keine-schule{background:#fdf5f8}
 .k-d{display:flex;flex-direction:column}
-.k-kz{font-size:13px;font-weight:700}
+.k-kz{font-size:13px;font-weight:800}
 .k-dt{font-size:11px;color:var(--faint)}
 .k-az{font-size:12px;color:var(--sub)}
 .k-pz{font-size:11px;color:var(--faint);text-align:center}
 .k-ctrl{display:flex;align-items:center;gap:5px;justify-content:flex-end}
-.k-ist{font-size:14px;font-weight:700;color:var(--grn);min-width:40px;text-align:center}
+.k-ist{font-size:16px;font-weight:900;color:var(--dark);min-width:40px;text-align:center}
 .k-stat{font-size:11px;color:var(--faint);font-style:italic;text-align:right}
-.s-btn{width:28px;height:28px;border-radius:50%;border:none;color:#fff;font-size:16px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center}
+.s-btn{width:28px;height:28px;border-radius:50%;border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .s-btn.m{background:var(--red)}.s-btn.p{background:var(--grn)}
-.k-sum{background:#f8fdf9;padding:12px 16px;border-top:1px solid var(--border);
-  display:flex;justify-content:space-around}
+.k-sum{background:var(--grn-light);padding:14px 16px;border-top:2px solid var(--lime2);display:flex;justify-content:space-around}
 .k-sum-item{text-align:center}
 .k-sum-item .lbl{font-size:11px;color:var(--sub);margin-bottom:2px}
-.k-sum-item .val{font-size:15px;font-weight:700;color:var(--grn)}
+.k-sum-item .val{font-size:16px;font-weight:900;color:var(--dark)}
 .k-sum-item .val.neg{color:var(--red)}
-.kw-vorb{display:flex;justify-content:space-between;align-items:center;
-  padding:10px 16px;border-top:1px solid var(--border)}
+.kw-vorb{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;
+  background:#f0faf0;border-top:2px solid var(--lime2)}
 .pos{color:var(--grn)}.neg{color:var(--red)}
 
-/* ── MONAT ── */
-.m-card{background:var(--card);border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden}
-.m-row{display:flex;justify-content:space-between;align-items:center;
-  padding:14px 18px;border-bottom:1px solid var(--border)}
+/* MONAT */
+.m-card{background:var(--card);border-radius:16px;border:1.5px solid var(--border);box-shadow:0 3px 12px rgba(13,43,20,.08);overflow:hidden}
+.m-row{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border)}
 .m-row:last-child{border-bottom:none}
 .m-row span:first-child{font-size:14px;color:var(--sub)}
-.m-row span:last-child{font-size:15px;font-weight:700}
+.m-row span:last-child{font-size:15px;font-weight:800}
 .m-ub{display:flex;align-items:center;gap:8px}
-.m-ub input{width:64px;padding:5px;border:1.5px solid var(--border);border-radius:8px;
-  text-align:center;font-size:14px;font-weight:700}
-.m-total{background:var(--grn-light);border-top:2px solid #c3e8cc;
-  display:flex;justify-content:space-between;align-items:center;padding:16px 18px}
-.m-total span:first-child{font-size:15px;font-weight:700;color:var(--grn)}
-.m-total .val{font-size:22px;font-weight:800}
+.m-ub input{width:64px;padding:5px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-size:14px;font-weight:700}
+.m-total{background:linear-gradient(135deg,var(--dark),var(--mid));border-top:none;display:flex;justify-content:space-between;align-items:center;padding:18px 18px}
+.m-total span:first-child{font-size:15px;font-weight:800;color:rgba(255,255,255,.7)}
+.m-total .val{font-size:24px;font-weight:900;color:#fff}
 
 /* ── BOTTOM BAR ── */
-#bar{position:fixed;bottom:0;left:0;right:0;
-  background:#111;
-  display:none;gap:0;
-  padding-bottom:max(0px,env(safe-area-inset-bottom))}
+#bar{position:fixed;bottom:0;left:0;right:0;display:none;
+  background:var(--dark);padding:10px 12px;
+  padding-bottom:max(10px,env(safe-area-inset-bottom));gap:8px}
 #bar.show{display:flex}
-/* Teilen: prominent */
-.bb-share{flex:1.4;padding:15px 6px;border:none;background:#fff;
-  color:#111;font-size:15px;font-weight:800;cursor:pointer;
-  border-right:1px solid #333}
-/* Speichern + Drucken: kleiner */
-.bb-save,.bb-print{flex:1;padding:15px 6px;border:none;background:#111;
-  color:rgba(255,255,255,.75);font-size:13px;font-weight:600;cursor:pointer}
-.bb-save{border-right:1px solid #333}
-.bb-save.done{color:#4caf50}
+.bb-share{flex:1.5;padding:14px 6px;border:none;border-radius:12px;
+  background:var(--lime);color:var(--dark);font-size:14px;font-weight:900;cursor:pointer}
+.bb-save,.bb-print{flex:1;padding:14px 6px;border:none;border-radius:12px;
+  background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);
+  font-size:13px;font-weight:600;cursor:pointer;
+  border:1px solid rgba(255,255,255,.1)}
+.bb-save.done{color:var(--lime)}
 
-/* Wochenende */
-.weekend-msg{text-align:center;padding:18px;color:var(--sub);font-size:15px}
+/* WEEKEND */
+.weekend-msg{text-align:center;padding:20px;color:var(--sub);font-size:15px}
 
-
-/* ── EVENTS WIDGET ── */
-.evt-card{background:#fff;border-radius:16px;padding:14px 16px;
-  box-shadow:0 4px 16px rgba(0,0,0,.18);border:1.5px solid rgba(255,255,255,.9);
-  margin-bottom:14px}
-.evt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.evt-title{font-size:13px;font-weight:700;color:var(--grn);text-transform:uppercase;letter-spacing:.8px}
-.evt-add-btn{background:var(--grn);color:#fff;border:none;border-radius:20px;
-  padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer}
-.evt-next{display:flex;align-items:center;gap:12px}
-.evt-dot{width:10px;height:10px;border-radius:50%;background:var(--grn);flex-shrink:0}
-.evt-dot.soon{background:var(--ora)}
-.evt-dot.today{background:var(--red)}
-.evt-info{flex:1}
-.evt-date{font-size:12px;color:var(--sub);margin-bottom:2px}
-.evt-name{font-size:15px;font-weight:700;color:var(--txt)}
-.evt-days{font-size:12px;font-weight:700;border-radius:20px;padding:3px 10px;background:var(--grn-light);color:var(--grn)}
-.evt-days.soon{background:#fff3e0;color:var(--ora)}
-.evt-days.today{background:#fce4ec;color:var(--red)}
-.evt-empty{font-size:14px;color:var(--sub);text-align:center;padding:6px 0}
-/* Modal */
+/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:flex-end}
 .modal-overlay.open{display:flex}
-.modal{background:#fff;border-radius:22px 22px 0 0;padding:20px;width:100%;max-height:80vh;overflow-y:auto}
-.modal h2{font-size:18px;font-weight:800;color:var(--txt);margin-bottom:16px}
-.modal-close{float:right;background:none;border:none;font-size:24px;color:var(--sub);cursor:pointer;margin-top:-4px}
-.evt-list{}
+.modal{background:#fff;border-radius:24px 24px 0 0;padding:22px;width:100%;max-height:80vh;overflow-y:auto}
+.modal h2{font-size:19px;font-weight:900;color:var(--txt);margin-bottom:16px}
+.modal-close{float:right;background:none;border:none;font-size:26px;color:var(--sub);cursor:pointer;margin-top:-4px}
 .evt-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
 .evt-item:last-child{border-bottom:none}
 .evt-item-date{font-size:13px;font-weight:700;color:var(--grn);min-width:52px}
 .evt-item-name{flex:1;font-size:14px;color:var(--txt)}
-.evt-del{background:none;border:none;color:var(--faint);font-size:18px;cursor:pointer;padding:2px 6px}
-.evt-del:hover{color:var(--red)}
+.evt-del{background:none;border:none;color:var(--faint);font-size:20px;cursor:pointer;padding:2px 6px}
 .evt-form{margin-top:16px;border-top:1px solid var(--border);padding-top:16px}
-.evt-form h3{font-size:14px;font-weight:700;color:var(--sub);margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px}
-.evt-inp{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;margin-bottom:8px}
-.evt-save-btn{width:100%;padding:13px;background:var(--grn);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
+.evt-form h3{font-size:13px;font-weight:800;color:var(--sub);margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px}
+.evt-inp{width:100%;padding:12px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;margin-bottom:8px;color:var(--txt)}
+.evt-save-btn{width:100%;padding:14px;background:var(--dark);color:var(--lime);border:none;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer}
 
 @media print{
-  #hdr,#mnav,#mainScroll .nav-grid,#mainScroll .nav-card-full,#bar{display:none!important}
-  .sub-header{display:none!important}
+  #hdr,#mainScroll .nav-grid,#mainScroll .nav-full,#mainScroll .evt-card,#bar{display:none!important}
+  .sub-hdr,#bar{display:none!important}
   body,html{background:#fff}
-  .d-st-btn,.d-grund,.h-btn,.t-btn,.v-btn,.s-btn{display:none!important}
+  .d-st-btn,.d-grund,.adj-btn,.t-btn,.v-btn,.s-btn{display:none!important}
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div id="hdr">
-  <h1>Stundenzettel</h1>
-  <p>Marc Hoß · RGT · AWO</p>
-  <div class="hBadge">31 Std. / Woche</div>
+  <div class="hdr-row">
+    <div class="hdr-app">Stundenzettel</div>
+    <div class="hdr-name">Marc Hoß</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:10px;letter-spacing:.5px">RGT &nbsp;·&nbsp; AWO</div>
+    <div class="hdr-badge">31 Std. / Woche</div>
+  </div>
+  <div class="mnav">
+    <button class="mnav-btn" id="prevBtn">‹</button>
+    <span id="monthLabel"></span>
+    <button class="mnav-btn" id="nextBtn">›</button>
+  </div>
 </div>
 
-<!-- MONAT NAV -->
-<div id="mnav">
-  <button class="mnav-btn" id="prevBtn">‹</button>
-  <span id="monthLabel"></span>
-  <button class="mnav-btn" id="nextBtn">›</button>
-</div>
-
-<!-- STARTSEITE -->
 <div id="mainScroll">
-  <!-- HEUTE KARTE -->
   <div id="todayCard"></div>
 
-
-  <!-- EVENTS WIDGET -->
   <div class="evt-card" id="evtWidget">
-    <div class="evt-header">
+    <div class="evt-hdr">
       <span class="evt-title">📅 Nächster Termin</span>
-      <button class="evt-add-btn" onclick="openEvtModal()">+ Termin</button>
+      <button class="evt-add" onclick="openEvtModal()">+</button>
     </div>
     <div id="evtNext"></div>
   </div>
-  <!-- NAVIGATIONS-BUTTONS -->
+
+  <button class="nav-full" onclick="openView('uebersicht')">
+    <span style="font-size:36px;line-height:1">🗒️</span>
+    <div style="flex:1"><div class="nl">Tage</div><div class="ns">Jeden Tag einzeln – mit Notizen & Details</div></div>
+    <span class="arr">›</span>
+  </button>
   <div class="nav-grid">
     <button class="nav-card" onclick="openView('kompakt')">
-      <span class="nc-icon">⚡</span>
-      <span class="nc-lbl">Kompakt</span>
-      <span class="nc-sub">Aktuelle Woche</span>
+      <span class="ic">🗓️</span>
+      <span class="nl">Woche</span>
+      <span class="ns">Schnellansicht</span>
     </button>
     <button class="nav-card" onclick="openView('monat')">
-      <span class="nc-icon">📊</span>
-      <span class="nc-lbl">Monat</span>
-      <span class="nc-sub">Gesamtübersicht</span>
+      <span class="ic">📊</span>
+      <span class="nl">Bilanz</span>
+      <span class="ns">Monatsbilanz</span>
     </button>
   </div>
-  <button class="nav-card-full" onclick="openView('uebersicht')">
-    <span style="font-size:22px">📅</span>
-    <div style="text-align:left">
-      <div class="nc-lbl">Alle Tage – Übersicht</div>
-      <div class="nc-sub">Jeden Tag einzeln bearbeiten</div>
-    </div>
-    <span style="font-size:20px;color:var(--faint);margin-left:auto">›</span>
-  </button>
 </div>
 
-<!-- SUB-VIEW -->
 <div id="subView">
-  <div class="sub-header">
-    <button class="back-btn" onclick="closeView()">‹</button>
+  <div class="sub-hdr">
+    <button class="back-btn" onclick="closeView()">‹ Zurück</button>
     <span class="sub-title" id="subTitle"></span>
   </div>
   <div class="sub-content" id="subContent"></div>
 </div>
 
-<!-- BOTTOM BAR (nur in Sub-Views) -->
 <div id="bar">
   <button class="bb-share" id="shareBtn">📤 Teilen</button>
   <button class="bb-save"  id="saveBtn">💾 Speichern</button>
   <button class="bb-print" id="printBtn">🖨 Drucken</button>
+</div>
+
+<div class="modal-overlay" id="evtModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeEvtModal()">×</button>
+    <h2>📅 Termine</h2>
+    <div id="evtList"></div>
+    <div class="evt-form">
+      <h3>Neuer Termin</h3>
+      <input class="evt-inp" type="date" id="evtDate">
+      <input class="evt-inp" type="text" id="evtName" placeholder="z.B. Geburtstag, Brückentag...">
+      <button class="evt-save-btn" onclick="addEvt()">Speichern</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -342,10 +365,9 @@ const PLAN={
   4:{kz:'Do',az:'8:00–16:00', soll:8.30,pause:'–',   team:true },
   5:{kz:'Fr',az:'10:00–15:00',soll:5.00,pause:'–',   team:false},
 };
-const WSOLL=31.00,TDEF=1.00,VDEF=1.00,STEP=0.25;
+const WSOLL=31,TDEF=1,VDEF=1,STEP=0.25;
 const MN=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 const TKZ=['So','Mo','Di','Mi','Do','Fr','Sa'];
-
 let S={year:new Date().getFullYear(),month:new Date().getMonth()+1,view:'home',data:{},vorb:{},ubertrag:0};
 
 function fH(n){if(n==null||isNaN(n))return'–';const s=n<0?'-':'',a=Math.abs(n),h=Math.floor(a),m=String(Math.round((a-h)*100)).padStart(2,'0');return s+h+','+m;}
@@ -360,72 +382,57 @@ function wSoll(days){const full=days.length===5||[1,2,3,4,5].every(dw=>days.some
 function wIst(days){let s=0;days.forEach(({dow,key})=>s+=cIst(dd(key,dow)));return Math.round(s*100)/100;}
 function mCalc(){const w=weeksOf(S.year,S.month);let ts=0,ti=0,tv=0;Object.entries(w).forEach(([k,days])=>{ts+=wSoll(days);ti+=wIst(days);tv+=S.vorb[k]!==undefined?S.vorb[k]:VDEF;});ts=Math.round(ts*100)/100;ti=Math.round(ti*100)/100;tv=Math.round(tv*100)/100;return{ts,ti,tv,ub:S.ubertrag,neu:Math.round((ti+tv-ts+S.ubertrag)*100)/100};}
 
-function sk(){return`sz5_${S.year}_${S.month}`;}
+function sk(){return`sz6_${S.year}_${S.month}`;}
 function save(){localStorage.setItem(sk(),JSON.stringify({data:S.data,vorb:S.vorb,ubertrag:S.ubertrag}));}
 function load(){const r=localStorage.getItem(sk());if(r){const p=JSON.parse(r);S.data=p.data||{};S.vorb=p.vorb||{};S.ubertrag=p.ubertrag||0;}else{S.data={};S.vorb={};S.ubertrag=0;}}
 
-// ── NAVIGATION ──
-function openView(v){
-  S.view=v;
-  document.getElementById('mainScroll').style.display='none';
-  document.getElementById('subView').style.display='block';
-  document.getElementById('bar').classList.add('show');
-  const titles={uebersicht:'📅 Übersicht',kompakt:'⚡ Kompakt',monat:'📊 Monat'};
-  document.getElementById('subTitle').textContent=titles[v];
-  renderSubView();
-}
-function closeView(){
-  S.view='home';
-  document.getElementById('mainScroll').style.display='block';
-  document.getElementById('subView').style.display='none';
-  document.getElementById('bar').classList.remove('show');
-}
+function openView(v){S.view=v;document.getElementById('mainScroll').style.display='none';document.getElementById('subView').style.display='block';document.getElementById('bar').classList.add('show');const t={uebersicht:'🗒️ Tage',kompakt:'🗓️ Woche',monat:'📊 Bilanz'};document.getElementById('subTitle').textContent=t[v];renderSub();}
+function closeView(){S.view='home';document.getElementById('mainScroll').style.display='block';document.getElementById('subView').style.display='none';document.getElementById('bar').classList.remove('show');}
 
-// ── HEUTE KARTE ──
 function rToday(){
   const now=new Date(),dow=now.getDay(),el=document.getElementById('todayCard');
-  if(dow===0||dow===6){el.innerHTML=`<div class="heute-card"><div class="weekend-msg">🌴 Wochenende</div></div>`;return;}
+  if(dow===0||dow===6){el.innerHTML=`<div class="today-float"><div class="weekend-msg">🌴 Wochenende – erhol dich!</div></div>`;return;}
   const y=now.getFullYear(),m=now.getMonth()+1,d=now.getDate();
   const key=dKey(y,m,d),D=dd(key,dow),p=PLAN[dow];
   const cur=y===S.year&&m===S.month,st=D?D.status:'';
-  const zeig=st?'0,00':fH(D?D.ist:p.soll);
-  const soll=p.soll+(p.team?(D?D.team:TDEF):0);
-  const ist=D?D.ist:soll;
+  const ist=D?D.ist:p.soll,soll=p.soll+(p.team?(D?D.team:TDEF):0);
   const pct=Math.min(Math.round(ist/soll*100),100);
   const diff=Math.round((ist-soll)*100)/100;
+  const dc=diff>0?'over':'';
   const diffTxt=diff===0?'✓ genau':diff>0?`+${fH(diff)}h über Soll`:`${fH(diff)}h unter Soll`;
   const diffCol=diff>0?'var(--ora)':diff<0?'var(--red)':'var(--grn)';
-  el.innerHTML=`<div class="heute-card">
-    <div class="h-top">
-      <span class="h-tag">HEUTE</span>
-      <div class="h-right"><div class="h-dat">${TKZ[dow]}, ${d}. ${MN[m-1]}</div><div class="h-az">${p.az}</div></div>
+  el.innerHTML=`<div class="today-float">
+    <div class="tf-top">
+      <span class="tf-tag">HEUTE</span>
+      <div class="tf-right"><div class="tf-dat">${TKZ[dow]}, ${d}. ${MN[m-1]}</div><div class="tf-az">${p.az}</div></div>
     </div>
-    ${cur?`<div class="h-main">
-      <button class="h-btn m" onclick="adjD('${key}',${dow},-1)">−</button>
-      <span class="h-std${st?' zero':''}">${zeig}h</span>
-      <button class="h-btn p" onclick="adjD('${key}',${dow},1)">+</button>
+    ${cur?`<div class="tf-main">
+      <div class="tf-std${st?' zero':''}"><span>${st?'0,00':fH(ist)}</span><span class="unit"> Std.</span></div>
+      <div class="tf-adj">
+        <button class="adj-btn m" onclick="adjD('${key}',${dow},-1)">−</button>
+        <button class="adj-btn p" onclick="adjD('${key}',${dow},1)">+</button>
+      </div>
     </div>
-    ${!st?`<div class="prog-wrap">
-      <div class="prog-lbl"><span>${fH(ist)}h</span><span style="color:${diffCol}">${diffTxt}</span></div>
-      <div class="prog-bg"><div class="prog-fill${diff>0?' over':''}" style="width:${pct}%"></div></div>
+    ${!st?`<div class="tf-prog">
+      <div class="tf-prog-lbl"><span>${fH(ist)}h</span><span style="color:${diffCol}">${diffTxt}</span></div>
+      <div class="tf-prog-bg"><div class="tf-prog-fill ${dc}" style="width:${pct}%"></div></div>
     </div>`:''}
-    ${p.team?`<div class="h-team"><span class="h-team-lbl">🤝 Teambesprechung</span>
+    ${p.team?`<div class="tf-team"><span class="tf-team-lbl">🤝 Teambesprechung</span>
       <button class="t-btn m" onclick="adjT('${key}',${dow},-1)">−</button>
-      <span class="h-team-val">${fH(D?D.team:TDEF)}h</span>
+      <span class="tf-team-val">${fH(D?D.team:TDEF)}h</span>
       <button class="t-btn p" onclick="adjT('${key}',${dow},1)">+</button></div>`:''}
-    <div class="h-status">
-      <button class="st-btn${st==='frei'?' ak-frei':''}" onclick="togS('${key}',${dow},'frei')">⭐ Frei</button>
-      <button class="st-btn${st==='krank'?' ak-krank':''}" onclick="togS('${key}',${dow},'krank')">🤒 Krank</button>
-      <button class="st-btn${st==='keine_schule'?' ak-ks':''}" onclick="togS('${key}',${dow},'keine_schule')">🚫 K.Schule</button>
+    <div class="tf-status">
+      <button class="tf-st-btn${st==='frei'?' ak-frei':''}" onclick="togS('${key}',${dow},'frei')">⭐ Frei</button>
+      <button class="tf-st-btn${st==='krank'?' ak-krank':''}" onclick="togS('${key}',${dow},'krank')">🤒 Krank</button>
+      <button class="tf-st-btn${st==='keine_schule'?' ak-ks':''}" onclick="togS('${key}',${dow},'keine_schule')">🚫 Schule</button>
     </div>`:`<div style="text-align:center;color:var(--faint);font-size:13px;padding:8px">anderer Monat</div>`}
   </div>`;
 }
 
-// ── SUB-VIEWS ──
-function renderSubView(){
+function renderSub(){
   const el=document.getElementById('subContent');
-  if(S.view==='uebersicht') el.innerHTML=rUebersicht();
-  else if(S.view==='kompakt') el.innerHTML=rKompakt();
+  if(S.view==='uebersicht')el.innerHTML=rUebersicht();
+  else if(S.view==='kompakt')el.innerHTML=rKompakt();
   else el.innerHTML=rMonat();
 }
 
@@ -437,16 +444,15 @@ function rUebersicht(){
     const D=dd(key,dow),p=PLAN[dow],st=D.status;
     const isT=key===tod&&S.year===now.getFullYear()&&S.month===now.getMonth()+1;
     const hc=isT?'h-today':st?'h-'+st.replace('_','-'):'';
-    const bl=st==='frei'?'⭐ Frei':st==='krank'?'🤒 Krank':st==='keine_schule'?'🚫 K.Schule':p.az;
+    const bl=st==='frei'?'⭐ Frei':st==='krank'?'🤒 Krank':st==='keine_schule'?'🚫 Schule':p.az;
     const bc=st==='frei'?'b-frei':st==='krank'?'b-krank':st==='keine_schule'?'b-ks':'';
-    const disp=st?'0,00':fH(D.ist);
     h+=`<div class="d-card"><div class="d-head ${hc}">
       <span class="d-name${st?' grau':''}">${p.kz} ${d}.${String(S.month).padStart(2,'0')}.</span>
       <span class="d-badge ${bc}">${bl}</span></div>
       <div class="d-body">
         <div class="d-h-row">
           <input class="d-h-inp" type="text" value="${fH(D.ist)}"${st?' disabled':''} onchange="setI('${key}',${dow},this.value)">
-          <span class="d-h-show${st==='keine_schule'?' neg':''}">${disp}h</span>
+          <span class="d-h-show${st==='keine_schule'?' neg':''}">${st?'0,00':fH(D.ist)}h</span>
         </div>
         ${p.team?`<div class="d-team"><span class="d-team-lbl">🤝 Teambesprechung</span>
           <button class="s-btn m" onclick="adjT('${key}',${dow},-1)">−</button>
@@ -456,14 +462,13 @@ function rUebersicht(){
           <button class="d-st-btn${!st?' on-n':''}" onclick="togS('${key}',${dow},'')">✅ Normal</button>
           <button class="d-st-btn${st==='krank'?' on-k':''}" onclick="togS('${key}',${dow},'krank')">🤒 Krank</button>
           <button class="d-st-btn${st==='frei'?' on-f':''}" onclick="togS('${key}',${dow},'frei')">⭐ Frei</button>
-          <button class="d-st-btn${st==='keine_schule'?' on-s':''}" onclick="togS('${key}',${dow},'keine_schule')">🚫</button>
+          <button class="d-st-btn${st==='keine_schule'?' on-s':''}" onclick="togS('${key}',${dow},'keine_schule')">🚫 Schule</button>
         </div>
-        <input class="d-grund" type="text" placeholder="Begründung (z.B. kein Team, Vertretung...)"
-          value="${D.grund}" onchange="setG('${key}',${dow},this.value)">
+        <input class="d-grund" type="text" placeholder="Begründung..." value="${D.grund}" onchange="setG('${key}',${dow},this.value)">
       </div></div>`;
   });
   const weeks=weeksOf(S.year,S.month);
-  h+=`<div class="vorb-section"><h3>📝 Vorbereitungszeit pro Woche</h3>`;
+  h+=`<div class="vorb-section"><h3>📝 Vorbereitungszeit</h3>`;
   Object.entries(weeks).forEach(([wk,days])=>{
     const v=S.vorb[wk]!==undefined?S.vorb[wk]:VDEF;
     const kw=wk.split('-W')[1],d1=days[0].d,d2=days[days.length-1].d;
@@ -492,10 +497,8 @@ function rKompakt(){
       <div class="k-d"><span class="k-kz">${p.kz}</span><span class="k-dt">${day}.${String(m).padStart(2,'0')}.</span></div>
       <span class="k-az">${p.az}</span><span class="k-pz">${p.pause}</span>
       ${cur&&D?`<div class="k-ctrl">${st
-        ?`<span class="k-stat">${st==='keine_schule'?'K.Sch.':st}</span>`
-        :`<button class="s-btn m" onclick="adjD('${key}',${dw},-1)">−</button>
-           <span class="k-ist">${fH(D.ist)}</span>
-           <button class="s-btn p" onclick="adjD('${key}',${dw},1)">+</button>`
+        ?`<span class="k-stat">${st==='keine_schule'?'Schule':st}</span>`
+        :`<button class="s-btn m" onclick="adjD('${key}',${dw},-1)">−</button><span class="k-ist">${fH(D.ist)}</span><button class="s-btn p" onclick="adjD('${key}',${dw},1)">+</button>`
       }</div>`:`<div class="k-ctrl"><span class="k-ist">${D?(st||fH(D.ist)):'–'}</span></div>`}
     </div>`;
   }
@@ -535,315 +538,71 @@ function rMonat(){
     </div></div>`;
 }
 
-// ── AKTIONEN ──
-function adjD(k,dw,d){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};S.data[k].ist=step(S.data[k].ist!==undefined?S.data[k].ist:D.ist,d);save();rToday();if(S.view!=='home')renderSubView();}
-function adjT(k,dw,d){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};const nt=step(S.data[k].team!==undefined?S.data[k].team:TDEF,d);S.data[k].team=nt;S.data[k].ist=Math.round((PLAN[dw].soll+nt)*100)/100;save();rToday();if(S.view!=='home')renderSubView();}
-function togS(k,dw,st){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};S.data[k].status=S.data[k].status===st?'':st;save();rToday();if(S.view!=='home')renderSubView();}
-function setI(k,dw,v){const n=parseFloat(String(v).replace(',','.'));if(!isNaN(n)){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};S.data[k].ist=Math.round(n*100)/100;save();renderSubView();}}
+function adjD(k,dw,d){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};S.data[k].ist=step(S.data[k].ist!==undefined?S.data[k].ist:D.ist,d);save();rToday();if(S.view!=='home')renderSub();}
+function adjT(k,dw,d){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};const nt=step(S.data[k].team!==undefined?S.data[k].team:TDEF,d);S.data[k].team=nt;S.data[k].ist=Math.round((PLAN[dw].soll+nt)*100)/100;save();rToday();if(S.view!=='home')renderSub();}
+function togS(k,dw,st){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};S.data[k].status=S.data[k].status===st?'':st;save();rToday();if(S.view!=='home')renderSub();}
+function setI(k,dw,v){const n=parseFloat(String(v).replace(',','.'));if(!isNaN(n)){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};S.data[k].ist=Math.round(n*100)/100;save();renderSub();}}
 function setG(k,dw,v){const D=dd(k,dw);if(!S.data[k])S.data[k]={...D};S.data[k].grund=v;save();}
-function adjV(wk,d){const c=S.vorb[wk]!==undefined?S.vorb[wk]:VDEF;S.vorb[wk]=step(c,d);save();renderSubView();}
-function adjU(d){S.ubertrag=step(S.ubertrag,d);save();renderSubView();}
-function setU(v){const n=parseFloat(String(v).replace(',','.'));if(!isNaN(n)){S.ubertrag=Math.round(n*100)/100;save();renderSubView();}}
+function adjV(wk,d){const c=S.vorb[wk]!==undefined?S.vorb[wk]:VDEF;S.vorb[wk]=step(c,d);save();renderSub();}
+function adjU(d){S.ubertrag=step(S.ubertrag,d);save();renderSub();}
+function setU(v){const n=parseFloat(String(v).replace(',','.'));if(!isNaN(n)){S.ubertrag=Math.round(n*100)/100;save();renderSub();}}
 
-// ── EVENTS ──
-document.getElementById('prevBtn').onclick=()=>{S.month--;if(S.month<1){S.month=12;S.year--;}
-// ── EVENTS SYSTEM ──
-const DEFAULT_EVENTS = [
-  {id:'e1', date:'2026-06-19', name:'Fronleichnam (Feiertag)'},
-  {id:'e2', date:'2026-10-03', name:'Tag der Deutschen Einheit'},
-  {id:'e3', date:'2026-10-31', name:'Reformationstag'},
-  {id:'e4', date:'2026-11-01', name:'Allerheiligen (Feiertag)'},
-  {id:'e5', date:'2026-12-25', name:'1. Weihnachtstag'},
-  {id:'e6', date:'2026-12-26', name:'2. Weihnachtstag'},
-  {id:'e7', date:'2027-01-01', name:'Neujahr 2027'},
+// EVENTS
+const DEF_EVTS=[
+  {id:'e1',date:'2026-06-19',name:'Fronleichnam'},
+  {id:'e2',date:'2026-08-15',name:'Mariä Himmelfahrt'},
+  {id:'e3',date:'2026-10-03',name:'Tag der Deutschen Einheit'},
+  {id:'e4',date:'2026-10-31',name:'Reformationstag'},
+  {id:'e5',date:'2026-11-01',name:'Allerheiligen'},
+  {id:'e6',date:'2026-12-24',name:'Heiligabend'},
+  {id:'e7',date:'2026-12-25',name:'1. Weihnachtstag'},
+  {id:'e8',date:'2026-12-26',name:'2. Weihnachtstag'},
+  {id:'e9',date:'2027-01-01',name:'Neujahr 2027'},
 ];
-
-function loadEvts(){
-  const raw=localStorage.getItem('sz_events');
-  if(raw) return JSON.parse(raw);
-  localStorage.setItem('sz_events', JSON.stringify(DEFAULT_EVENTS));
-  return DEFAULT_EVENTS;
-}
-function saveEvts(evts){ localStorage.setItem('sz_events', JSON.stringify(evts)); }
-
+function loadEvts(){const r=localStorage.getItem('sz_evts');if(r)return JSON.parse(r);localStorage.setItem('sz_evts',JSON.stringify(DEF_EVTS));return DEF_EVTS;}
+function saveEvts(e){localStorage.setItem('sz_evts',JSON.stringify(e));}
 function rEvtWidget(){
   const evts=loadEvts();
-  const today=new Date(); today.setHours(0,0,0,0);
-  const future=evts
-    .map(e=>({...e,dt:new Date(e.date+'T00:00:00')}))
-    .filter(e=>e.dt>=today)
-    .sort((a,b)=>a.dt-b.dt);
+  const today=new Date();today.setHours(0,0,0,0);
+  const future=evts.map(e=>({...e,dt:new Date(e.date+'T00:00:00')})).filter(e=>e.dt>=today).sort((a,b)=>a.dt-b.dt);
   const el=document.getElementById('evtNext');
-  if(!future.length){el.innerHTML='<div class="evt-empty">Keine Termine eingetragen</div>';return;}
-  const next=future[0];
-  const diff=Math.round((next.dt-today)/86400000);
+  if(!future.length){el.innerHTML='<div class="evt-empty">Keine Termine</div>';return;}
+  const nx=future[0],diff=Math.round((nx.dt-today)/86400000);
   const cls=diff===0?'today':diff<=7?'soon':'';
-  const daysTxt=diff===0?'Heute!':diff===1?'Morgen':`in ${diff} Tagen`;
-  const d=next.dt;
-  const dateStr=`${d.getDate()}. ${MN[d.getMonth()]} ${d.getFullYear()}`;
-  el.innerHTML=`<div class="evt-next">
-    <div class="evt-dot ${cls}"></div>
-    <div class="evt-info">
-      <div class="evt-date">${dateStr}</div>
-      <div class="evt-name">${next.name}</div>
-    </div>
-    <span class="evt-days ${cls}">${daysTxt}</span>
-  </div>`;
+  const dtxt=diff===0?'Heute!':diff===1?'Morgen':`in ${diff} Tagen`;
+  const ds=`${nx.dt.getDate()}. ${MN[nx.dt.getMonth()]}`;
+  el.innerHTML=`<div class="evt-body"><div class="evt-strip ${cls}"></div>
+    <div class="evt-inf"><div class="evt-d">${ds} ${nx.dt.getFullYear()}</div><div class="evt-n">${nx.name}</div></div>
+    <span class="evt-pill ${cls}">${dtxt}</span></div>`;
 }
-
-function openEvtModal(){
-  // Datum auf heute vorausfüllen
-  const today=new Date();
-  document.getElementById('evtDate').value=today.toISOString().split('T')[0];
-  rEvtList();
-  document.getElementById('evtModal').classList.add('open');
-}
-function closeEvtModal(){
-  document.getElementById('evtModal').classList.remove('open');
-  rEvtWidget();
-}
-
+function openEvtModal(){document.getElementById('evtDate').value=new Date().toISOString().split('T')[0];rEvtList();document.getElementById('evtModal').classList.add('open');}
+function closeEvtModal(){document.getElementById('evtModal').classList.remove('open');rEvtWidget();}
 function rEvtList(){
   const evts=loadEvts().sort((a,b)=>a.date.localeCompare(b.date));
   const el=document.getElementById('evtList');
-  if(!evts.length){el.innerHTML='<div class="evt-empty">Noch keine Termine</div>';return;}
-  el.innerHTML=evts.map(e=>{
+  el.innerHTML=evts.length?evts.map(e=>{
     const d=new Date(e.date+'T00:00:00');
-    const ds=`${d.getDate()}. ${MN[d.getMonth()]}`;
-    return`<div class="evt-item">
-      <span class="evt-item-date">${ds}</span>
+    return`<div class="evt-item"><span class="evt-item-date">${d.getDate()}. ${MN[d.getMonth()]}</span>
       <span class="evt-item-name">${e.name}</span>
-      <button class="evt-del" onclick="delEvt('${e.id}')">×</button>
-    </div>`;
-  }).join('');
+      <button class="evt-del" onclick="delEvt('${e.id}')">×</button></div>`;
+  }).join(''):'<div style="color:var(--sub);text-align:center;padding:10px">Noch keine Termine</div>';
 }
-
 function addEvt(){
-  const date=document.getElementById('evtDate').value;
-  const name=document.getElementById('evtName').value.trim();
-  if(!date||!name) return;
-  const evts=loadEvts();
-  evts.push({id:'e'+Date.now(), date, name});
-  saveEvts(evts);
-  document.getElementById('evtName').value='';
-  rEvtList();
+  const date=document.getElementById('evtDate').value,name=document.getElementById('evtName').value.trim();
+  if(!date||!name)return;
+  const evts=loadEvts();evts.push({id:'e'+Date.now(),date,name});saveEvts(evts);
+  document.getElementById('evtName').value='';rEvtList();
 }
+function delEvt(id){saveEvts(loadEvts().filter(e=>e.id!==id));rEvtList();}
 
-function delEvt(id){
-  const evts=loadEvts().filter(e=>e.id!==id);
-  saveEvts(evts);
-  rEvtList();
-}
-
-load();init();
-rEvtWidget();};
-document.getElementById('nextBtn').onclick=()=>{S.month++;if(S.month>12){S.month=1;S.year++;}
-// ── EVENTS SYSTEM ──
-const DEFAULT_EVENTS = [
-  {id:'e1', date:'2026-06-19', name:'Fronleichnam (Feiertag)'},
-  {id:'e2', date:'2026-10-03', name:'Tag der Deutschen Einheit'},
-  {id:'e3', date:'2026-10-31', name:'Reformationstag'},
-  {id:'e4', date:'2026-11-01', name:'Allerheiligen (Feiertag)'},
-  {id:'e5', date:'2026-12-25', name:'1. Weihnachtstag'},
-  {id:'e6', date:'2026-12-26', name:'2. Weihnachtstag'},
-  {id:'e7', date:'2027-01-01', name:'Neujahr 2027'},
-];
-
-function loadEvts(){
-  const raw=localStorage.getItem('sz_events');
-  if(raw) return JSON.parse(raw);
-  localStorage.setItem('sz_events', JSON.stringify(DEFAULT_EVENTS));
-  return DEFAULT_EVENTS;
-}
-function saveEvts(evts){ localStorage.setItem('sz_events', JSON.stringify(evts)); }
-
-function rEvtWidget(){
-  const evts=loadEvts();
-  const today=new Date(); today.setHours(0,0,0,0);
-  const future=evts
-    .map(e=>({...e,dt:new Date(e.date+'T00:00:00')}))
-    .filter(e=>e.dt>=today)
-    .sort((a,b)=>a.dt-b.dt);
-  const el=document.getElementById('evtNext');
-  if(!future.length){el.innerHTML='<div class="evt-empty">Keine Termine eingetragen</div>';return;}
-  const next=future[0];
-  const diff=Math.round((next.dt-today)/86400000);
-  const cls=diff===0?'today':diff<=7?'soon':'';
-  const daysTxt=diff===0?'Heute!':diff===1?'Morgen':`in ${diff} Tagen`;
-  const d=next.dt;
-  const dateStr=`${d.getDate()}. ${MN[d.getMonth()]} ${d.getFullYear()}`;
-  el.innerHTML=`<div class="evt-next">
-    <div class="evt-dot ${cls}"></div>
-    <div class="evt-info">
-      <div class="evt-date">${dateStr}</div>
-      <div class="evt-name">${next.name}</div>
-    </div>
-    <span class="evt-days ${cls}">${daysTxt}</span>
-  </div>`;
-}
-
-function openEvtModal(){
-  // Datum auf heute vorausfüllen
-  const today=new Date();
-  document.getElementById('evtDate').value=today.toISOString().split('T')[0];
-  rEvtList();
-  document.getElementById('evtModal').classList.add('open');
-}
-function closeEvtModal(){
-  document.getElementById('evtModal').classList.remove('open');
-  rEvtWidget();
-}
-
-function rEvtList(){
-  const evts=loadEvts().sort((a,b)=>a.date.localeCompare(b.date));
-  const el=document.getElementById('evtList');
-  if(!evts.length){el.innerHTML='<div class="evt-empty">Noch keine Termine</div>';return;}
-  el.innerHTML=evts.map(e=>{
-    const d=new Date(e.date+'T00:00:00');
-    const ds=`${d.getDate()}. ${MN[d.getMonth()]}`;
-    return`<div class="evt-item">
-      <span class="evt-item-date">${ds}</span>
-      <span class="evt-item-name">${e.name}</span>
-      <button class="evt-del" onclick="delEvt('${e.id}')">×</button>
-    </div>`;
-  }).join('');
-}
-
-function addEvt(){
-  const date=document.getElementById('evtDate').value;
-  const name=document.getElementById('evtName').value.trim();
-  if(!date||!name) return;
-  const evts=loadEvts();
-  evts.push({id:'e'+Date.now(), date, name});
-  saveEvts(evts);
-  document.getElementById('evtName').value='';
-  rEvtList();
-}
-
-function delEvt(id){
-  const evts=loadEvts().filter(e=>e.id!==id);
-  saveEvts(evts);
-  rEvtList();
-}
-
-load();init();
-rEvtWidget();};
+document.getElementById('prevBtn').onclick=()=>{S.month--;if(S.month<1){S.month=12;S.year--;}load();init();};
+document.getElementById('nextBtn').onclick=()=>{S.month++;if(S.month>12){S.month=1;S.year++;}load();init();};
 document.getElementById('saveBtn').onclick=()=>{save();const b=document.getElementById('saveBtn');b.textContent='✅ Gespeichert';b.classList.add('done');setTimeout(()=>{b.textContent='💾 Speichern';b.classList.remove('done');},2000);};
-document.getElementById('shareBtn').onclick=()=>{save();if(navigator.share){navigator.share({title:'Stundenzettel',url:window.location.href});}else{navigator.clipboard.writeText(window.location.href).then(()=>{const b=document.getElementById('shareBtn');b.textContent='✅ Kopiert!';setTimeout(()=>{b.textContent='📤 Teilen';},2000);});}};
+document.getElementById('shareBtn').onclick=()=>{save();if(navigator.share)navigator.share({title:'Stundenzettel',url:window.location.href});else{navigator.clipboard.writeText(window.location.href).then(()=>{const b=document.getElementById('shareBtn');b.textContent='✅ Kopiert!';setTimeout(()=>{b.textContent='📤 Teilen';},2000);});}};
 document.getElementById('printBtn').onclick=()=>window.print();
 
-function init(){
-  document.getElementById('monthLabel').textContent=`${MN[S.month-1]} ${S.year}`;
-  rToday();
-}
-
-
-// ── EVENTS SYSTEM ──
-const DEFAULT_EVENTS = [
-  {id:'e1', date:'2026-06-19', name:'Fronleichnam (Feiertag)'},
-  {id:'e2', date:'2026-10-03', name:'Tag der Deutschen Einheit'},
-  {id:'e3', date:'2026-10-31', name:'Reformationstag'},
-  {id:'e4', date:'2026-11-01', name:'Allerheiligen (Feiertag)'},
-  {id:'e5', date:'2026-12-25', name:'1. Weihnachtstag'},
-  {id:'e6', date:'2026-12-26', name:'2. Weihnachtstag'},
-  {id:'e7', date:'2027-01-01', name:'Neujahr 2027'},
-];
-
-function loadEvts(){
-  const raw=localStorage.getItem('sz_events');
-  if(raw) return JSON.parse(raw);
-  localStorage.setItem('sz_events', JSON.stringify(DEFAULT_EVENTS));
-  return DEFAULT_EVENTS;
-}
-function saveEvts(evts){ localStorage.setItem('sz_events', JSON.stringify(evts)); }
-
-function rEvtWidget(){
-  const evts=loadEvts();
-  const today=new Date(); today.setHours(0,0,0,0);
-  const future=evts
-    .map(e=>({...e,dt:new Date(e.date+'T00:00:00')}))
-    .filter(e=>e.dt>=today)
-    .sort((a,b)=>a.dt-b.dt);
-  const el=document.getElementById('evtNext');
-  if(!future.length){el.innerHTML='<div class="evt-empty">Keine Termine eingetragen</div>';return;}
-  const next=future[0];
-  const diff=Math.round((next.dt-today)/86400000);
-  const cls=diff===0?'today':diff<=7?'soon':'';
-  const daysTxt=diff===0?'Heute!':diff===1?'Morgen':`in ${diff} Tagen`;
-  const d=next.dt;
-  const dateStr=`${d.getDate()}. ${MN[d.getMonth()]} ${d.getFullYear()}`;
-  el.innerHTML=`<div class="evt-next">
-    <div class="evt-dot ${cls}"></div>
-    <div class="evt-info">
-      <div class="evt-date">${dateStr}</div>
-      <div class="evt-name">${next.name}</div>
-    </div>
-    <span class="evt-days ${cls}">${daysTxt}</span>
-  </div>`;
-}
-
-function openEvtModal(){
-  // Datum auf heute vorausfüllen
-  const today=new Date();
-  document.getElementById('evtDate').value=today.toISOString().split('T')[0];
-  rEvtList();
-  document.getElementById('evtModal').classList.add('open');
-}
-function closeEvtModal(){
-  document.getElementById('evtModal').classList.remove('open');
-  rEvtWidget();
-}
-
-function rEvtList(){
-  const evts=loadEvts().sort((a,b)=>a.date.localeCompare(b.date));
-  const el=document.getElementById('evtList');
-  if(!evts.length){el.innerHTML='<div class="evt-empty">Noch keine Termine</div>';return;}
-  el.innerHTML=evts.map(e=>{
-    const d=new Date(e.date+'T00:00:00');
-    const ds=`${d.getDate()}. ${MN[d.getMonth()]}`;
-    return`<div class="evt-item">
-      <span class="evt-item-date">${ds}</span>
-      <span class="evt-item-name">${e.name}</span>
-      <button class="evt-del" onclick="delEvt('${e.id}')">×</button>
-    </div>`;
-  }).join('');
-}
-
-function addEvt(){
-  const date=document.getElementById('evtDate').value;
-  const name=document.getElementById('evtName').value.trim();
-  if(!date||!name) return;
-  const evts=loadEvts();
-  evts.push({id:'e'+Date.now(), date, name});
-  saveEvts(evts);
-  document.getElementById('evtName').value='';
-  rEvtList();
-}
-
-function delEvt(id){
-  const evts=loadEvts().filter(e=>e.id!==id);
-  saveEvts(evts);
-  rEvtList();
-}
-
-load();init();
-rEvtWidget();
+function init(){document.getElementById('monthLabel').textContent=`${MN[S.month-1]} ${S.year}`;rToday();}
+load();init();rEvtWidget();
 </script>
-
-<!-- EVENTS MODAL -->
-<div class="modal-overlay" id="evtModal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeEvtModal()">×</button>
-    <h2>📅 Termine</h2>
-    <div class="evt-list" id="evtList"></div>
-    <div class="evt-form">
-      <h3>Neuer Termin</h3>
-      <input class="evt-inp" type="date" id="evtDate">
-      <input class="evt-inp" type="text" id="evtName" placeholder="z.B. Geburtstag Mama, Brückentag...">
-      <button class="evt-save-btn" onclick="addEvt()">Termin speichern</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
