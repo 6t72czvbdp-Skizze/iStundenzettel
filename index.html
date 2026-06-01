@@ -735,6 +735,7 @@ function printPDF() {
   
   for (let week of weeks) {
     let weekSoll = 0, weekIst = 0;
+    let weekStartY = yPos;
     
     // Jede Woche: 5 Tage (Mo-Fr)
     for (let day of week) {
@@ -743,6 +744,7 @@ function printPDF() {
       let dateStr = String(day.day).padStart(2,'0') + '.' + String(m+1).padStart(2,'0');
       let timeStr = data.az || STD_AZ[dow];
       let hoursStr = (data.ist || STD_SOLL[dow].toFixed(2)).replace('.',',');
+      let grStr = data.gr || '';
       let sollHours = STD_SOLL[dow];
       
       // Berechne IST-Stunden
@@ -755,30 +757,34 @@ function printPDF() {
       totalSoll += sollHours;
       totalIst += istHours;
       
-      // Spalten: Datum | Arbeitszeit | Pause | Stunden | Begründung
-      html += `<div class="field" style="left:15mm; top:${yPos}mm;">${dateStr}</div>`;
-      html += `<div class="field" style="left:45mm; top:${yPos}mm;">${timeStr}</div>`;
-      html += `<div class="field" style="left:115mm; top:${yPos}mm;">${hoursStr}</div>`;
+      // Spalten: Datum | Arbeitszeit | (PAUSE WIRD ÜBERSPRUNGEN) | Stunden | Begründung
+      html += `<div class="field" style="left:18mm; top:${yPos}mm; width:20mm;">${dateStr}</div>`;
+      html += `<div class="field" style="left:45mm; top:${yPos}mm; width:30mm;">${timeStr}</div>`;
+      html += `<div class="field" style="left:115mm; top:${yPos}mm; width:15mm; text-align:center;">${hoursStr}</div>`;
+      if (grStr) html += `<div class="field" style="left:155mm; top:${yPos}mm; width:35mm; font-size:8px;">${grStr}</div>`;
       
       yPos += 6.5;
     }
     
     // Wochensummary-Box (rechts neben der Woche)
-    let weekYPos = yPos - (week.length * 6.5) - 3;
-    html += `<div class="field" style="left:172mm; top:${weekYPos}mm; font-size:8px;">
-      Gesamt SOLL: ${weekSoll.toFixed(2).replace('.',',')} h<br>
-      Gesamt IST: ${weekIst.toFixed(2).replace('.',',')} h<br>
-      +/-: ${(weekIst - weekSoll).toFixed(2).replace('.',',')} h
+    let weekYPos = weekStartY + (week.length * 6.5) / 2 - 6;
+    html += `<div class="field" style="left:172mm; top:${weekYPos}mm; font-size:8px; line-height:1.2;">
+      Gesamt SOLL Woche:<br>
+      ${weekSoll.toFixed(2).replace('.',',')} h<br><br>
+      Gesamt IST Woche:<br>
+      ${weekIst.toFixed(2).replace('.',',')} h<br><br>
+      +/-Stunden:<br>
+      ${(weekIst - weekSoll).toFixed(2).replace('.',',')} h
     </div>`;
     
-    yPos += 2; // Abstand zwischen Wochen
+    yPos += 3; // Abstand zwischen Wochen
     weekIndex++;
   }
   
   // Monatssummary unten
-  let monthPos = yPos + 15;
-  html += `<div class="field" style="left:80mm; top:${monthPos}mm; font-weight:bold;">
-    Gesamt Monat: ${(totalIst - totalSoll).toFixed(2).replace('.',',')} h
+  let monthPos = yPos + 20;
+  html += `<div class="field" style="left:120mm; top:${monthPos}mm; font-weight:bold; font-size:10px;">
+    Gesamt Monat +/-Stunden: ${(totalIst - totalSoll).toFixed(2).replace('.',',')} h
   </div>`;
   
   html += `</div></body></html>`;
