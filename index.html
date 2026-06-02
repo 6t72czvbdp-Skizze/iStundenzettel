@@ -87,9 +87,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 .tf-st-btn{padding:11px 4px;border-radius:12px;border:1.5px solid var(--border);
   background:#fafffe;color:var(--sub);font-size:13px;font-weight:600;cursor:pointer;
   transition:all .15s;white-space:nowrap}
-.tf-st-btn.ak-frei{background:#f5a623;border-color:#e6a000;color:#fff;font-weight:800}
-.tf-st-btn.ak-krank{background:#fff3e0;border-color:var(--ora);color:var(--ora);font-weight:800}
-.tf-st-btn.ak-ks{background:#fce4ec;border-color:var(--pin);color:var(--pin);font-weight:800}
+.tf-st-btn.ak-frei{background:#FFB300;border-color:#f5a623;color:#fff;font-weight:800}
+.tf-st-btn.ak-krank{background:#e3f2fd;border-color:#1976d2;color:#1976d2;font-weight:800}
+.tf-st-btn.ak-ks{background:#ffebee;border-color:#c62828;color:#c62828;font-weight:800}
 /* Team */
 .tf-team{background:#fffbf0;border:1.5px solid #fde8b0;border-radius:12px;
   display:flex;align-items:center;padding:10px 14px;gap:10px;margin-bottom:12px}
@@ -445,7 +445,7 @@ function step(v,d){let r=Math.round((v+d*STEP)*100)/100;const h=Math.floor(Math.
 function wdays(y,m){const a=[],c=new Date(y,m,0).getDate();for(let d=1;d<=c;d++){const dw=new Date(y,m-1,d).getDay();if(dw>=1&&dw<=5)a.push({d,dow:dw,key:dKey(y,m,d)});}return a;}
 function wKey(y,m,d){const dt=new Date(Date.UTC(y,m-1,d));dt.setUTCDate(dt.getUTCDate()+4-(dt.getUTCDay()||7));const y1=new Date(Date.UTC(dt.getUTCFullYear(),0,1));return`${dt.getUTCFullYear()}-W${String(Math.ceil((((dt-y1)/86400000)+1)/7)).padStart(2,'0')}`;}
 function weeksOf(y,m){const w={};wdays(y,m).forEach(({d,dow,key})=>{const k=wKey(y,m,d);if(!w[k])w[k]=[];w[k].push({d,dow,key});});return w;}
-function dd(key,dow){const p=PLAN[dow];if(!p)return null;const st=S.data[key]||{},team=st.team!==undefined?st.team:(p.team?TDEF:0),def=p.soll+(p.team?team:0);return{ist:st.ist!==undefined?st.ist:def,status:st.status||'',team,grund:st.grund||''};}
+function dd(key,dow){const p=PLAN[dow];if(!p)return null;const st=S.data[key]||{},team=st.team!==undefined?st.team:(p.team?TDEF:0),def=p.soll+(p.team?team:0);let ist=st.ist!==undefined?st.ist:def;if(st.status==='keine_schule')ist=-ist;return{ist,status:st.status||'',team,grund:st.grund||''};};
 function cIst(d){if(!d||d.status)return 0;return d.ist;}
 function wSoll(days){const full=days.length===5||[1,2,3,4,5].every(dw=>days.some(x=>x.dow===dw));if(full)return WSOLL;let s=0;days.forEach(({dow,key})=>{const d=dd(key,dow);if(!d)return;s+=PLAN[dow].soll+(PLAN[dow].team?(d.team||TDEF):0);});return Math.round(s*100)/100;}
 function wIst(days){let s=0;days.forEach(({dow,key})=>s+=cIst(dd(key,dow)));return Math.round(s*100)/100;}
@@ -520,10 +520,10 @@ function rToday(){
       <div class="tf-right"><div class="tf-dat">${TKZ[dow]}, ${d}. ${MN[m-1]}</div><div class="tf-az">${p.az}</div></div>
     </div>
     <div class="tf-main">
-      <div class="tf-std${st?' zero':''}"><span>${st?'0,00':fH(ist)}</span><span class="unit"> Std.</span></div>
+      <div class="tf-std${st?' zero':''}"><span>${fH(ist)}</span><span class="unit"> Std.</span></div>
       <div class="tf-adj">
-        <button class="adj-btn m" onclick="adjD('${key}',${dow},-1)">−</button>
-        <button class="adj-btn p" onclick="adjD('${key}',${dow},1)">+</button>
+        <button class="adj-btn m" onclick="adjD('${key}',${dow},-1)"${st?' disabled':''}>−</button>
+        <button class="adj-btn p" onclick="adjD('${key}',${dow},1)"${st?' disabled':''}>+</button>
       </div>
     </div>
     ${!st?`<div class="tf-prog">
@@ -536,8 +536,8 @@ function rToday(){
       <button class="t-btn p" onclick="adjT('${key}',${dow},1)">+</button></div>`:''}
     <div class="tf-status">
       <button class="tf-st-btn${st==='frei'?' ak-frei':''}" onclick="togS('${key}',${dow},'frei')"><span class="bi">★</span> Frei</button>
-      <button class="tf-st-btn${st==='krank'?' ak-krank':''}" onclick="togS('${key}',${dow},'krank')"><span class="bi">✕</span> Krank</button>
-      <button class="tf-st-btn${st==='keine_schule'?' ak-ks':''}" onclick="togS('${key}',${dow},'keine_schule')">🚫 Schule</button>
+      <button class="tf-st-btn${st==='krank'?' ak-krank':''}" onclick="togS('${key}',${dow},'krank')"><span class="bi">😷</span> Krank</button>
+      <button class="tf-st-btn${st==='keine_schule'?' ak-ks':''}" onclick="togS('${key}',${dow},'keine_schule')"><span class="bi">🚫</span> Schule</button>
     </div>
   </div>`;
 }
@@ -552,6 +552,16 @@ function renderSub(){
 function rUebersicht(){
   const days=wdays(S.year,S.month);
   const now=new Date(),tod=dKey(now.getFullYear(),now.getMonth()+1,now.getDate());
+  
+  // Sortiere so dass heute zuerst kommt
+  days.sort((a,b)=>{
+    const aIsToday=a.key===tod&&S.year===now.getFullYear()&&S.month===now.getMonth()+1;
+    const bIsToday=b.key===tod&&S.year===now.getFullYear()&&S.month===now.getMonth()+1;
+    if(aIsToday) return -1;
+    if(bIsToday) return 1;
+    return 0;
+  });
+  
   let h='';
   days.forEach(({d,dow,key})=>{
     const D=dd(key,dow),p=PLAN[dow],st=D.status;
@@ -566,9 +576,9 @@ function rUebersicht(){
       <div class="d-body">
         <div class="d-h-row">
           <input class="d-h-inp" type="text" value="${fH(D.ist)}"${st?' disabled':''} onchange="setI('${key}',${dow},this.value)">
-          <button class="s-btn m" onclick="adjD('${key}',${dow},-1)">−</button>
-          <span class="d-h-show${st==='keine_schule'?' neg':''}">${st?'0,00':fH(D.ist)}h</span>
-          <button class="s-btn p" onclick="adjD('${key}',${dow},1)">+</button>
+          <button class="s-btn m" onclick="adjD('${key}',${dow},-1)"${st?' disabled':''}>−</button>
+          <span class="d-h-show${st==='keine_schule'?' neg':''}">${fH(D.ist)}h</span>
+          <button class="s-btn p" onclick="adjD('${key}',${dow},1)"${st?' disabled':''}>+</button>
         </div>
         ${p.team?`<div class="d-team"><span class="d-team-lbl">🤝 Teambesprechung</span>
           <button class="s-btn m" onclick="adjT('${key}',${dow},-1)">−</button>
