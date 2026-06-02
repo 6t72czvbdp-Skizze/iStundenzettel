@@ -145,11 +145,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 /* ── SUB VIEW ── */
 #subView{display:none;padding-bottom:80px;background:transparent;min-height:100vh;margin-top:-90px}
 .sub-hdr{display:flex;align-items:center;padding:12px 14px 10px;gap:12px;
-  background:rgba(0,0,0,.25);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.back-btn{background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.35);color:#fff;cursor:pointer;
-  border-radius:12px;padding:9px 16px;font-size:14px;font-weight:800;
-  display:flex;align-items:center;gap:6px;flex-shrink:0;white-space:nowrap;
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  background:rgba(0,0,0,.25);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  position:relative;justify-content:center}
+.back-btn{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.3);color:#fff;cursor:pointer;
+  border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;
+  display:flex;align-items:center;gap:4px;flex-shrink:0;white-space:nowrap;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  position:absolute;left:14px;transition:all .2s}
+.back-btn.bottom{position:relative;left:0}
 .sub-title{font-size:20px;font-weight:900;color:#fff;letter-spacing:-.3px}
 .sub-content{padding:8px 14px;background:var(--bg);border-radius:20px 20px 0 0;margin-top:0;min-height:calc(100vh - 160px)}
 
@@ -313,25 +316,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 }
 
 /* Print Layout */
-#printModal #printContent{font-family:'Courier',monospace;font-size:11px;color:#000;line-height:1.4}
-.p-header{margin-bottom:16px;font-size:12px;line-height:1.6}
-.p-header div{margin-bottom:4px}
-.p-tbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:11px}
-.p-tbl td{border:1px solid #000;padding:6px 4px;text-align:left;height:20px;vertical-align:top}
-.p-head{background:#f0f0f0;font-weight:600;text-align:center;height:auto}
-.p-head td{vertical-align:middle;padding:8px 4px}
-.p-datum{width:6%;text-align:center}
-.p-azeit{width:18%;text-align:center}
-.p-pause{width:10%;text-align:center}
-.p-stunden{width:10%;text-align:center}
-.p-grund{width:56%}
-.p-wsummary{background:#f9f9f9;font-weight:600;font-size:10px;padding:8px!important}
-.p-wsummary td{border:1px solid #000;padding:8px 4px;height:auto}
-.p-footer{margin-top:12px;font-size:11px;line-height:1.8}
+#printModal #printContent{font-family:'Courier New',Courier,monospace;font-size:10px;color:#000;line-height:1.3}
+.p-header{margin-bottom:8px;font-size:10px;line-height:1.4}
+.p-line{display:flex;align-items:center;margin-bottom:3px;white-space:nowrap}
+.p-fill{border-bottom:1px solid #000;display:inline-block}
+.p-tbl{width:100%;border-collapse:collapse;margin:4px 0;font-size:9px;border:1px solid #000}
+.p-tbl td{border:1px solid #000;padding:3px 2px;text-align:left;height:16px;vertical-align:top}
+.p-head{background:#fff;font-weight:600;text-align:center;font-size:9px}
+.p-head td{vertical-align:middle;padding:4px 2px;height:auto}
+.p-datum{width:8%;text-align:center;font-size:9px}
+.p-azeit{width:16%;text-align:center}
+.p-pause{width:9%;text-align:center}
+.p-stunden{width:9%;text-align:center}
+.p-grund{width:58%}
+.p-row{height:14px}
+.p-sum{background:#fff;font-weight:600;font-size:8px;padding:2px!important;height:auto}
+.p-sum td{border:1px solid #000;padding:3px 2px;height:auto}
+.p-footer{margin-top:4px;font-size:9px;line-height:1.5}
+.p-sigs{margin-top:12px;display:flex;justify-content:space-between;font-size:9px;line-height:1.8}
+.p-sigs div{flex:1;text-align:left}
 @media print{
-  #printModal{display:flex!important}
-  #printModal>div{max-width:100%!important;border:none!important;background:transparent!important;padding:0!important}
-  .p-tbl{page-break-inside:avoid;margin:8px 0}
+  #printModal{display:flex!important;background:#fff!important}
+  #printModal>div{max-width:100%!important;border:none!important;background:#fff!important;padding:8px!important;margin:0!important}
+  .p-tbl{page-break-inside:avoid;margin:2px 0}
   body,html{background:#fff;margin:0;padding:0}
   #printContent{color:#000}
   button{display:none!important}
@@ -402,7 +409,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 
 <div id="subView">
   <div class="sub-hdr">
-    <button class="back-btn" onclick="closeView()">‹ Zurück</button>
+    <button class="back-btn" onclick="closeView()">← Zurück</button>
     <span class="sub-title" id="subTitle"></span>
   </div>
   <div class="sub-content" id="subContent"></div>
@@ -639,6 +646,9 @@ function rUebersicht(){
         <button class="v-btn p" onclick="adjV('${wk}',1)">+</button>
       </div></div>`;
   });
+  h+=`<div style="text-align:center;padding:16px 14px;margin-top:8px">
+    <button class="back-btn bottom" onclick="closeView()">← Zurück</button>
+  </div>`;
   return h+'</div>';
 }
 
@@ -655,7 +665,7 @@ function rKompakt(){
     wkRows.push({dw,key,D,cur});
     h+=`<div class="k-row${isT?' k-today':''}${st?' k-'+st.replace('_','-'):''}">
       <div class="k-d"><span class="k-kz">${p.kz}</span><span class="k-dt">${day}.${String(m).padStart(2,'0')}.</span></div>
-      <span class="k-az">${p.az}</span><span class="k-pz">${p.pause}</span>
+      <span class="k-az">${p.az}</span>
       ${cur&&D?`<div class="k-ctrl">${st
         ?`<span class="k-stat">${st==='keine_schule'?'Schule':st}</span>`
         :`<button class="s-btn m" onclick="adjD('${key}',${dw},-1)">−</button><span class="k-ist">${fH(D.ist)}</span><button class="s-btn p" onclick="adjD('${key}',${dw},1)">+</button>`
@@ -886,44 +896,64 @@ function savePlan(){
 function openPrintModal(){
   const m=S.month,y=S.year;
   const days=wdays(y,m);
-  const tr=(k,dow)=>{
-    const D=dd(k,dow);
-    const p=PLAN[dow];
-    if(!D)return '';
-    const st=D.status;
-    const ist=D.ist;
-    const az=st==='frei'?'−':st==='krank'?'−':st==='keine_schule'?'−':p.az;
-    const sd=k.split('-');
-    const d=parseInt(sd[2]);
-    return `<tr class="p-row${st?' p-'+st:''}">
-      <td class="p-datum">${d}.</td>
-      <td class="p-azeit">${az}</td>
-      <td class="p-pause">−</td>
-      <td class="p-stunden">${ist<0?fH(Math.abs(ist)):fH(ist)}</td>
-      <td class="p-grund"></td>
-    </tr>`;
-  };
   
-  let h='<table class="p-tbl"><tr class="p-head"><td>Datum</td><td>Arbeitszeit</td><td>Pause</td><td>Stunden</td><td>Begründung Mehr-/Minderarbeit</td></tr>';
-  let wcount=0,wstart=0;
+  // Berechne Wochenweise
+  const weeks=[];
+  let curWeek=[];
   days.forEach(({d,dow,key},i)=>{
-    if(wcount===0)wstart=i;
-    h+=tr(key,dow);
-    wcount++;
-    if(wcount===5||(i===days.length-1)){
-      h+=`<tr class="p-wsummary"><td colspan="5">Gesamt SOLL Woche: ____ &nbsp;&nbsp;&nbsp; Gesamt IST Woche: ____ &nbsp;&nbsp;&nbsp; +/- Stunden: ____</td></tr>`;
-      wcount=0;
+    curWeek.push({d,dow,key});
+    if(dow===5||i===days.length-1){
+      weeks.push([...curWeek]);
+      curWeek=[];
     }
   });
-  h+=`</table><div class="p-footer">Gesamt Monat +/- Stunden: ________________ Mehr-/Minderarbeitstunden neu: ________________</div>`;
+  
+  // Berechne Monatssummen
+  const{ts,ti}=mCalc();
+  const monthDiff=Math.round((ti-ts)*100)/100;
+  
+  let tableHtml='<table class="p-tbl">';
+  tableHtml+='<tr class="p-head"><td>Datum</td><td>Arbeitszeit</td><td>Pause</td><td>Stunden</td><td>Begründung Mehr-/Minderarbeit</td></tr>';
+  
+  weeks.forEach((week,wi)=>{
+    let wSoll=0,wIst=0;
+    week.forEach(({d,dow,key})=>{
+      const D=dd(key,dow);
+      const p=PLAN[dow];
+      if(!D)return;
+      const st=D.status;
+      const ist=D.ist;
+      const az=st==='frei'?'−':st==='krank'?'−':st==='keine_schule'?'−':p.az;
+      wSoll+=p.soll+(p.team?TDEF:0);
+      wIst+=ist;
+      tableHtml+=`<tr class="p-row${st?' p-'+st:''}"><td class="p-datum">${d}.</td><td class="p-azeit">${az}</td><td class="p-pause">−</td><td class="p-stunden">${ist<0?'−'+fH(Math.abs(ist)):fH(ist)}</td><td class="p-grund"></td></tr>`;
+    });
+    const wDiff=Math.round((wIst-wSoll)*100)/100;
+    tableHtml+=`<tr class="p-sum"><td colspan="5">Gesamt SOLL Woche: ${fH(wSoll)}h &nbsp;&nbsp;&nbsp; Gesamt IST Woche: ${fH(wIst)}h &nbsp;&nbsp;&nbsp; +/- Stunden: ${wDiff>=0?'+':''}${fH(wDiff)}h</td></tr>`;
+  });
+  tableHtml+='</table>';
+  
+  const neu=ti+S.ubertrag;
   
   document.getElementById('printContent').innerHTML=`
     <div class="p-header">
-      <div>OGS: _________________________</div>
-      <div>Name: ____________ Monat: ${MN[m-1]} ${y} Wochenstunden: _____</div>
-      <div style="margin-top:8px">Übertrag Mehr-/Minderarbeitstunden: _____</div>
+      <div class="p-line">OGS: <span class="p-fill"></span></div>
+      <div class="p-line">
+        <span>Name: <span class="p-fill" style="width:140px"></span></span>
+        <span style="margin-left:20px">Monat: <span class="p-fill" style="width:100px"></span></span>
+        <span style="margin-left:20px">Wochenstunden: <span class="p-fill" style="width:40px"></span></span>
+      </div>
+      <div class="p-line" style="margin-top:8px">Übertrag Mehr-/Minderarbeitstunden: <span class="p-fill" style="width:60px"></span></div>
     </div>
-    ${h}
+    ${tableHtml}
+    <div class="p-footer">
+      <div class="p-line">Gesamt Monat +/- Stunden: <span class="p-fill" style="width:80px"></span></div>
+      <div class="p-line">Mehr-/Minderarbeitstunden neu: <span class="p-fill" style="width:80px"></span></div>
+    </div>
+    <div class="p-sigs">
+      <div>Datum, Unterschrift Mitarbeiter*in</div>
+      <div>Datum, Unterschrift Koordinator*in</div>
+    </div>
   `;
   document.getElementById('printModal').style.display='flex';
 }
