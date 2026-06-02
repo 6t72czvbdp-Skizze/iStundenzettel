@@ -503,7 +503,7 @@ const PLAN={
   4:{kz:'Do',az:'8:00–16:00', soll:8.30,pause:'–',   team:true },
   5:{kz:'Fr',az:'10:00–15:00',soll:5.00,pause:'–',   team:false},
 };
-const WSOLL=31,TDEF=1,VDEF=1,STEP=0.25;
+const WSOLL=31,TDEF=1,VDEF=1,STEP=0.15;
 const MN=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
 const TKZ=['So','Mo','Di','Mi','Do','Fr','Sa'];
 let S={year:new Date().getFullYear(),month:new Date().getMonth()+1,view:'home',data:{},vorb:{},ubertrag:0};
@@ -599,7 +599,7 @@ function rToday(){
       <div class="tf-prog-lbl"><span>${fH(ist)}h</span><span style="color:${diffCol}">${diffTxt}</span></div>
       <div class="tf-prog-bg"><div class="tf-prog-fill ${dc}" style="width:${pct}%"></div></div>
     </div>`:''}
-    ${p.team?`<div class="tf-team"><span class="tf-team-lbl">🤝 Teambesprechung</span>
+    ${p.team?`<div class="tf-team"><span class="tf-team-lbl">💬 Teambesprechung</span>
       <button class="t-btn m" onclick="adjT('${key}',${dow},-1)">−</button>
       <span class="tf-team-val">${fH(D?D.team:TDEF)}h</span>
       <button class="t-btn p" onclick="adjT('${key}',${dow},1)">+</button></div>`:''}
@@ -658,7 +658,7 @@ function rUebersicht(){
           <button class="s-btn p" onclick="adjD('${key}',${dow},1)"${st?' disabled':''}>+</button>
           ${diffTxt?`<span class="d-diff ${diffCls}">${diffTxt}</span>`:''}
         </div>
-        ${p.team?`<div class="d-team"><span class="d-team-lbl">🤝 Teambesprechung</span>
+        ${p.team?`<div class="d-team"><span class="d-team-lbl">💬 Teambesprechung</span>
           <button class="s-btn m" onclick="adjT('${key}',${dow},-1)">−</button>
           <span class="d-team-val">${fH(D.team)}h</span>
           <button class="s-btn p" onclick="adjT('${key}',${dow},1)">+</button></div>`:''}
