@@ -369,9 +369,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 </head>
 <body>
 <div class="modal-overlay" id="setupModal" style="z-index:10000;background:rgba(0,0,0,.7)">
-  <div class="modal" style="max-height:95vh;overflow-y:auto;padding:0;border-radius:20px;background:linear-gradient(180deg,#fff 0%,#f8fdf8 100%)">
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#2E9E4F,#1a5c2a);padding:28px 20px;color:#fff;border-radius:20px 20px 0 0">
+  <div class="modal" style="max-height:95vh;overflow-y:auto;padding:0;border-radius:20px;background:#fff">
+    <!-- Header BLAU -->
+    <div style="background:linear-gradient(135deg,#1976D2,#1565C0);padding:28px 20px;color:#fff;border-radius:20px 20px 0 0">
       <div style="font-size:32px;margin-bottom:8px">👋</div>
       <h2 style="font-size:26px;font-weight:900;margin:0;margin-bottom:6px">Guten Tag!</h2>
       <p style="color:rgba(255,255,255,.85);font-size:14px;margin:0">Bitte kurz einrichten, bevors losgeht.</p>
@@ -381,29 +381,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
     <div style="padding:24px 20px">
       <!-- Name Section -->
       <div style="margin-bottom:24px">
-        <label style="font-size:12px;font-weight:800;color:#0d2b14;display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">👤 Dein Name</label>
-        <input id="setupName" type="text" placeholder="z.B. Marc Hoß" style="width:100%;padding:14px;border:2px solid #e8f0ea;border-radius:12px;font-size:16px;font-weight:600;color:#0d2b14;transition:all .2s">
+        <label style="font-size:12px;font-weight:800;color:#1565C0;display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">👤 Dein Name</label>
+        <input id="setupName" type="text" placeholder="z.B. Marc Hoß" style="width:100%;padding:14px;border:2px solid #E3F2FD;border-radius:12px;font-size:16px;font-weight:600;color:#0d2b14;background:#F5F9FF">
       </div>
       
       <!-- Wochenstunden Section -->
       <div style="margin-bottom:28px">
-        <label style="font-size:12px;font-weight:800;color:#0d2b14;display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">📊 Wochenstunden Gesamt</label>
-        <input id="setupWsoll" type="number" value="31" min="1" max="60" style="width:100%;padding:14px;border:2px solid #e8f0ea;border-radius:12px;font-size:16px;font-weight:600">
+        <label style="font-size:12px;font-weight:800;color:#1565C0;display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">📊 Wochenstunden Gesamt</label>
+        <input id="setupWsoll" type="number" value="31" min="1" max="60" style="width:100%;padding:14px;border:2px solid #E3F2FD;border-radius:12px;font-size:16px;font-weight:600;background:#F5F9FF">
       </div>
       
       <!-- Stundenplan Title -->
-      <h3 style="font-size:14px;font-weight:800;color:#0d2b14;margin-bottom:16px;text-transform:uppercase;letter-spacing:.5px">📅 Dein Stundenplan</h3>
+      <h3 style="font-size:14px;font-weight:800;color:#1565C0;margin-bottom:16px;text-transform:uppercase;letter-spacing:.5px">📅 Dein Stundenplan</h3>
       
       <!-- Stundenplan Rows -->
       <div id="setupPlanRows" style="display:grid;gap:16px;margin-bottom:24px"></div>
       
       <!-- Team-Erklärung Info Box -->
-      <div style="background:linear-gradient(135deg,rgba(224,123,0,.1),rgba(255,180,0,.05));border:2px solid #ffe8d4;border-radius:14px;padding:16px;margin-bottom:24px">
+      <div style="background:linear-gradient(135deg,rgba(25,118,210,.08),rgba(25,118,210,.04));border:2px solid #BBDEFB;border-radius:14px;padding:16px;margin-bottom:24px">
         <div style="display:flex;gap:12px">
           <div style="font-size:20px;flex-shrink:0">💬</div>
           <div>
-            <div style="font-weight:800;color:#e07b00;margin-bottom:4px;font-size:13px">Was ist Team-Besprechung?</div>
-            <div style="font-size:13px;color:#5a7a5e;line-height:1.6">
+            <div style="font-weight:800;color:#1565C0;margin-bottom:4px;font-size:13px">Was ist Team-Besprechung?</div>
+            <div style="font-size:13px;color:#1565C0;opacity:.8;line-height:1.6">
               <strong>Mit Team:</strong> Deine normale Arbeitszeit <strong>PLUS</strong> 1 Stunde Team-Besprechung<br>
               <strong>Beispiel:</strong> Donnerstag bis 16:00 ohne Team = 6h<br>
               Donnerstag bis 17:00 mit Team = 7h (6h + 1h Team) ✓
@@ -414,8 +414,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
     </div>
     
     <!-- Footer with Button -->
-    <div style="padding:20px;border-top:2px solid #e8f0ea;background:#f8fdf8;border-radius:0 0 20px 20px">
-      <button onclick="saveSetup()" style="width:100%;padding:16px;border:none;border-radius:12px;background:linear-gradient(135deg,#2E9E4F,#1a5c2a);color:#fff;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(46,158,79,.3)">
+    <div style="padding:20px;border-top:2px solid #E3F2FD;background:#F5F9FF;border-radius:0 0 20px 20px">
+      <button onclick="saveSetup()" style="width:100%;padding:16px;border:none;border-radius:12px;background:linear-gradient(135deg,#1976D2,#1565C0);color:#fff;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 12px rgba(25,118,210,.3)">
         ✅ Speichern & Starten
       </button>
     </div>
@@ -1126,30 +1126,30 @@ function buildSetupRows(){
   const el=document.getElementById('setupPlanRows');
   el.innerHTML=TGZ.map((_,i)=>{
     const dw=i+1;
-    return`<div style="background:#fff;border:2px solid #e8f0ea;border-radius:14px;padding:16px;transition:all .2s">
-      <div style="font-weight:900;font-size:14px;color:#0d2b14;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">${['Montag','Dienstag','Mittwoch','Donnerstag','Freitag'][i]}</div>
+    return`<div style="background:#F5F9FF;border:2px solid #BBDEFB;border-radius:14px;padding:16px;transition:all .2s">
+      <div style="font-weight:900;font-size:14px;color:#1565C0;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">${['Montag','Dienstag','Mittwoch','Donnerstag','Freitag'][i]}</div>
       
       <!-- Arbeitszeiten -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
         <div>
-          <div style="font-size:11px;color:#5a7a5e;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">⏰ Von</div>
-          <input id="az_von_${dw}" type="time" value="${['07:30','10:00','08:00','08:00','10:00'][i]}" style="width:100%;padding:10px;border:1.5px solid #e8f0ea;border-radius:10px;font-size:15px;font-weight:600">
+          <div style="font-size:11px;color:#1565C0;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">⏰ Von</div>
+          <input id="az_von_${dw}" type="time" value="${['07:30','10:00','08:00','08:00','10:00'][i]}" style="width:100%;padding:10px;border:1.5px solid #BBDEFB;border-radius:10px;font-size:15px;font-weight:600;background:#fff">
         </div>
         <div>
-          <div style="font-size:11px;color:#5a7a5e;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">⏰ Bis</div>
-          <input id="az_bis_${dw}" type="time" value="${['15:00','14:20','13:30','16:00','15:00'][i]}" style="width:100%;padding:10px;border:1.5px solid #e8f0ea;border-radius:10px;font-size:15px;font-weight:600">
+          <div style="font-size:11px;color:#1565C0;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">⏰ Bis</div>
+          <input id="az_bis_${dw}" type="time" value="${['15:00','14:20','13:30','16:00','15:00'][i]}" style="width:100%;padding:10px;border:1.5px solid #BBDEFB;border-radius:10px;font-size:15px;font-weight:600;background:#fff">
         </div>
       </div>
       
       <!-- Soll-Stunden und Team -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:flex-end">
         <div>
-          <div style="font-size:11px;color:#5a7a5e;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">📊 Soll (h,mm)</div>
-          <input id="soll_${dw}" type="text" value="${['7,00','4,20','5,30','8,30','5,00'][i]}" placeholder="7,00" style="width:100%;padding:10px;border:1.5px solid #e8f0ea;border-radius:10px;font-size:15px;font-weight:600">
+          <div style="font-size:11px;color:#1565C0;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px">📊 Soll (h,mm)</div>
+          <input id="soll_${dw}" type="text" value="${['7,00','4,20','5,30','8,30','5,00'][i]}" placeholder="7,00" style="width:100%;padding:10px;border:1.5px solid #BBDEFB;border-radius:10px;font-size:15px;font-weight:600;background:#fff">
         </div>
-        <div style="display:flex;align-items:center;gap:8px;padding:10px;background:#fff8f0;border-radius:10px;cursor:pointer" onclick="document.getElementById('team_${dw}').checked = !document.getElementById('team_${dw}').checked">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px;background:#E3F2FD;border-radius:10px;cursor:pointer" onclick="document.getElementById('team_${dw}').checked = !document.getElementById('team_${dw}').checked">
           <input type="checkbox" id="team_${dw}" ${dw===4?'checked':''} style="width:20px;height:20px;cursor:pointer">
-          <label for="team_${dw}" style="font-size:13px;font-weight:700;color:#e07b00;cursor:pointer;flex:1">💬 Team</label>
+          <label for="team_${dw}" style="font-size:13px;font-weight:700;color:#1976D2;cursor:pointer;flex:1">💬 Team</label>
         </div>
       </div>
     </div>`;
