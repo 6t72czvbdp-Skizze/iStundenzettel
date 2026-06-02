@@ -118,6 +118,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
   border:1px solid rgba(109,235,109,.3)}
 .evt-pill.soon{background:rgba(255,214,0,.2);color:#ffd600;border-color:rgba(255,214,0,.3)}
 .evt-pill.today{background:rgba(255,82,82,.2);color:#ff5252;border-color:rgba(255,82,82,.3)}
+.evt-pill.birthday{background:rgba(255,193,7,.2);color:#ffc107;border-color:rgba(255,193,7,.3)}
+.evt-strip.birthday{background:#ffc107}
 .evt-empty{font-size:14px;color:rgba(255,255,255,.5);padding:4px 0;text-align:center}
 
 /* ── NAV BUTTONS ── */
@@ -627,6 +629,33 @@ function adjV(wk,d){const c=S.vorb[wk]!==undefined?S.vorb[wk]:VDEF;S.vorb[wk]=st
 function adjU(d){S.ubertrag=step(S.ubertrag,d);save();renderSub();}
 function setU(v){const n=parseFloat(String(v).replace(',','.'));if(!isNaN(n)){S.ubertrag=Math.round(n*100)/100;save();renderSub();}}
 
+// GEBURTSTAGE
+const DEF_BIRTHDAYS=[
+  {name:'Melissa',m:1,d:2},{name:'Thomas',m:1,d:14},{name:'Uwe',m:1,d:20},{name:'Oxana',m:1,d:26},{name:'Tamara',m:1,d:30},
+  {name:'Manu',m:2,d:1},{name:'Sebastian',m:2,d:10},{name:'Samira',m:2,d:15},{name:'Ana',m:2,d:18},{name:'Kim',m:2,d:23},
+  {name:'Alex',m:3,d:2},{name:'Lea',m:3,d:5},{name:'Samira',m:3,d:15},
+  {name:'Joulina',m:4,d:1},{name:'Lena',m:4,d:1},{name:'Birgit',m:4,d:17},{name:'Franzi',m:4,d:17},{name:'Nadja',m:4,d:18},{name:'Renate',m:4,d:23},
+  {name:'Gitti',m:5,d:3},
+  {name:'Angela',m:6,d:1},{name:'Annika',m:6,d:11},{name:'Helen',m:6,d:22},
+  {name:'Sabine V.',m:7,d:20},
+  {name:'Bärbel',m:8,d:7},{name:'Stefanie',m:8,d:16},{name:'Michelle',m:8,d:17},{name:'Roswitha',m:8,d:20},{name:'Koni',m:8,d:26},
+  {name:'Janine',m:9,d:10},{name:'Lars',m:9,d:14},{name:'Tara',m:9,d:21},
+  {name:'Marc',m:11,d:13},{name:'Joana',m:11,d:23},
+  {name:'Sabine B.',m:12,d:3},{name:'Christiane',m:12,d:3},{name:'Aileen',m:12,d:4},{name:'Filiz',m:12,d:16}
+];
+
+function genBirthdayEvents(){
+  const events=[];
+  const years=[2026,2027,2028];
+  DEF_BIRTHDAYS.forEach(bd=>{
+    years.forEach(y=>{
+      const dateStr=`${y}-${String(bd.m).padStart(2,'0')}-${String(bd.d).padStart(2,'0')}`;
+      events.push({id:`bd_${bd.name}_${y}`,date:dateStr,name:`🎂 ${bd.name}`,type:'birthday'});
+    });
+  });
+  return events;
+}
+
 // EVENTS
 const DEF_EVTS=[
   {id:'e1',date:'2026-06-19',name:'Fronleichnam'},
@@ -638,8 +667,15 @@ const DEF_EVTS=[
   {id:'e7',date:'2026-12-25',name:'1. Weihnachtstag'},
   {id:'e8',date:'2026-12-26',name:'2. Weihnachtstag'},
   {id:'e9',date:'2027-01-01',name:'Neujahr 2027'},
-];
-function loadEvts(){const r=localStorage.getItem('sz_evts');if(r)return JSON.parse(r);localStorage.setItem('sz_evts',JSON.stringify(DEF_EVTS));return DEF_EVTS;}
+].concat(genBirthdayEvents());
+function loadEvts(){
+  const r=localStorage.getItem('sz_evts');
+  const stored=r?JSON.parse(r):DEF_EVTS;
+  // Geburtstags-Events automatisch hinzufügen (falls nicht vorhanden)
+  const bdays=genBirthdayEvents();
+  const merged=[...stored.filter(e=>e.type!=='birthday'),...bdays];
+  return merged;
+}
 function saveEvts(e){localStorage.setItem('sz_evts',JSON.stringify(e));}
 function rEvtWidget(){
   const evts=loadEvts();
@@ -648,8 +684,9 @@ function rEvtWidget(){
   const el=document.getElementById('evtNext');
   if(!future.length){el.innerHTML='<div class="evt-empty">Keine Termine</div>';return;}
   const nx=future[0],diff=Math.round((nx.dt-today)/86400000);
-  const cls=diff===0?'today':diff<=7?'soon':'';
-  const dtxt=diff===0?'Heute!':diff===1?'Morgen':`in ${diff} Tagen`;
+  const isBday=nx.type==='birthday';
+  const cls=isBday?'birthday':diff===0?'today':diff<=7?'soon':'';
+  const dtxt=isBday?(diff===0?'Heute!':diff===1?'Morgen':`in ${diff} Tagen`):diff===0?'Heute!':diff===1?'Morgen':`in ${diff} Tagen`;
   const ds=`${nx.dt.getDate()}. ${MN[nx.dt.getMonth()]}`;
   el.innerHTML=`<div class="evt-body"><div class="evt-strip ${cls}"></div>
     <div class="evt-inf"><div class="evt-d">${ds} ${nx.dt.getFullYear()}</div><div class="evt-n">${nx.name}</div></div>
