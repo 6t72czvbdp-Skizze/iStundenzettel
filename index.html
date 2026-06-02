@@ -454,8 +454,20 @@ function rToday(){
   const y=now.getFullYear(),m=now.getMonth()+1,d=now.getDate();
   const cur=y===S.year&&m===S.month;
   
-  // Wenn wir nicht im aktuellen Monat sind, keine "HEUTE"-Karte anzeigen
-  if(!cur){el.innerHTML='';return;}
+  // Wenn wir nicht im aktuellen Monat sind, zeige Monat-Info statt "HEUTE"
+  if(!cur){
+    const{ts,ti,tv}=mCalc();
+    const monatsTxt=`${MN[S.month-1]} ${S.year}`;
+    el.innerHTML=`<div class="today-float" style="text-align:center;padding:16px;border:1.5px solid var(--border)">
+      <div style="color:var(--sub);font-size:13px;margin-bottom:8px">📅 Übersicht</div>
+      <div style="font-size:18px;font-weight:800;color:var(--txt);margin-bottom:12px">${monatsTxt}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px">
+        <div><div style="color:var(--sub)">SOLL</div><div style="font-size:16px;font-weight:800;color:var(--grn)">${fH(ts)}h</div></div>
+        <div><div style="color:var(--sub)">IST</div><div style="font-size:16px;font-weight:800;color:var(--txt)">${fH(ti)}h</div></div>
+      </div>
+    </div>`;
+    return;
+  }
   
   // Wenn es Wochenende ist, zeige Wochenenden-Msg
   if(dow===0||dow===6){el.innerHTML=`<div class="today-float"><div class="weekend-msg">🌴 Wochenende – erhol dich!</div></div>`;return;}
