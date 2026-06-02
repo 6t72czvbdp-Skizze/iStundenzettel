@@ -312,6 +312,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
   animation: slideDown .28s cubic-bezier(.32,.72,0,1) forwards;
 }
 
+/* Print Layout */
+#printModal #printContent{font-family:'Courier',monospace;font-size:11px;color:#000;line-height:1.4}
+.p-header{margin-bottom:16px;font-size:12px;line-height:1.6}
+.p-header div{margin-bottom:4px}
+.p-tbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:11px}
+.p-tbl td{border:1px solid #000;padding:6px 4px;text-align:left;height:20px;vertical-align:top}
+.p-head{background:#f0f0f0;font-weight:600;text-align:center;height:auto}
+.p-head td{vertical-align:middle;padding:8px 4px}
+.p-datum{width:6%;text-align:center}
+.p-azeit{width:18%;text-align:center}
+.p-pause{width:10%;text-align:center}
+.p-stunden{width:10%;text-align:center}
+.p-grund{width:56%}
+.p-wsummary{background:#f9f9f9;font-weight:600;font-size:10px;padding:8px!important}
+.p-wsummary td{border:1px solid #000;padding:8px 4px;height:auto}
+.p-footer{margin-top:12px;font-size:11px;line-height:1.8}
+@media print{
+  #printModal{display:flex!important}
+  #printModal>div{max-width:100%!important;border:none!important;background:transparent!important;padding:0!important}
+  .p-tbl{page-break-inside:avoid;margin:8px 0}
+  body,html{background:#fff;margin:0;padding:0}
+  #printContent{color:#000}
+  button{display:none!important}
+}
+
 @media print{
   #hdr,#mainScroll .nav-grid,#mainScroll .nav-full,#mainScroll .evt-card,#bar{display:none!important}
   .sub-hdr,#bar{display:none!important}
@@ -321,6 +346,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 </style>
 </head>
 <body>
+<div id="printModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;width:100%;max-width:1000px;max-height:90vh;border-radius:12px;overflow:auto;padding:20px">
+    <div id="printContent"></div>
+    <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">
+      <button onclick="closePrintModal()" style="padding:10px 20px;border:1.5px solid var(--border);background:#fff;border-radius:8px;cursor:pointer">Abbrechen</button>
+      <button onclick="doPrint()" style="padding:10px 20px;border:none;background:var(--grn);color:#fff;border-radius:8px;cursor:pointer;font-weight:600">🖨️ Drucken</button>
+    </div>
+  </div>
+</div>
 
 <div id="hdr">
   <div class="hdr-row">
@@ -662,8 +696,9 @@ function rMonat(){
     <div class="m-total"><span>Neuer Stand +/–</span>
       <span class="val${neu<0?' neg':' pos'}">${neu>=0?'+':''}${fH(neu)}h</span>
     </div>
-    <div style="text-align:center;padding:12px 0;border-top:1px solid var(--border);margin-top:12px">
+    <div style="text-align:center;padding:12px 0;border-top:1px solid var(--border);margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
       <button onclick="confirmNewYear()" style="background:linear-gradient(135deg,#ff9800,#ff6f00);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer">🎓 Neues Schuljahr</button>
+      <button onclick="openPrintModal()" style="background:linear-gradient(135deg,#2196f3,#1565c0);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer">🖨️ Drucken</button>
     </div>
   </div>`;
 }
@@ -846,6 +881,57 @@ function savePlan(){
   btn.textContent='✅ Schuljahr gestartet!';
   btn.classList.add('done');
   setTimeout(()=>{btn.textContent='💾 Speichern';btn.classList.remove('done');},2000);
+}
+
+function openPrintModal(){
+  const m=S.month,y=S.year;
+  const days=wdays(y,m);
+  const tr=(k,dow)=>{
+    const D=dd(k,dow);
+    const p=PLAN[dow];
+    if(!D)return '';
+    const st=D.status;
+    const ist=D.ist;
+    const az=st==='frei'?'−':st==='krank'?'−':st==='keine_schule'?'−':p.az;
+    const sd=k.split('-');
+    const d=parseInt(sd[2]);
+    return `<tr class="p-row${st?' p-'+st:''}">
+      <td class="p-datum">${d}.</td>
+      <td class="p-azeit">${az}</td>
+      <td class="p-pause">−</td>
+      <td class="p-stunden">${ist<0?fH(Math.abs(ist)):fH(ist)}</td>
+      <td class="p-grund"></td>
+    </tr>`;
+  };
+  
+  let h='<table class="p-tbl"><tr class="p-head"><td>Datum</td><td>Arbeitszeit</td><td>Pause</td><td>Stunden</td><td>Begründung Mehr-/Minderarbeit</td></tr>';
+  let wcount=0,wstart=0;
+  days.forEach(({d,dow,key},i)=>{
+    if(wcount===0)wstart=i;
+    h+=tr(key,dow);
+    wcount++;
+    if(wcount===5||(i===days.length-1)){
+      h+=`<tr class="p-wsummary"><td colspan="5">Gesamt SOLL Woche: ____ &nbsp;&nbsp;&nbsp; Gesamt IST Woche: ____ &nbsp;&nbsp;&nbsp; +/- Stunden: ____</td></tr>`;
+      wcount=0;
+    }
+  });
+  h+=`</table><div class="p-footer">Gesamt Monat +/- Stunden: ________________ Mehr-/Minderarbeitstunden neu: ________________</div>`;
+  
+  document.getElementById('printContent').innerHTML=`
+    <div class="p-header">
+      <div>OGS: _________________________</div>
+      <div>Name: ____________ Monat: ${MN[m-1]} ${y} Wochenstunden: _____</div>
+      <div style="margin-top:8px">Übertrag Mehr-/Minderarbeitstunden: _____</div>
+    </div>
+    ${h}
+  `;
+  document.getElementById('printModal').style.display='flex';
+}
+function closePrintModal(){
+  document.getElementById('printModal').style.display='none';
+}
+function doPrint(){
+  window.print();
 }
 
 function init(){document.getElementById('monthLabel').textContent=`${MN[S.month-1]} ${S.year}`;rToday();}
