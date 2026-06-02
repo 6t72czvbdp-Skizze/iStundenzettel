@@ -232,7 +232,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 .k-ctrl{display:flex;align-items:center;gap:5px;justify-content:flex-end}
 .k-ist{font-size:16px;font-weight:900;color:var(--dark);min-width:40px;text-align:center}
 .k-stat{font-size:11px;color:var(--faint);font-style:italic;text-align:right}
-.s-btn{width:28px;height:28px;border-radius:50%;border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.s-btn{width:28px;height:28px;border-radius:50%;border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .s-btn.m{background:var(--red)}.s-btn.p{background:var(--grn)}
 .k-sum{background:var(--grn-light);padding:14px 16px;border-top:2px solid var(--lime2);display:flex;justify-content:space-around}
 .k-sum-item{text-align:center}
@@ -563,7 +563,9 @@ function rUebersicht(){
       <div class="d-body">
         <div class="d-h-row">
           <input class="d-h-inp" type="text" value="${fH(D.ist)}"${st?' disabled':''} onchange="setI('${key}',${dow},this.value)">
+          <button class="s-btn m" onclick="adjD('${key}',${dow},-1)">−</button>
           <span class="d-h-show${st==='keine_schule'?' neg':''}">${st?'0,00':fH(D.ist)}h</span>
+          <button class="s-btn p" onclick="adjD('${key}',${dow},1)">+</button>
         </div>
         ${p.team?`<div class="d-team"><span class="d-team-lbl">🤝 Teambesprechung</span>
           <button class="s-btn m" onclick="adjT('${key}',${dow},-1)">−</button>
