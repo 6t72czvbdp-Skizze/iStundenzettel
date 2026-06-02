@@ -891,14 +891,20 @@ function rKompakt(){
       </div></div>`;
     h+=wh+'</div>';
   });
-  // Gesamtbilanz - Nutze mCalc für Konsistenz
-  const{ts,ti,tv,neu}=mCalc();
+  // Gesamtbilanz - Berechne korrekt für Woche OHNE Vorbereitung & Übertrag
+  const allDays=wdays(S.year,S.month).filter(({key})=>{
+    const dt=new Date(S.year,S.month-1,parseInt(key.split('-')[2]));
+    return dt<=new Date();
+  });
+  let gs=0,gi=0;
+  allDays.forEach(({dow,key})=>{const D=dd(key,dow);if(D&&!D.status){const p=PLAN[dow];gs+=p.soll+(p.team?(D.team||0):0);gi+=D.ist;}});
+  const gd=Math.round((gi-gs)*100)/100;
   h+=`<div class="d-summary">
     <h4>📊 Bisherige Bilanz – ${MN[S.month-1]}</h4>
     <div class="d-sum-grid">
-      <div class="d-sum-box"><div class="lbl">SOLL</div><div class="val">${fH(ts)}h</div></div>
-      <div class="d-sum-box"><div class="lbl">IST</div><div class="val">${fH(ti)}h</div></div>
-      <div class="d-sum-box"><div class="lbl">+/–</div><div class="val ${neu>0?'pos':neu<0?'neg':''}">${neu>=0?'+':''}${fH(neu)}h</div></div>
+      <div class="d-sum-box"><div class="lbl">SOLL</div><div class="val">${fH(gs)}h</div></div>
+      <div class="d-sum-box"><div class="lbl">IST</div><div class="val">${fH(gi)}h</div></div>
+      <div class="d-sum-box"><div class="lbl">+/–</div><div class="val ${gd>0?'pos':gd<0?'neg':''}">${gd>=0?'+':''}${fH(gd)}h</div></div>
     </div>
   </div>`;
   return h;
