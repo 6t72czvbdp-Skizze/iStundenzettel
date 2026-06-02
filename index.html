@@ -675,8 +675,14 @@ function rUebersicht(){
         <input class="d-grund" type="text" placeholder="Begründung..." value="${D.grund}" onchange="setG('${key}',${dow},this.value)">
       </div></div>`;
   });
-  // Zusammenfassung
-  const totalDiff=Math.round((totalIst-totalSoll)*100)/100;
+  // Zusammenfassung - mit Vorbereitung
+  const weeks=weeksOf(S.year,S.month);
+  let totalVorb=0;
+  Object.entries(weeks).forEach(([wk,days])=>{
+    totalVorb+=S.vorb[wk]!==undefined?S.vorb[wk]:VDEF;
+  });
+  totalVorb=Math.round(totalVorb*100)/100;
+  const totalDiff=Math.round((totalIst+totalVorb-totalSoll)*100)/100;
   h+=`<div class="d-summary">
     <h4>📊 Bisherige Bilanz – ${MN[S.month-1]}</h4>
     <div class="d-sum-grid">
@@ -685,7 +691,6 @@ function rUebersicht(){
       <div class="d-sum-box"><div class="lbl">+/–</div><div class="val ${totalDiff>0?'pos':totalDiff<0?'neg':''}">${totalDiff>=0?'+':''}${fH(totalDiff)}h</div></div>
     </div>
   </div>`;
-  const weeks=weeksOf(S.year,S.month);
   h+=`<div class="vorb-section"><h3>📝 Vorbereitungszeit</h3>`;
   Object.entries(weeks).forEach(([wk,days])=>{
     const v=S.vorb[wk]!==undefined?S.vorb[wk]:VDEF;
