@@ -259,6 +259,8 @@
 
             if (password === PASSWORD) {
                 error.classList.remove('show');
+                // 🔒 Speichere Admin-Authentifizierung
+                sessionStorage.setItem('admin_authenticated', 'true');
                 window.location.href = 'dashboard.html';
             } else {
                 error.classList.add('show');
