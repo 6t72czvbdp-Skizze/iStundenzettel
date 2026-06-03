@@ -318,10 +318,10 @@
 
                 <div class="user-stats">
                     <div><span class="stat-label">Stunden</span><span class="stat-value">${userData.wochenstunden}h</span></div>
-                    <div><span class="stat-label">Tage</span><span class="stat-value">${userData.schedule.length}</span></div>
+                    <div><span class="stat-label">Tage</span><span class="stat-value">${userData.schedule ? userData.schedule.length : 0}</span></div>
                 </div>
 
-                <button class="view-detail">Stundenzettel ansehen →</button>
+                <button class="view-detail" data-username="${userData.name}" onclick="openWorkerByButton(this)">Stundenzettel ansehen →</button>
             `;
 
             return div;
@@ -347,9 +347,11 @@
                     <tbody>
             `;
 
-            userData.schedule.forEach(entry => {
-                tableHTML += `<tr><td><strong>${entry.day}</strong></td><td>${entry.von}</td><td>${entry.bis}</td><td>${entry.team ? '✓' : '–'}</td></tr>`;
-            });
+            if (userData.schedule && Array.isArray(userData.schedule)) {
+                userData.schedule.forEach(entry => {
+                    tableHTML += `<tr><td><strong>${entry.day}</strong></td><td>${entry.von}</td><td>${entry.bis}</td><td>${entry.team ? '✓' : '–'}</td></tr>`;
+                });
+            }
 
             tableHTML += `</tbody></table>
                 <div style="margin-top: 20px; padding: 12px; background: #f9fbfd; border-radius: 10px; font-size: 12px;">
@@ -367,6 +369,16 @@
 
         function goToSetup() {
             window.location.href = 'setup.html';
+        }
+
+        function openWorkerByButton(button) {
+            const userName = button.getAttribute('data-username');
+            if (!userName) return;
+            // Speichere den Benutzernamen in sessionStorage für worker.html
+            const cleanName = userName.replace(/\s+/g, '_').toUpperCase();
+            sessionStorage.setItem('current_user', cleanName);
+            // Navigiere zu worker.html
+            window.location.href = 'worker.html';
         }
 
         document.getElementById('detailModal').addEventListener('click', (e) => {

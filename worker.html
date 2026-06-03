@@ -1191,8 +1191,8 @@ function buildShareText(){
   const m=S.month,y=S.year;
   const days=wdays(y,m);
   const{ts,ti,neu}=mCalc();
-  const currentUserName=document.getElementById('displayName')?.textContent||'Stundenzettel';
-  let lines=[`Stundenzettel – ${currentUserName}`,`${MN[m-1]} ${y}`,`──────────────────────`];
+  const displayName = document.getElementById('displayName')?.textContent || 'Stundenzettel';
+  let lines=[`Stundenzettel – ${displayName}`,`${MN[m-1]} ${y}`,`──────────────────────`];
   days.forEach(({d,dow,key})=>{
     const D=dd(key,dow),p=PLAN[dow],st=D.status;
     const ist=D.ist,az=st==='frei'?'★ Frei':st==='krank'?'✕ Krank':st==='keine_schule'?'🚫 Schule':p.az;
@@ -1282,17 +1282,22 @@ if (!currentUserName) {
   for (let i = localStorage.length - 1; i >= 0; i--) {
     const key = localStorage.key(i);
     if (key && key.startsWith('stundenzettel_')) {
-      currentUserName = key.replace('stundenzettel_', '').replace(/_/g, ' ');
+      currentUserName = key.replace('stundenzettel_', '');
       break;
     }
   }
 }
 
-// Name in Header anzeigen
+// Konvertiere zurück zu lesbarem Format (z.B. "ADAM_RIESE" → "Adam Riese")
 if (currentUserName) {
   const displayEl = document.getElementById('displayName');
   if (displayEl) {
-    displayEl.textContent = currentUserName;
+    const readableName = currentUserName
+      .replace(/_/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+      .join(' ');
+    displayEl.textContent = readableName;
   }
 } else {
   // Fallback auf index.html wenn kein User gefunden
