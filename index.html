@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Stundenzettel">
-    <title>Stundenzettel – Willkommen</title>
+    <title>Stundenzettel – Einrichtung</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -28,7 +28,7 @@
 
         .container {
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
             background: white;
             border-radius: 24px;
             box-shadow: 0 20px 60px rgba(53, 122, 189, 0.15);
@@ -47,26 +47,53 @@
             }
         }
 
+        /* Progress Indicator */
+        .progress-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            justify-content: center;
+        }
+
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e8eef5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            background: linear-gradient(135deg, #4f9ff0 0%, #357abd 100%);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .progress-step.completed {
+            background: #4f9ff0;
+            color: white;
+        }
+
         /* Header */
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 32px;
         }
 
         .emoji {
             font-size: 48px;
             display: block;
             margin-bottom: 16px;
-            animation: bounce 0.6s ease-out;
-        }
-
-        @keyframes bounce {
-            0% { transform: translateY(-20px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
         }
 
         .header h1 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
             color: #1a1a1a;
             margin-bottom: 8px;
@@ -78,7 +105,26 @@
             font-weight: 400;
         }
 
-        /* Form */
+        /* Form Step */
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Form Group */
         .form-group {
             margin-bottom: 24px;
         }
@@ -123,20 +169,109 @@
             color: #aaa;
         }
 
-        /* Hours Display */
-        .hours-info {
+        /* Info Box */
+        .info-box {
             background: linear-gradient(135deg, #f9fbfd 0%, #f0f6fc 100%);
             border: 1px solid #e8eef5;
             border-radius: 14px;
             padding: 14px 16px;
             margin-bottom: 8px;
-            font-size: 14px;
+            font-size: 13px;
             color: #666;
+            line-height: 1.5;
         }
 
-        .hours-info strong {
+        .info-box strong {
             color: #357abd;
             font-weight: 600;
+        }
+
+        /* Day Schedule */
+        .day-schedule {
+            background: #f9fbfd;
+            border: 1px solid #e8eef5;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .day-schedule:hover {
+            background: #f0f6fc;
+        }
+
+        .day-title {
+            font-weight: 600;
+            color: #357abd;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .time-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .time-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .time-input-group {
+            position: relative;
+        }
+
+        .time-input-group small {
+            display: block;
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 500;
+        }
+
+        .time-input-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e8eef5;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            background: white;
+            text-align: center;
+        }
+
+        .time-input-group input:focus {
+            outline: none;
+            border-color: #4f9ff0;
+            box-shadow: 0 2px 8px rgba(79, 159, 240, 0.1);
+        }
+
+        /* Team Checkbox */
+        .team-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            cursor: pointer;
+        }
+
+        .team-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #4f9ff0;
+        }
+
+        .team-checkbox label {
+            cursor: pointer;
+            font-size: 13px;
+            color: #666;
+            margin: 0;
+            text-transform: none;
         }
 
         /* Buttons */
@@ -164,13 +299,18 @@
             box-shadow: 0 8px 24px rgba(79, 159, 240, 0.3);
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 12px 32px rgba(79, 159, 240, 0.4);
         }
 
         .btn-primary:active {
             transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .btn-secondary {
@@ -197,11 +337,17 @@
         /* Responsive */
         @media (max-width: 480px) {
             .container {
-                padding: 40px 24px;
+                padding: 32px 24px;
             }
 
             .header h1 {
-                font-size: 28px;
+                font-size: 24px;
+            }
+
+            .progress-step {
+                width: 36px;
+                height: 36px;
+                font-size: 12px;
             }
 
             .button-group {
@@ -211,66 +357,102 @@
             .button-group button {
                 width: 100%;
             }
-        }
 
-        /* Success State (optional) */
-        .form-group.filled input {
-            border-color: #4f9ff0;
+            .day-schedule {
+                padding: 14px;
+            }
+
+            .time-row {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <span class="emoji">👋</span>
-            <h1>Willkommen!</h1>
-            <p>Lass uns dich einrichten</p>
+        <!-- Progress Indicator -->
+        <div class="progress-bar">
+            <div class="progress-step active" id="progressStep1">1</div>
+            <div class="progress-step" id="progressStep2">2</div>
         </div>
 
-        <form id="setupForm">
-            <div class="form-group">
-                <label for="name">
-                    <span class="label-icon">👤</span>
-                    Dein Name
-                </label>
-                <input 
-                    type="text" 
-                    id="name" 
-                    placeholder="z.B. Max Mustermann" 
-                    required
-                    autocomplete="name"
-                >
+        <!-- STEP 1: Basic Info -->
+        <div class="step active" id="step1">
+            <div class="header">
+                <span class="emoji">👋</span>
+                <h1>Willkommen!</h1>
+                <p>Lass uns dich einrichten</p>
             </div>
 
-            <div class="form-group">
-                <label for="hours">
-                    <span class="label-icon">📊</span>
-                    Wochenstunden (gesamt)
-                </label>
-                <input 
-                    type="number" 
-                    id="hours" 
-                    placeholder="z.B. 31" 
-                    min="0"
-                    max="99"
-                    step="0.5"
-                    required
-                    autocomplete="off"
-                >
-                <div class="hours-info">
-                    <strong>Tipp:</strong> Das sind deine geplanten Arbeitsstunden pro Woche.
+            <form id="form1">
+                <div class="form-group">
+                    <label for="name">
+                        <span class="label-icon">👤</span>
+                        Dein Name
+                    </label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        placeholder="z.B. Max Mustermann" 
+                        required
+                    >
                 </div>
+
+                <div class="form-group">
+                    <label for="hours">
+                        <span class="label-icon">📊</span>
+                        Wochenstunden (gesamt)
+                    </label>
+                    <input 
+                        type="number" 
+                        id="hours" 
+                        placeholder="z.B. 31" 
+                        min="0"
+                        max="99"
+                        step="0.5"
+                        required
+                    >
+                    <div class="info-box">
+                        <strong>Tipp:</strong> Das sind deine geplanten Arbeitsstunden pro Woche.
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn-secondary" onclick="handleCancel()">
+                        Abbrechen
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        Weiter →
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- STEP 2: Weekly Schedule -->
+        <div class="step" id="step2">
+            <div class="header">
+                <span class="emoji">📅</span>
+                <h1>Dein Stundenplan</h1>
+                <p>Trage deine Arbeitszeiten ein</p>
             </div>
 
-            <div class="button-group">
-                <button type="button" class="btn-secondary" onclick="handleCancel()">
-                    Abbrechen
-                </button>
-                <button type="submit" class="btn-primary">
-                    Weiter →
-                </button>
-            </div>
-        </form>
+            <form id="form2">
+                <div id="scheduleContainer"></div>
+
+                <div class="info-box">
+                    <strong>📌 Team-Besprechung:</strong> Mit dieser Option wird 1h zur geplanten Zeit hinzugefügt.
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn-secondary" onclick="goBackToStep1()">
+                        ← Zurück
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        Speichern & Starten ✓
+                    </button>
+                </div>
+            </form>
+        </div>
 
         <div class="footer-note">
             💾 Deine Daten werden lokal auf deinem Gerät gespeichert.
@@ -278,73 +460,138 @@
     </div>
 
     <script>
-        const form = document.getElementById('setupForm');
-        const nameInput = document.getElementById('name');
-        const hoursInput = document.getElementById('hours');
+        const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'];
+        let currentStep = 1;
 
-        // Load saved data if exists
+        // Initialize
         window.addEventListener('DOMContentLoaded', () => {
-            const saved = localStorage.getItem('stundenzettel_user');
-            if (saved) {
-                const data = JSON.parse(saved);
-                nameInput.value = data.name || '';
-                hoursInput.value = data.hours || '';
-            }
+            loadSavedData();
+            renderSchedule();
         });
 
-        // Handle form submission
-        form.addEventListener('submit', (e) => {
+        // Load saved data
+        function loadSavedData() {
+            const saved = localStorage.getItem('stundenzettel_setup');
+            if (saved) {
+                const data = JSON.parse(saved);
+                document.getElementById('name').value = data.name || '';
+                document.getElementById('hours').value = data.hours || '';
+            }
+        }
+
+        // Render Schedule
+        function renderSchedule() {
+            const container = document.getElementById('scheduleContainer');
+            container.innerHTML = '';
+
+            days.forEach(day => {
+                const dayHtml = `
+                    <div class="day-schedule">
+                        <div class="day-title">${day}</div>
+                        <div class="time-row">
+                            <div class="time-input-group">
+                                <small>⏰ Von</small>
+                                <input type="time" id="${day}_von" value="07:30">
+                            </div>
+                            <div class="time-input-group">
+                                <small>⏰ Bis</small>
+                                <input type="time" id="${day}_bis" value="15:00">
+                            </div>
+                        </div>
+                        <div class="team-checkbox">
+                            <input type="checkbox" id="${day}_team">
+                            <label for="${day}_team">💬 Team-Besprechung</label>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += dayHtml;
+            });
+        }
+
+        // Step 1 Form Submit
+        document.getElementById('form1').addEventListener('submit', (e) => {
             e.preventDefault();
             
-            const name = nameInput.value.trim();
-            const hours = parseFloat(hoursInput.value);
+            const name = document.getElementById('name').value.trim();
+            const hours = parseFloat(document.getElementById('hours').value);
 
             if (!name || !hours) {
                 alert('Bitte alle Felder ausfüllen.');
                 return;
             }
 
-            // Save data
-            const userData = { name, hours };
-            localStorage.setItem('stundenzettel_user', JSON.stringify(userData));
+            // Save Step 1
+            const setup = JSON.parse(localStorage.getItem('stundenzettel_setup') || '{}');
+            setup.name = name;
+            setup.hours = hours;
+            localStorage.setItem('stundenzettel_setup', JSON.stringify(setup));
 
-            // Show success feedback
-            const btn = form.querySelector('.btn-primary');
-            const originalText = btn.textContent;
+            goToStep2();
+        });
+
+        // Step 2 Form Submit
+        document.getElementById('form2').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const schedule = [];
+            days.forEach(day => {
+                const von = document.getElementById(`${day}_von`).value;
+                const bis = document.getElementById(`${day}_bis`).value;
+                const team = document.getElementById(`${day}_team`).checked;
+
+                schedule.push({
+                    day,
+                    von,
+                    bis,
+                    team
+                });
+            });
+
+            // Save complete setup
+            const setup = JSON.parse(localStorage.getItem('stundenzettel_setup'));
+            setup.schedule = schedule;
+            setup.setupCompleted = true;
+            setup.setupDate = new Date().toISOString();
+            localStorage.setItem('stundenzettel_setup', JSON.stringify(setup));
+
+            // Show success
+            const btn = e.target.querySelector('.btn-primary');
             btn.textContent = '✓ Gespeichert!';
-            btn.style.pointerEvents = 'none';
+            btn.disabled = true;
 
             setTimeout(() => {
-                // Redirect to main app or next page
-                // Anpassen: Je nachdem wo deine Hauptseite ist
-                window.location.href = './index.html'; // oder deine Hauptseite
-            }, 1000);
+                // Navigate to main app
+                window.location.href = './index.html';
+            }, 1200);
         });
+
+        // Navigation
+        function goToStep2() {
+            currentStep = 2;
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+            
+            document.getElementById('progressStep1').classList.add('completed');
+            document.getElementById('progressStep1').classList.remove('active');
+            document.getElementById('progressStep2').classList.add('active');
+        }
+
+        function goBackToStep1() {
+            currentStep = 1;
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+            
+            document.getElementById('progressStep2').classList.remove('active');
+            document.getElementById('progressStep1').classList.remove('completed');
+            document.getElementById('progressStep1').classList.add('active');
+        }
 
         function handleCancel() {
             if (confirm('Willst du wirklich abbrechen?')) {
-                window.location.href = './'; // oder Startseite
+                localStorage.removeItem('stundenzettel_setup');
+                window.location.href = './';
             }
         }
-
-        // Visual feedback when typing
-        nameInput.addEventListener('input', (e) => {
-            const group = e.target.closest('.form-group');
-            if (e.target.value.trim()) {
-                group.classList.add('filled');
-            } else {
-                group.classList.remove('filled');
-            }
-        });
-
-        hoursInput.addEventListener('input', (e) => {
-            const group = e.target.closest('.form-group');
-            if (e.target.value) {
-                group.classList.add('filled');
-            } else {
-                group.classList.remove('filled');
-            }
-        });
     </script>
 </body>
 </html>
