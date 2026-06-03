@@ -510,7 +510,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 <div id="hdr">
   <div class="hdr-row">
     <div class="hdr-app">Stundenzettel</div>
-    <div class="hdr-name">Marc Hoß</div>
+    <div class="hdr-name" id="displayName">Laden...</div>
     <div style="font-size:13px;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:10px;letter-spacing:.5px">RGT &nbsp;·&nbsp; AWO</div>
     <div class="hdr-badge">31 Std. / Woche</div>
   </div>
@@ -1191,7 +1191,8 @@ function buildShareText(){
   const m=S.month,y=S.year;
   const days=wdays(y,m);
   const{ts,ti,neu}=mCalc();
-  let lines=[`Stundenzettel – Marc Hoß`,`${MN[m-1]} ${y}`,`──────────────────────`];
+  const currentUserName=document.getElementById('displayName')?.textContent||'Stundenzettel';
+  let lines=[`Stundenzettel – ${currentUserName}`,`${MN[m-1]} ${y}`,`──────────────────────`];
   days.forEach(({d,dow,key})=>{
     const D=dd(key,dow),p=PLAN[dow],st=D.status;
     const ist=D.ist,az=st==='frei'?'★ Frei':st==='krank'?'✕ Krank':st==='keine_schule'?'🚫 Schule':p.az;
@@ -1273,25 +1274,31 @@ function init(){
   rToday();
 }
 load();
-// Lade aktuellen User aus localStorage
-let userName = sessionStorage.getItem('current_user');
-if (!userName) {
+
+// 🔧 DYNAMISCHER NAME AUS LOCALSTORAGE LADEN
+let currentUserName = sessionStorage.getItem('current_user');
+if (!currentUserName) {
+  // Fallback: Letzte gespeicherte Person finden
   for (let i = localStorage.length - 1; i >= 0; i--) {
     const key = localStorage.key(i);
     if (key && key.startsWith('stundenzettel_')) {
-      userName = key.replace('stundenzettel_', '').replace(/_/g, ' ');
+      currentUserName = key.replace('stundenzettel_', '').replace(/_/g, ' ');
       break;
     }
   }
 }
-if (!userName) {
+
+// Name in Header anzeigen
+if (currentUserName) {
+  const displayEl = document.getElementById('displayName');
+  if (displayEl) {
+    displayEl.textContent = currentUserName;
+  }
+} else {
+  // Fallback auf index.html wenn kein User gefunden
   window.location.href = 'index.html';
 }
-// Aktualisiere Header mit Benutzernamen
-document.addEventListener('DOMContentLoaded', () => {
-  const nameEl = document.querySelector('.hdr-name');
-  if (nameEl) nameEl.textContent = userName || 'Stundenzettel';
-});
+
 init();
 rEvtWidget();
 </script>
